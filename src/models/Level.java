@@ -9,12 +9,12 @@ public class Level {
     private int height;
     private int width;
     private char shape;
-    ArrayList<Character> configuration = new ArrayList<Character>();
+    private ArrayList<Character> configuration = new ArrayList<Character>();
 
     public Level(int l) {
 
         try {
-            File levelFile = new File("../../levels/level" + l + ".nrg");
+            File levelFile = new File("levels/level" + l + ".nrg");
             Scanner sc = new Scanner(levelFile);
             int i = 0;
             while (sc.hasNext()) {
@@ -41,10 +41,11 @@ public class Level {
             e.printStackTrace();
         }
     }
+
     public int getHeight() {
         return this.height;
     }
-    
+
     public int getWidth() {
         return this.width;
     }
