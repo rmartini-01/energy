@@ -1,28 +1,25 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Tile {
-    private HashMap<Integer, Boolean> neighboors; // <graph's every tile's id, connected to it?> or <tile's neighboors,
-                                                  // (is connected to it)>
+    private ArrayList<Tile> neighbors; // exists an edge between "this" and the tiles in "neighbors"
+    private ArrayList<Integer> edges; // ex : [1,4,3] -> edges at position 1 4 3 of the tile
     private int id;
-    private int rotation;
+    private int rotation; // useful ? IG?
     private int pos_x;
     private int pos_y;
-    private boolean flag;
     private Role role;
+    private char shape;
 
-    public enum Role {
-        SOURCE, LAMP, TERMINAL
-    };
-
-    public Tile(int i, int x, int y, Role r) {
+    public Tile(int i, int x, int y, Role r, ArrayList<Integer> e) {
         this.id = i;
         this.rotation = 0;
         this.pos_x = x;
         this.pos_y = y;
         this.role = r;
-        this.flag = false;
+        this.edges = e;
 
     }
 
@@ -42,16 +39,12 @@ public class Tile {
         this.pos_y = y;
     }
 
-    public void setFlag(boolean f) {
-        this.flag = f;
-    }
-
     public void setRole(Role r) {
         this.role = r;
     }
 
-    public HashMap getNeighboors() {
-        return this.neighboors;
+    public ArrayList<Tile> getNeighbors() {
+        return this.neighbors;
     }
 
     public int getId() {
@@ -70,11 +63,36 @@ public class Tile {
         return this.pos_y;
     }
 
-    public boolean getFlag() {
-        return this.flag;
-    }
-
     public Role getRole() {
         return this.role;
     }
+
+    public char getShape() {
+        return this.shape;
+    }
+
+    public ArrayList<Integer> getEdges() {
+        return this.edges;
+    }
+
+    public void setNeighbors(ArrayList<Tile> n) {
+        this.neighbors = n;
+    }
+
+    public void rotateTile() { // update neighbors/edges and when this function is used, need to change the
+                               // board's edgeList too
+        if (this.shape == 'S') { // square
+            for (int i = 0; i < this.edges.size(); i++) {
+                int tmp = (edges.get(i) + 1) % 4;
+                edges.set(i, tmp);
+            }
+        } else {// hexagonal
+            for (int i = 0; i < this.edges.size(); i++) {
+                int tmp = (edges.get(i) + 1) % 6;
+                edges.set(i, tmp);
+            }
+        }
+
+    }
+
 }
