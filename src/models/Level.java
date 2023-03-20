@@ -1,5 +1,3 @@
-package models;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -22,21 +20,19 @@ public class Level {
                 switch (i) {
                     case 0:
                         this.height = Integer.parseInt(line);
+                        break;
                     case 1:
                         this.width = Integer.parseInt(line);
+                        break;
                     case 2:
                         this.shape = line.charAt(0);
+                        break;
                     default:
                         this.configuration.add(line.charAt(0));
-                        i++;
+                        break;
                 }
+                i++;
             }
-            /*
-             * System.out.println(height);
-             * System.out.println(width);
-             * System.out.println(shape);
-             * System.out.println(configuration);
-             */
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -52,5 +48,9 @@ public class Level {
 
     public ArrayList getConfig() {
         return this.configuration;
+    }
+
+    public char getShape() {
+        return this.shape;
     }
 }
