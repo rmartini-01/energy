@@ -1,15 +1,32 @@
 import com.formdev.flatlaf.FlatDarculaLaf;
-import views.HomepageView;
+import controllers.NavigationController;
+import listeners.NavigateBackListener;
 
+import views.HomepageView;
+import views.MenuBarView;
 import javax.swing.*;
+import java.awt.*;
+
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class Main {
 
-    public static void main(String[] args) throws UnsupportedLookAndFeelException {
+    public static void main(String[] args){
         FlatDarculaLaf.setup();
-
-        HomepageView home = new HomepageView();
+        JFrame frame = new JFrame(); // contains the main frame
+        frame.setSize(600, 600);
+        frame.setLayout(new BorderLayout());
+        JButton goBackBtn = new JButton("Go back");
+        goBackBtn.setBounds(275, 330, 150, 40);
+        goBackBtn.addActionListener(new NavigateBackListener(frame));
+        frame.add(goBackBtn);
+        NavigationController.getInstance(frame).navigateTo(null , new HomepageView(frame));
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        frame.setJMenuBar(new MenuBarView(frame));
+        frame.setVisible(true);
     }
+
+
 }
 /*
  * import java.io.File;
