@@ -1,15 +1,21 @@
 package controllers;
 
+import listeners.NavigateBackListener;
+
 import javax.swing.*;
 
+import java.awt.*;
 import java.util.Stack;
 
 public class NavigationController {
-    private JFrame jframe;
+    private final JFrame jframe;
     private final Stack<JPanel> history = new Stack<JPanel>();
     private static NavigationController instance;
+
     private NavigationController(JFrame frame){
         this.jframe = frame;
+
+
     }
 
     public static NavigationController getInstance(JFrame frame) {
@@ -25,11 +31,12 @@ public class NavigationController {
             jframe.getContentPane().remove(currentScene);
 
         }
+        if(currentScene==null || currentScene.getName().equals("Homepage")){
 
+        }
         // Add the new scene to the JFrame
         jframe.getContentPane().add(newScene);
         history.push(newScene);
-
 
         // Set the name of the new scene to the current scene's name
         String newSceneName = newScene.getName();
@@ -47,5 +54,7 @@ public class NavigationController {
             navigateTo(history.pop(), history.peek());
         }
     }
+
+
 
 }
