@@ -31,9 +31,7 @@ public class NavigationController {
             jframe.getContentPane().remove(currentScene);
 
         }
-        if(currentScene==null || currentScene.getName().equals("Homepage")){
 
-        }
         // Add the new scene to the JFrame
         jframe.getContentPane().add(newScene);
         history.push(newScene);

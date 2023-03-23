@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 
 public class HomepageView extends JPanel {
     private JFrame frame;
+    JComboBox<Integer> selectLevel= new JComboBox<>();
+
     public HomepageView(JFrame frame ){
         this.frame = frame ;
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
@@ -17,7 +19,6 @@ public class HomepageView extends JPanel {
         JButton settings = new JButton("Settings");
         settings.addActionListener(this::settingsListener);
 
-        JComboBox<Integer> selectLevel= new JComboBox<>();
         for(int i = 1; i<12; i++){
             selectLevel.addItem(i);
         }
@@ -25,7 +26,6 @@ public class HomepageView extends JPanel {
         selectLevel.setMaximumSize(new Dimension(150, 40));
         newGameBtn.setPreferredSize(new Dimension(150, 40));
         newGameBtn.setMaximumSize(new Dimension(150, 40));
-
 
         JLabel level = new JLabel("Select a level: "); //JLabel Creation
         Box verticalBox = Box.createVerticalBox();
@@ -60,7 +60,7 @@ public class HomepageView extends JPanel {
     }
     public void newGameListener( ActionEvent event ) {
         JOptionPane.showMessageDialog( this, "Button clicked !" );
-        NavigationController.getInstance(frame).navigateTo(this, new BoardView(frame));
+        NavigationController.getInstance(frame).navigateTo(this, new BoardView(frame, (Integer) selectLevel.getSelectedItem()));
     }
 
     public void settingsListener( ActionEvent event ) {

@@ -14,7 +14,7 @@ public class Level {
     public Level(int l) {
 
         try {
-            File levelFile = new File("levels/level" + l + ".nrg");
+            File levelFile = new File("src/models/levels/level" + l + ".nrg");
             Scanner sc = new Scanner(levelFile);
             int i = 0;
             while (sc.hasNext()) {
