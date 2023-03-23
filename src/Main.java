@@ -41,12 +41,18 @@ public class Main {
  * 
  * public static void main(String[] args) {
  * Level l = new Level(1);
- * 
- * System.out.println(l.getHeight());
- * System.out.println(l.getWidth());
- * System.out.println(l.getShape());
- * System.out.println(l.getConfig());
- * 
+ *      System.out.println(l.getHeight());
+ *     System.out.println(l.getWidth());
+ *       System.out.println(l.getShape());
+ *      System.out.println(l.getConfig());
+ *     if (l.getTileConfig().isEmpty()) {
+ *           System.out.println("empty");
+ *
+ *      } else {
+ *           for (Tile e : l.getTileConfig()) {
+ *              e.printTile();
+ *           }
+ *      }
  * ArrayList<Integer> tab1 = new ArrayList<Integer>();
  * tab1.add(0);
  * ArrayList<Integer> tab2 = new ArrayList<Integer>();

@@ -95,4 +95,14 @@ public class Tile {
 
     }
 
+    public void printTile() {
+        System.out.println(
+                "id : " + this.id + " |x : " + this.pos_x + " y : " + this.pos_y + "| Role : " + this.role.toString());
+        for (Integer r : this.edges) {
+            System.out.print(r + " ");
+        }
+        System.out.println();
+
+    }
+
 }
