@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class SquareBoard extends Board {
 
-    public SquareBoard(ArrayList<Tile> tl) {
-        super(tl);
+    public SquareBoard(ArrayList<Tile> tl, int rows, int col) {
+        super(tl, rows, col);
         this.isSquare = true;
     }
 

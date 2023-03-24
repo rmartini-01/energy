@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class HexaBoard extends Board {
 
-    public HexaBoard(ArrayList<Tile> tl) {
-        super(tl);
+    public HexaBoard(ArrayList<Tile> tl, int rows, int columns) {
+        super(tl, rows, columns);
         this.isSquare = false;
     }
 

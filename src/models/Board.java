@@ -12,9 +12,9 @@ public abstract class Board {
     protected ArrayList<Integer>[] edgeList; // storing the neighbors of each vertex in the graph.
     protected boolean isSquare; // 0 = square, 1 = Hexagone
 
-    public Board(ArrayList<Tile> tl) {
-        rows = 4;
-        columns = 4;
+    public Board(ArrayList<Tile> tl, int rows, int columns) {
+        this.rows = rows;
+        this.columns = columns;
         score = 0;
         board = tl;
         edgeList = (ArrayList<Integer>[]) new ArrayList[tl.size()];
