@@ -43,7 +43,7 @@ public class Level {
                     tmp_r = Role.LAMP;
                     break;
                 case 'W':
-                    tmp_r = Role.TERMINAL;
+                    tmp_r = Role.WIFI;
                     break;
                 default:
                     tmp_r = Role.EMPTY;
