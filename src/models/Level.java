@@ -13,10 +13,11 @@ public class Level {
     private ArrayList<Tile> tiles_config = new ArrayList<Tile>();
 
     public Level(int l) {
+
         try {
             File levelFile = new File("src/models/levels/level" + l + ".nrg");
             Scanner sc = new Scanner(levelFile);
-
+            int i = 0;
             this.height = sc.nextInt();
             this.width = sc.nextInt();
             this.shape = sc.next().charAt(0);
@@ -24,18 +25,18 @@ public class Level {
             while (sc.hasNext()) {
                 this.configuration.add(sc.next().charAt(0));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        int id = 0;
-
-        for (char c : this.configuration) {
-            ArrayList<Integer> tmp_edge = new ArrayList<Integer>();
+        int id = 0; // tmp_tile id
+        // init tiles_config
+        int h = this.configuration.size() - 1;
+        for (int i = 0; i < this.configuration.size() - 1; i++) {
+            Tile tmp_tile;
             Role tmp_r;
-
-            switch (c) {
+            ArrayList<Integer> tmp_edge = new ArrayList<Integer>();
+            switch (this.configuration.get(i)) {
                 case 'S':
                     tmp_r = Role.SOURCE;
                     break;
@@ -50,20 +51,52 @@ public class Level {
                     break;
             }
 
-            Tile tmp_tile = new Tile(id, 0, 0, tmp_r, tmp_edge);
+            while (Character.isDigit(this.configuration.get(i + 1))) {
+                tmp_edge.add(Character.getNumericValue(this.configuration.get(i + 1)));
+                i++;
+                if (i == h) {
+                    break;
+                }
+            }
+            tmp_tile = new Tile(id, 0, 0, tmp_r, tmp_edge);
             id++;
             this.tiles_config.add(tmp_tile);
         }
+        char last_element = this.configuration.get(this.configuration.size() - 1);
+        if (!Character.isDigit(last_element)) {
+            ArrayList<Integer> tmp_edge = new ArrayList<Integer>();
+            Tile tmp_tile;
+            switch (last_element) {
+                case 'S':
+                    tmp_tile = new Tile(id, 0, 0, Role.SOURCE, tmp_edge);
+                    this.tiles_config.add(tmp_tile);
+                    break;
+                case 'L':
+                    tmp_tile = new Tile(id, 0, 0, Role.LAMP, tmp_edge);
+                    this.tiles_config.add(tmp_tile);
+                    break;
+                case 'W':
+                    tmp_tile = new Tile(id, 0, 0, Role.TERMINAL, tmp_edge);
+                    this.tiles_config.add(tmp_tile);
+                    break;
+                default:
+                    tmp_tile = new Tile(id, 0, 0, Role.EMPTY, tmp_edge);
+                    this.tiles_config.add(tmp_tile);
+                    break;
+            }
 
+        }
         int k = 0;
 
-        for (int i = 0; i < this.width; i++) {
-            for (int j = 0; j < this.height; j++) {
+        // correctly place the tiles
+        for (int i = 0; i < this.width; i++) {// y axis
+            for (int j = 0; j < this.height; j++) {// x axis
                 this.tiles_config.get(k).setPositionX(j);
                 this.tiles_config.get(k).setPositionY(i);
                 k++;
             }
         }
+
     }
 
     public int getHeight() {
