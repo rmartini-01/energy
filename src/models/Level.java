@@ -57,8 +57,8 @@ public class Level {
 
         int k = 0;
 
-        for (int i = 0; i < this.height; i++) {
-            for (int j = 0; j < this.width; j++) {
+        for (int i = 0; i < this.width; i++) {
+            for (int j = 0; j < this.height; j++) {
                 this.tiles_config.get(k).setPositionX(j);
                 this.tiles_config.get(k).setPositionY(i);
                 k++;
