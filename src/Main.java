@@ -14,7 +14,7 @@ public class Main {
     public static void main(String[] args){
         FlatDarculaLaf.setup();
         JFrame frame = new JFrame(); // contains the main frame
-        frame.setSize(600, 600);
+        frame.setSize(600, 800);
         frame.setLayout(new BorderLayout());
 
 

@@ -14,10 +14,10 @@ public enum Role {
             return "Lamp";
         }
     },
-    TERMINAL {
+    WIFI {
         @Override
         public String toString() {
-            return "Terminal";
+            return "Wifi";
         }
     },
     EMPTY {
