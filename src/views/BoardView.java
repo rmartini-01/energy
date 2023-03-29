@@ -61,12 +61,16 @@ public class BoardView extends JPanel {
         }
     }
 
+    private String createFileName(String shape, String role){
+        return "src/res/"+shape+"_images/"+role+".png";
+    }
     private JPanel createImages( String shape){
         JPanel panel = new JPanel();
         panel.setBackground(Color.darkGray);
         panel.setSize(300,300);
 
         GridLayout layout;
+
         if(shape.equals("hexagone")){
             layout= new GridLayout(board.getRows(),0);
         }else{
@@ -87,7 +91,7 @@ public class BoardView extends JPanel {
                 roleFilename = "src/res/"+shape+"_images/line.png";
             }
             String borderFilename = "src/res/"+shape+"_images/"+shape+".png";
-            System.out.println(t.getRole().toString());
+            System.out.println(t.getRole().toString() + " edges = " + t.getEdges().toString());
             ImageIcon roleIcon = new ImageIcon(roleFilename);
             ImageIcon borderIcon = new ImageIcon(borderFilename);
 
@@ -102,19 +106,109 @@ public class BoardView extends JPanel {
             JLabel roleLabel = new JLabel(roleIcon);
             JLabel borderLabel = new JLabel(borderIcon);
 
-            JPanel tilePanel = new JPanel();
-            tilePanel.setLayout(new BorderLayout());
-            tilePanel.add(borderLabel, BorderLayout.CENTER);
-
             // Add roleLabel to the center of borderLabel using GridBagLayout
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.weightx = 1.0;
             gbc.weighty = 1.0;
-            gbc.anchor = GridBagConstraints.CENTER;
             borderLabel.setLayout(new GridBagLayout());
+            gbc.anchor = GridBagConstraints.CENTER;
             borderLabel.add(roleLabel, gbc);
+
+            JPanel tilePanel = new JPanel();
+            tilePanel.setLayout(new BorderLayout());
+            tilePanel.add(borderLabel, BorderLayout.CENTER);
+
+            if(!t.getRole().equals(Role.EMPTY)){
+
+                for(int edge : t.getEdges()){
+                    String connectionFilename="" ;
+                    if(edge==0 || edge==2){
+                         connectionFilename = createFileName(shape, "short_line");
+
+                    }else{
+                        connectionFilename = createFileName(shape, "short_line_sides");
+
+                    }
+                    ImageIcon edgeIcon= new ImageIcon(connectionFilename);
+                    Image scaledConnectionImage = edgeIcon.getImage().getScaledInstance(
+                            edgeIcon.getIconWidth() / 2, edgeIcon.getIconHeight() / 2, Image.SCALE_SMOOTH);
+                    edgeIcon = new ImageIcon(scaledConnectionImage);
+
+                    switch (edge) {
+                        case 0 -> { // top edge
+
+                            if(shape.equalsIgnoreCase("square")) {
+
+                                JLabel edgeLabel = new JLabel(edgeIcon);
+
+                                JPanel topPanel = new JPanel(new BorderLayout());
+                                topPanel.add(edgeLabel, BorderLayout.NORTH);
+                                gbc.anchor = GridBagConstraints.PAGE_START;
+                                borderLabel.add(topPanel, gbc);
+                            }else{
+                                /*double angle = Math.toRadians(35);
+                                AffineTransform transform = new AffineTransform();
+                                transform.rotate(angle, edgeIcon.getIconWidth() / 2, edgeIcon.getIconHeight() / 2);
+                                Image image = ((ImageIcon) edgeIcon).getImage();
+                                Image rotatedImage = new BufferedImage(edgeIcon.getIconWidth(), edgeIcon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+                                Graphics2D g = (Graphics2D) rotatedImage.getGraphics();
+                                g.setTransform(transform);
+                                g.drawImage(image, 0, 0, null);
+                                ImageIcon rotatedIcon = new ImageIcon(rotatedImage);*/
+                                JLabel edgeLabel = new JLabel(edgeIcon);
+
+                                JPanel leftPanel = new JPanel(new BorderLayout());
+                                leftPanel.add(edgeLabel, BorderLayout.WEST);
+                                System.out.println("tile " + edge);
+                                gbc.anchor = GridBagConstraints.PAGE_END;
+
+                                borderLabel.add(leftPanel,gbc);
+                            }
+
+                        }
+                        case 1 -> { // right edge
+                            JLabel edgeLabel = new JLabel(edgeIcon);
+
+                            JPanel rightPanel = new JPanel(new BorderLayout());
+                            rightPanel.add(edgeLabel, BorderLayout.EAST);
+                            gbc.anchor = GridBagConstraints.LINE_END;
+
+                            borderLabel.add(rightPanel,gbc);
+                        }
+                        case 2 -> { // bottom edge
+                            JLabel edgeLabel = new JLabel(edgeIcon);
+
+                            JPanel bottomPanel = new JPanel(new BorderLayout());
+                            bottomPanel.add(edgeLabel, BorderLayout.SOUTH);
+                            gbc.anchor = GridBagConstraints.PAGE_END;
+
+                            borderLabel.add(bottomPanel, gbc);
+                        }
+                        case 3 -> { // left edge
+                            JLabel edgeLabel = new JLabel(edgeIcon);
+
+                            JPanel leftPanel = new JPanel(new BorderLayout());
+                            leftPanel.add(edgeLabel, BorderLayout.WEST);
+                            System.out.println("tile " + edge);
+                            gbc.anchor = GridBagConstraints.LINE_START;
+                            borderLabel.add(leftPanel,gbc);
+                        }
+                        case 4 -> {
+                            System.out.println("case 4 ");
+                            // assuming imageIcon contains the image you want to rotate
+
+
+                        }
+                        case 5->{
+                            System.out.println("case 5 ");
+                        }
+
+                    }
+                }
+            }
+
 
             panel.add(tilePanel);
         }

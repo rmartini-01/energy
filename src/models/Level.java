@@ -76,7 +76,7 @@ public class Level {
                     this.tiles_config.add(tmp_tile);
                     break;
                 case 'W':
-                    tmp_tile = new Tile(id, 0, 0, Role.TERMINAL, tmp_edge);
+                    tmp_tile = new Tile(id, 0, 0, Role.WIFI, tmp_edge);
                     this.tiles_config.add(tmp_tile);
                     break;
                 default:
