@@ -12,14 +12,16 @@ public class Tile {
     private int pos_y;
     private Role role;
     private char shape;
+    private boolean lit = false;
 
-    public Tile(int i, int x, int y, Role r, ArrayList<Integer> e) {
+    public Tile(int i, int x, int y, char s, Role r, ArrayList<Integer> e) {
         this.id = i;
         this.rotation = 0;
         this.pos_x = x;
         this.pos_y = y;
         this.role = r;
         this.edges = e;
+        this.shape = s;
 
     }
 
@@ -79,6 +81,14 @@ public class Tile {
         this.neighbors = n;
     }
 
+    public void setLit(boolean b) {
+        this.lit = b;
+    }
+
+    public boolean getLit() {
+        return this.lit;
+    }
+
     public void rotateTile() { // update neighbors/edges and when this function is used, need to change the
                                // board's edgeList too
         if (this.shape == 'S') { // square
@@ -92,7 +102,6 @@ public class Tile {
                 edges.set(i, tmp);
             }
         }
-
     }
 
     public void printTile() {
@@ -102,6 +111,15 @@ public class Tile {
             System.out.print(r + " ");
         }
         System.out.println();
+
+    }
+
+    public void printNeighbors() {
+        if (!this.neighbors.isEmpty()) {
+            for (Tile p : this.neighbors) {
+                p.printTile();
+            }
+        }
 
     }
 

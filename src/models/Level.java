@@ -10,14 +10,14 @@ public class Level {
     private int width;
     private char shape;
     private ArrayList<Character> configuration = new ArrayList<Character>();
+    private ArrayList<Tile> tiles_config_win = new ArrayList<Tile>();
     private ArrayList<Tile> tiles_config = new ArrayList<Tile>();
 
     public Level(int l) {
 
         try {
-            File levelFile = new File("src/models/levels/level" + l + ".nrg");
+            File levelFile = new File("levels/level" + l + ".nrg");
             Scanner sc = new Scanner(levelFile);
-            int i = 0;
             this.height = sc.nextInt();
             this.width = sc.nextInt();
             this.shape = sc.next().charAt(0);
@@ -29,8 +29,7 @@ public class Level {
             e.printStackTrace();
         }
 
-        int id = 0; // tmp_tile id
-        // init tiles_config
+        int id = 0;
         int h = this.configuration.size() - 1;
         for (int i = 0; i < this.configuration.size() - 1; i++) {
             Tile tmp_tile;
@@ -44,7 +43,7 @@ public class Level {
                     tmp_r = Role.LAMP;
                     break;
                 case 'W':
-                    tmp_r = Role.WIFI;
+                    tmp_r = Role.TERMINAL;
                     break;
                 default:
                     tmp_r = Role.EMPTY;
@@ -58,9 +57,10 @@ public class Level {
                     break;
                 }
             }
-            tmp_tile = new Tile(id, 0, 0, tmp_r, tmp_edge);
+            tmp_tile = new Tile(id, 0, 0, this.shape, tmp_r, tmp_edge);
             id++;
             this.tiles_config.add(tmp_tile);
+            this.tiles_config_win.add(tmp_tile);
         }
         char last_element = this.configuration.get(this.configuration.size() - 1);
         if (!Character.isDigit(last_element)) {
@@ -68,20 +68,24 @@ public class Level {
             Tile tmp_tile;
             switch (last_element) {
                 case 'S':
-                    tmp_tile = new Tile(id, 0, 0, Role.SOURCE, tmp_edge);
+                    tmp_tile = new Tile(id, 0, 0, this.shape, Role.SOURCE, tmp_edge);
                     this.tiles_config.add(tmp_tile);
+                    this.tiles_config_win.add(tmp_tile);
                     break;
                 case 'L':
-                    tmp_tile = new Tile(id, 0, 0, Role.LAMP, tmp_edge);
+                    tmp_tile = new Tile(id, 0, 0, this.shape, Role.LAMP, tmp_edge);
                     this.tiles_config.add(tmp_tile);
+                    this.tiles_config_win.add(tmp_tile);
                     break;
                 case 'W':
-                    tmp_tile = new Tile(id, 0, 0, Role.TERMINAL, tmp_edge);
+                    tmp_tile = new Tile(id, 0, 0, this.shape, Role.TERMINAL, tmp_edge);
                     this.tiles_config.add(tmp_tile);
+                    this.tiles_config_win.add(tmp_tile);
                     break;
                 default:
-                    tmp_tile = new Tile(id, 0, 0, Role.EMPTY, tmp_edge);
+                    tmp_tile = new Tile(id, 0, 0, this.shape, Role.EMPTY, tmp_edge);
                     this.tiles_config.add(tmp_tile);
+                    this.tiles_config_win.add(tmp_tile);
                     break;
             }
 
@@ -93,10 +97,11 @@ public class Level {
             for (int j = 0; j < this.height; j++) {// x axis
                 this.tiles_config.get(k).setPositionX(j);
                 this.tiles_config.get(k).setPositionY(i);
+                this.tiles_config_win.get(k).setPositionX(j);
+                this.tiles_config_win.get(k).setPositionY(i);
                 k++;
             }
         }
-
     }
 
     public int getHeight() {

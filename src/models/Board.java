@@ -9,17 +9,17 @@ public abstract class Board {
     protected int columns;
     protected int score;
     protected ArrayList<Tile> board;
-    protected ArrayList<Integer>[] edgeList; // storing the neighbors of each vertex in the graph.
+    protected ArrayList<Integer>[] neighborsList; // storing the neighbors of each vertex in the graph. connected
     protected boolean isSquare; // 0 = square, 1 = Hexagone
 
-    public Board(ArrayList<Tile> tl, int rows, int columns) {
-        this.rows = rows;
-        this.columns = columns;
+    public Board(int r, int c, ArrayList<Tile> tl) {
+        rows = r;
+        columns = c;
         score = 0;
         board = tl;
-        edgeList = (ArrayList<Integer>[]) new ArrayList[tl.size()];
-        for (int i = 0; i < 3; i++) {
-            edgeList[i] = new ArrayList<Integer>();
+        neighborsList = (ArrayList<Integer>[]) new ArrayList[tl.size()];
+        for (int i = 0; i < tl.size(); i++) {
+            neighborsList[i] = new ArrayList<Integer>();
         }
         isSquare = true;
     }
@@ -40,17 +40,13 @@ public abstract class Board {
         return board;
     }
 
-    public ArrayList<Integer>[] getEdgeList() {
-        return edgeList;
-    }
-
-    public void updateEdgelist(Tile t) { // update edgeList when move Tile t, t's id is the position as
-                                         // edgeList[position] to change
+    public ArrayList<Integer>[] getneighborsList() {
+        return neighborsList;
     }
 
     public abstract boolean isSquare();
 
-    public boolean DFS(int t1, int t2) { // arguments are tiles' id
+    public boolean DFS(int t1, int t2) { // arguments are tiles' id, checks if there's a way between two tiles
         boolean[] visited = new boolean[board.size()];
         Stack<Integer> stack = new Stack<Integer>();
         visited[t1] = true;
@@ -61,7 +57,7 @@ public abstract class Board {
             if (currentVertix == t2) {
                 return true;
             }
-            Iterator<Integer> i = edgeList[currentVertix].listIterator();
+            Iterator<Integer> i = neighborsList[currentVertix].listIterator();
             while (i.hasNext()) {
                 int m = i.next();
                 if (!visited[m]) {
@@ -73,13 +69,27 @@ public abstract class Board {
         return false;
     }
 
-    public void setEdgeList() {
-        for (int i = 0; i < edgeList.length; i++) {
-            if (!board.get(i).getNeighbors().isEmpty()) {
-                for (Tile elem : board.get(i).getNeighbors()) {
-                    edgeList[i].add(elem.getId());
-                }
+    public void printNeighborsList() {
+        for (int i = 0; i < neighborsList.length; i++) {
+            System.out.print("Tile id " + i + " : ");
+            for (Integer k : this.neighborsList[i]) {
+                System.out.print(k + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public void LightON(Tile a, Tile b) {
+        if (DFS(a.getId(), b.getId())) {
+            if (a.getRole() == Role.LAMP
+                    && (b.getRole() == Role.SOURCE || (b.getRole() == Role.TERMINAL && b.getLit()))) {
+                a.setLit(true);
+            }
+            if (b.getRole() == Role.LAMP
+                    && (a.getRole() == Role.SOURCE || (a.getRole() == Role.TERMINAL && a.getLit()))) {
+                b.setLit(true);
             }
         }
     }
+
 }
