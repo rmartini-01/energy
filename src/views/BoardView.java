@@ -279,7 +279,7 @@ public class BoardView extends JPanel {
         HashMap<String, BufferedImage> grayTiles;
         if(level.getShape()== 'H'){
             shape = "hexagone";
-            board = new HexaBoard(level.getTileConfig(), level.getWidth(), level.getHeight());
+            board = new HexaBoard( level.getWidth() , level.getHeight(), level.getTileConfig());
             layout= new GridLayout(board.getRows(), board.getColumns());
             panel.setLayout(layout);
             System.out.println("size : "+board.getRows() + " "+  board.getColumns());
@@ -289,7 +289,7 @@ public class BoardView extends JPanel {
 
         }else{
             shape = "square";
-            board = new SquareBoard(level.getTileConfig(), level.getWidth(), level.getHeight());
+            board = new SquareBoard( level.getWidth() , level.getHeight(), level.getTileConfig());
             layout = new GridLayout(board.getRows(), board.getColumns());
             grayTiles = createGraySquareTiles();
         }
