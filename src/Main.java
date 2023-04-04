@@ -1,6 +1,5 @@
 import com.formdev.flatlaf.FlatDarculaLaf;
 import controllers.NavigationController;
-import listeners.NavigateBackListener;
 
 import views.HomepageView;
 import views.MenuBarView;
@@ -16,11 +15,7 @@ public class Main {
         JFrame frame = new JFrame(); // contains the main frame
         frame.setSize(600, 800);
         frame.setLayout(new BorderLayout());
-
-
         NavigationController.getInstance(frame).navigateTo(null , new HomepageView(frame));
-
-
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setJMenuBar(new MenuBarView(frame));
         frame.setVisible(true);
