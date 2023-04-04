@@ -43,7 +43,7 @@ public class Level {
                     tmp_r = Role.LAMP;
                     break;
                 case 'W':
-                    tmp_r = Role.TERMINAL;
+                    tmp_r = Role.WIFI;
                     break;
                 default:
                     tmp_r = Role.EMPTY;
@@ -78,7 +78,7 @@ public class Level {
                     this.tiles_config_win.add(tmp_tile);
                     break;
                 case 'W':
-                    tmp_tile = new Tile(id, 0, 0, Role.WIFI, tmp_edge);
+                    tmp_tile = new Tile(id, 0, 0,this.shape, Role.WIFI, tmp_edge);
                     this.tiles_config.add(tmp_tile);
                     this.tiles_config_win.add(tmp_tile);
                     break;
