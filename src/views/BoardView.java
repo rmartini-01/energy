@@ -280,7 +280,7 @@ public class BoardView extends JPanel {
         if(level.getShape()== 'H'){
             shape = "hexagone";
             board = new HexaBoard(level.getTileConfig(), level.getWidth(), level.getHeight());
-            layout= new GridLayout();
+            layout= new GridLayout(board.getRows(), board.getColumns());
             panel.setLayout(layout);
             System.out.println("size : "+board.getRows() + " "+  board.getColumns());
 
