@@ -1,10 +1,11 @@
 package models;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
 
-public abstract class Board {
+public class Board {
     protected int rows;
     protected int columns;
     protected int score;
@@ -12,7 +13,7 @@ public abstract class Board {
     protected ArrayList<Integer>[] neighborsList; // storing the neighbors of each vertex in the graph. connected
     protected boolean isSquare; // 0 = square, 1 = Hexagone
 
-    public Board(int r, int c, ArrayList<Tile> tl) {
+    public Board(int r, int c, ArrayList<Tile> tl,boolean isSquare) {
         rows = r;
         columns = c;
         score = 0;
@@ -21,16 +22,18 @@ public abstract class Board {
         for (int i = 0; i < tl.size(); i++) {
             neighborsList[i] = new ArrayList<Integer>();
         }
-        isSquare = true;
+        this.isSquare = isSquare;
     }
 
     public int getRows() {
         return rows;
     }
+    public void setRows(int r){this.rows=r;}
 
     public int getColumns() {
         return columns;
     }
+    public void setColumns(int c){this.columns=c;}
 
     public int getScore() {
         return score;
@@ -44,7 +47,9 @@ public abstract class Board {
         return neighborsList;
     }
 
-    public abstract boolean isSquare();
+    public boolean isSquare(){
+        return true;
+    }
 
     public boolean DFS(int t1, int t2) { // arguments are tiles' id, checks if there's a way between two tiles
         boolean[] visited = new boolean[board.size()];
@@ -78,18 +83,240 @@ public abstract class Board {
             System.out.println();
         }
     }
+    public boolean areConnectedHex(Tile t1, Tile t2) { // same as areConnectedSquare but on hex board
+        boolean connect = false;
+        if (t1.getPositionX() == t2.getPositionX() && (t2.getPositionY() == t1.getPositionY() - 1)) { // t2 top
+            if (t1.getEdges().contains(0) && t2.getEdges().contains(3)) {
+                connect = true;
+            }
+        } else if ((t2.getPositionX() == t1.getPositionX() + 1) && t1.getPositionY() == t2.getPositionY()) { // t2 top
+            // right
+            if (t1.getEdges().contains(1) && t2.getEdges().contains(4)) {
+                connect = true;
+            }
+        } else if ((t2.getPositionX() == t1.getPositionX() + 1) && t2.getPositionY() == t1.getPositionY() + 1) { // t2
+            // down
+            // right
+            if (t1.getEdges().contains(2) && t2.getEdges().contains(5)) {
+                connect = true;
+            }
+        } else if (t1.getPositionX() == t2.getPositionX() && (t2.getPositionY() == t1.getPositionY() + 1)) { // t2 down
+            if (t1.getEdges().contains(3) && t2.getEdges().contains(0)) {
+                connect = true;
+            }
+
+        } else if ((t2.getPositionX() == t1.getPositionX() - 1) && (t2.getPositionY() == t1.getPositionY() + 1)) { // t2
+            // left
+            // down
+            if (t1.getEdges().contains(4) && t2.getEdges().contains(1)) {
+                connect = true;
+            }
+        } else if ((t2.getPositionX() == t1.getPositionX() - 1) && t1.getPositionY() == t2.getPositionY()) { // t2 left
+            // top
+            if (t1.getEdges().contains(5) && t2.getEdges().contains(2)) {
+                connect = true;
+            }
+        }
+        return connect; // not next to each other on the board
+    }
+
+    public boolean areConnectedSquare(Tile t1, Tile t2) { // check if two tiles are next to each other and connected on
+        // the board with their edges
+        boolean connect = false;
+        if (t1.getPositionX() == t2.getPositionX() && (t2.getPositionY() == t1.getPositionY() - 1)) { // t2 top
+            if (t1.getEdges().contains(0) && t2.getEdges().contains(2)) {
+                connect = true;
+            }
+        } else if ((t2.getPositionX() == t1.getPositionX() + 1) && t1.getPositionY() == t2.getPositionY()) { // t2 right
+            if (t1.getEdges().contains(1) && t2.getEdges().contains(3)) {
+                connect = true;
+            }
+        } else if (t1.getPositionX() == t2.getPositionX() && (t2.getPositionY() == t1.getPositionY() + 1)) { // t2 down
+            if (t1.getEdges().contains(2) && t2.getEdges().contains(0)) {
+                connect = true;
+            }
+
+        } else if ((t2.getPositionX() == t1.getPositionX() - 1) && t1.getPositionY() == t2.getPositionY()) { // t2 left
+            if (t1.getEdges().contains(3) && t2.getEdges().contains(1)) {
+                connect = true;
+            }
+
+        }
+        return connect; // not next to each other on the board
+
+    }
+
+
+    public void setNeighborsSquare() { // sets the neighbors of each square tile
+        for (int i = 0; i < this.board.size(); i++) {
+            ArrayList<Tile> tmp2 = new ArrayList<Tile>();
+            for (int j = 0; j < this.board.size(); j++) {
+                if (areConnectedSquare(board.get(i), board.get(j)) && i != j) {
+                    if (!tmp2.contains(board.get(j))) {
+                        tmp2.add(board.get(j));
+                    }
+
+                }
+            }
+            this.board.get(i).setNeighbors(tmp2);
+        }
+    }
+    public void setNeighborsHexa() { // sets the neighbors of each square tile
+        for (int i = 0; i < this.board.size(); i++) {
+            ArrayList<Tile> tmp2 = new ArrayList<Tile>();
+            for (int j = 0; j < this.board.size(); j++) {
+                if (areConnectedHex(board.get(i), board.get(j)) && i != j) {
+                    if (!tmp2.contains(board.get(j))) {
+                        tmp2.add(board.get(j));
+                    }
+
+                }
+            }
+            this.board.get(i).setNeighbors(tmp2);
+        }
+    }
+
+    public void initNeighborsList() { // initialize the adjacency list
+        this.neighborsList = new ArrayList[this.board.size()];
+        for (int i = 0; i < this.board.size(); i++) {
+            this.neighborsList[i] = new ArrayList<>();
+            Tile t1 = board.get(i);
+            for (int j = 0; j < this.board.size(); j++) {
+                if (i == j) {
+                    continue; // skip the current tile
+                }
+                Tile t2 = board.get(j);
+                if (isSquare){
+                    if (areConnectedSquare(t1, t2)) {
+                        neighborsList[i].add(j);
+                    }
+                }else{
+                    if (areConnectedHex(t1, t2)) {
+                        neighborsList[i].add(j);
+                    }
+                }
+
+            }
+        }
+    }
+
+    public void updateNeighborsList() {
+        for (int i = 0; i < board.size(); i++) {
+            Tile tile1 = board.get(i);
+            neighborsList[i].clear(); // clear the list of neighbors for the i-th tile
+            for (int j = 0; j < board.size(); j++) {
+                if (i == j) {
+                    continue; // skip the current tile
+                }
+                Tile tile2 = board.get(j);
+
+                if (isSquare){
+                    if (areConnectedSquare(tile1, tile2)) {
+                        // if the j-th tile is a neighbor of the i-th tile, add it to the list of
+                        // neighbors
+                        neighborsList[i].add(j);
+                    }
+                }else{
+                    if (areConnectedHex(tile1, tile2)) {
+                        neighborsList[i].add(j);
+                    }
+                }
+            }
+        }
+    }
 
     public void LightON(Tile a, Tile b) {
         if (DFS(a.getId(), b.getId())) {
             if (a.getRole() == Role.LAMP
-                    && (b.getRole() == Role.SOURCE || (b.getRole() == Role.TERMINAL && b.getLit()))) {
+                    && (b.getRole() == Role.SOURCE || (b.getRole() == Role.WIFI && b.getLit()))) {
                 a.setLit(true);
             }
             if (b.getRole() == Role.LAMP
-                    && (a.getRole() == Role.SOURCE || (a.getRole() == Role.TERMINAL && a.getLit()))) {
+                    && (a.getRole() == Role.SOURCE || (a.getRole() == Role.WIFI && a.getLit()))) {
                 b.setLit(true);
             }
         }
     }
+
+    public boolean isEmptyBoard(){
+        return this.board.isEmpty();
+    }
+
+    public void clearBoard(){
+        this.board.clear();
+        for (int i = 0 ; i<this.neighborsList.length ;i++){
+            neighborsList[i].clear();
+        }
+    }
+
+    public boolean isBoardWinningConfig(){ // don't work
+        ArrayList<Tile> tmp_board = this.board;
+        for (Tile t1 : this.board){
+            for (Tile t2 : tmp_board) {
+                if (t1.getId() != t2.getId()) {
+                    if (!DFS(t1.getId(), t2.getId())) {
+                        System.out.println("pas de chemin ente "+t1.getId()+ " et "+t2.getId());
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public Tile lastTileAdded(){
+        int id_tmp = 0;
+        Tile tile_tmp= this.board.get(0);
+        for (Tile t : this.board){ // to find the last tile in the board
+            if (id_tmp<t.getId()) {
+                id_tmp = t.getId();
+                tile_tmp = t;
+            }
+        }
+        return  tile_tmp;
+    }
+
+    public int [] getPosToAddColumn(){ // to add tile on the right of the board
+        int[] position = new int[2];
+        Tile last = this.lastTileAdded();
+        if (last.getPositionX()==((this.columns)-1) && last.getPositionY()==((this.rows)-1)){ // case when adding to a new column
+            position[0] = this.columns;
+            position[1]=0;
+            this.columns+=1;
+        }else{ // case when adding to an existing column
+            position[0] = this.columns-1;
+            position[1] = last.getPositionY()+1;
+        }
+        return position;
+    }
+    public int [] getPosToAddRow(){ // to add tile at the bottom of the board
+        int[] position = new int[2];
+        Tile last = this.lastTileAdded();
+        if (last.getPositionX()==((this.columns)-1) && last.getPositionY()==((this.rows)-1)){ // case when adding to a new row
+            position[0] = 0;
+            position[1]=this.rows;
+            this.rows+=1;
+        }else{ // case when adding to an existing row
+            position[0] = last.getPositionX()+1;
+            position[1] = this.rows-1;
+        }
+        return position;
+    }
+
+    public void changeTile(Tile t1, Tile t2){ // change t1 into t2
+
+    }
+
+    public void addTileHexa(Tile t){
+        this.board.add(t);
+        updateNeighborsList();
+    }
+
+    public void addTileSquare(Tile t){
+        this.board.add(t);
+        updateNeighborsList();
+    }
+
+
 
 }

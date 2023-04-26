@@ -16,7 +16,7 @@ public class Level {
     public Level(int l) {
 
         try {
-            File levelFile = new File("levels/level" + l + ".nrg");
+            File levelFile = new File("src/models/levels/level" + l + ".nrg");
             Scanner sc = new Scanner(levelFile);
             this.height = sc.nextInt();
             this.width = sc.nextInt();

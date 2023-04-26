@@ -193,7 +193,7 @@ public class BoardView extends JPanel {
                     edgeIcon = new ImageIcon(scaledConnectionImage);
 
                     switch (edge) {
-                        case 0 -> { // top edge
+                        case 0 : { // top edge
 
                             if(shape.equalsIgnoreCase("square")) {
 
@@ -224,7 +224,7 @@ public class BoardView extends JPanel {
                             }
 
                         }
-                        case 1 -> { // right edge
+                        case 1 : { // right edge
                             JLabel edgeLabel = new JLabel(edgeIcon);
 
                             JPanel rightPanel = new JPanel(new BorderLayout());
@@ -233,7 +233,7 @@ public class BoardView extends JPanel {
 
                             borderLabel.add(rightPanel,gbc);
                         }
-                        case 2 -> { // bottom edge
+                        case 2 : { // bottom edge
                             JLabel edgeLabel = new JLabel(edgeIcon);
 
                             JPanel bottomPanel = new JPanel(new BorderLayout());
@@ -242,7 +242,7 @@ public class BoardView extends JPanel {
 
                             borderLabel.add(bottomPanel, gbc);
                         }
-                        case 3 -> { // left edge
+                        case 3 : { // left edge
                             JLabel edgeLabel = new JLabel(edgeIcon);
 
                             JPanel leftPanel = new JPanel(new BorderLayout());
@@ -251,11 +251,11 @@ public class BoardView extends JPanel {
                             gbc.anchor = GridBagConstraints.LINE_START;
                             borderLabel.add(leftPanel,gbc);
                         }
-                        case 4 -> {
+                        case 4 : {
                             System.out.println("case 4 ");
                             // assuming imageIcon contains the image you want to rotate
                         }
-                        case 5->{
+                        case 5 : {
                             System.out.println("case 5 ");
                         }
                     }
@@ -279,7 +279,7 @@ public class BoardView extends JPanel {
         HashMap<String, BufferedImage> grayTiles;
         if(level.getShape()== 'H'){
             shape = "hexagone";
-            board = new HexaBoard( level.getWidth() , level.getHeight(), level.getTileConfig());
+            board = new Board( level.getWidth() , level.getHeight(), level.getTileConfig(),false);
             layout= new GridLayout(board.getRows(), board.getColumns());
             panel.setLayout(layout);
             System.out.println("size : "+board.getRows() + " "+  board.getColumns());
@@ -289,7 +289,7 @@ public class BoardView extends JPanel {
 
         }else{
             shape = "square";
-            board = new SquareBoard( level.getWidth() , level.getHeight(), level.getTileConfig());
+            board = new Board( level.getWidth() , level.getHeight(), level.getTileConfig(), true);
             layout = new GridLayout(board.getRows(), board.getColumns());
             grayTiles = createGraySquareTiles();
         }
@@ -332,12 +332,12 @@ public class BoardView extends JPanel {
                 for(int edge : tile.getEdges()){
                     System.out.println(edge);
                     switch (edge) {
-                        case 0 -> gbc.anchor = GridBagConstraints.PAGE_START;
-                        case 1 -> gbc.anchor = GridBagConstraints.LINE_END;
-                        case 2 -> gbc.anchor = GridBagConstraints.PAGE_END;
-                        case 3 -> gbc.anchor = GridBagConstraints.LINE_START;
-                        case 4 -> System.out.println("case4");
-                        case 5 -> System.out.println("case5");
+                        case 0 : gbc.anchor = GridBagConstraints.PAGE_START;
+                        case 1 : gbc.anchor = GridBagConstraints.LINE_END;
+                        case 2 : gbc.anchor = GridBagConstraints.PAGE_END;
+                        case 3 : gbc.anchor = GridBagConstraints.LINE_START;
+                        case 4 : System.out.println("case4");
+                        case 5 : System.out.println("case5");
                     }
                     border.add(addConnection(grayTiles.get("connection")), gbc);
                 }
