@@ -93,8 +93,8 @@ public class Level {
         int k = 0;
 
         // correctly place the tiles
-        for (int i = 0; i < this.width; i++) {// y axis
-            for (int j = 0; j < this.height; j++) {// x axis
+        for (int i = 0; i < this.height; i++) {// y axis
+            for (int j = 0; j < this.width; j++) {// x axis
                 this.tiles_config.get(k).setPositionX(j);
                 this.tiles_config.get(k).setPositionY(i);
                 this.tiles_config_win.get(k).setPositionX(j);
