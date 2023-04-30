@@ -16,8 +16,9 @@ public class BoardController {
 
     public BoardController(JFrame frame, int l) {
         this.level = new Level(l);
-        this.view = new BoardView(frame, l, this);
         this.board = new Board(level.getHeight(), level.getWidth(), level.getTileConfig(), level.getShape() == 'S');
+
+        this.view = new BoardView(frame, l,board, this);
         view.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

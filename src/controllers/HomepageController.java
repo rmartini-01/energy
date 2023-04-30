@@ -6,9 +6,10 @@ import views.HomepageView;
 
 import javax.swing.*;
 
-public class HomepageController{
+public class HomepageController extends  Controller{
     private final HomepageView view;
     private JFrame frame;
+
 
     public HomepageController(JFrame frame) {
         this.frame = frame;
@@ -16,7 +17,8 @@ public class HomepageController{
     }
 
     public void newGameAction() {
-       // NavigationController.getInstance(frame).navigateTo(view, new BoardView(frame,  view.getSelectedLevel()));
+        BoardController bc = new BoardController(frame, getView().getSelectedLevel());
+        navigationController.navigateTo(view, new BoardView(frame,  view.getSelectedLevel(), bc.getBoard(), bc));
     }
 
     public void settingsAction() {

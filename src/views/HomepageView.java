@@ -79,13 +79,6 @@ public class HomepageView extends JPanel {
     public int getSelectedLevel() {
         return (int) selectLevel.getSelectedItem();
     }
-    public void settingsListener(ActionEvent event) {
-        JOptionPane.showMessageDialog(this, "Button clicked !");
-        //NavigationController.getInstance(frame).navigateTo(this, new SettingsView(frame));
-    }
-
-    public void editGameListener(ActionEvent event) {
-    }
 
 
 }

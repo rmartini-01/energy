@@ -23,15 +23,17 @@ public class BoardView extends JPanel{
     private Graphics2D g2d;
     private HashMap<String, BufferedImage> squareGrayTiles = createGraySquareTiles();
     private BoardController boardController;
+    private Board board;
     public ArrayList<TileView> getTileViews() {
         return tileViews;
     }
 
     // Update the constructor to accept a BoardController parameter
-    public BoardView(JFrame frame, int level, BoardController boardController) {
+    public BoardView(JFrame frame, int level, Board b, BoardController boardController) {
         this.frame = frame;
         this.level = new Level(level);
         tileViews = new ArrayList<>();
+        this.board = b;
         setName("Board");
         add(goBackBtn(), BorderLayout.PAGE_START);
     }
@@ -78,8 +80,8 @@ public class BoardView extends JPanel{
 
     private void createHexagoneBoard(Graphics2D g2d, Point origin){
         HashMap<String, BufferedImage> grayTiles = createGrayHexagoneTiles();
-        for (int i = 0; i < boardController.getBoard().getBoard().size(); i++){
-            Tile tile = boardController.getBoard().getBoard().get(i);
+        for (int i = 0; i < board.getBoard().size(); i++){
+            Tile tile = board.getBoard().get(i);
             int posX = tile.getPositionX();
             int posY = tile.getPositionY();
             int x = origin.x + (posX * 104);
@@ -126,8 +128,8 @@ public class BoardView extends JPanel{
     }
     private void createSquareBoard(Graphics2D g2d, Point origin) {
         tileViews.clear();
-        for (int i = 0; i < boardController.getBoard().getBoard().size(); i++) {
-            Tile tile = boardController.getBoard().getBoard().get(i);
+        for (int i = 0; i < board.getBoard().size(); i++) {
+            Tile tile = board.getBoard().get(i);
             tileViews.addAll(drawSquareTile(origin, tile));
         }
     }

@@ -17,8 +17,10 @@ public class Main {
         JFrame frame = new JFrame(); // contains the main frame
         frame.setSize(600, 800);
         frame.setLayout(new BorderLayout());
+        NavigationController navigationController = NavigationController.getInstance(frame);
         HomepageController homepageController = new HomepageController(frame);
-        NavigationController.getInstance(frame).navigateTo(null , homepageController.getView());
+        homepageController.setNavigationController(navigationController);
+        navigationController.navigateTo(null , homepageController.getView());
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setJMenuBar(new MenuBarView(frame));
         frame.pack();
