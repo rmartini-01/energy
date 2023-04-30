@@ -17,7 +17,7 @@ public class HomepageController extends  Controller{
     }
 
     public void newGameAction() {
-        BoardController bc = new BoardController(frame, getView().getSelectedLevel());
+        BoardController bc = new BoardController(frame, getView().getSelectedLevel(), navigationController);
         navigationController.navigateTo(view, new BoardView(frame,  view.getSelectedLevel(), bc.getBoard(), bc));
     }
 

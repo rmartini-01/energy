@@ -9,15 +9,15 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class BoardController {
+public class BoardController extends Controller {
     private BoardView view;
     private Board board;
     private Level level;
 
-    public BoardController(JFrame frame, int l) {
+    public BoardController(JFrame frame, int l, NavigationController nc) {
         this.level = new Level(l);
         this.board = new Board(level.getHeight(), level.getWidth(), level.getTileConfig(), level.getShape() == 'S');
-
+        this.navigationController = nc;
         this.view = new BoardView(frame, l,board, this);
         view.addMouseListener(new MouseAdapter() {
             @Override
