@@ -1,4 +1,6 @@
 import com.formdev.flatlaf.FlatDarculaLaf;
+import controllers.BoardController;
+import controllers.HomepageController;
 import controllers.NavigationController;
 
 import views.HomepageView;
@@ -15,9 +17,11 @@ public class Main {
         JFrame frame = new JFrame(); // contains the main frame
         frame.setSize(600, 800);
         frame.setLayout(new BorderLayout());
-        NavigationController.getInstance(frame).navigateTo(null , new HomepageView(frame));
+        HomepageController homepageController = new HomepageController(frame);
+        NavigationController.getInstance(frame).navigateTo(null , homepageController.getView());
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setJMenuBar(new MenuBarView(frame));
+        frame.pack();
         frame.setVisible(true);
     }
 

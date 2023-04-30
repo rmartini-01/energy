@@ -21,61 +21,48 @@ public class BoardView extends JPanel{
     private  JFrame frame;
     private ArrayList<TileView> tileViews;
     private Graphics2D g2d;
+    private HashMap<String, BufferedImage> squareGrayTiles = createGraySquareTiles();
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    public ArrayList<TileView> getTileViews() {
+        return tileViews;
+    }
+
+    // Update the constructor to accept a BoardController parameter
     public BoardView(JFrame frame, int level) {
         this.frame = frame;
         this.level = new Level(level);
         tileViews = new ArrayList<>();
         setName("Board");
         add(goBackBtn(), BorderLayout.PAGE_START);
-        addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                for(TileView tileView : tileViews){
-                    Point point = tileView.getPosition();
-                    if(contains(point, e.getPoint()) ){
-                        System.out.println( "mouse : "+ e.getX() + " "  +e.getY());
-                        System.out.println(" tile : " + point.getX() + " " + point.getY() );
-                        System.out.println("inside image " +tileView.getTile().getRole().toString() + e.getX() + " "  +e.getY());
-
-                        tileView.setImage(rotateImage(tileView.getImage(), 45));
-
-                    }
-                }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-        });
     }
-
     @Override
-    public void repaint(){
-        super.repaint();
-        if(tileViews!= null) {
-            for (TileView tileView : tileViews) {
-                System.out.println("should repaint");
-                g2d.drawImage(tileView.getImage(), tileView.getPosition().x, tileView.getPosition().y, null);
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g2d = (Graphics2D) g;
+        Point origin = new Point(80, 70);
+        if(tileViews.size()==0){
+            if(level.getShape()=='H') {
+                createHexagoneBoard(g2d,  origin);
+            }else {
+                createSquareBoard(g2d, origin);
             }
+        }else{
+            System.out.println("should repaint ");
+            ArrayList<TileView> newTileView = new ArrayList<>();
+            for(TileView tv : tileViews) {
+                Tile tile = tv.getTile();
+                newTileView.addAll(drawSquareTile(origin, tile));
+            }
+
+            tileViews = newTileView;
         }
 
     }
-    private boolean contains(Point tilePosition , Point mousePosition){
+
+    public boolean contains(Point tilePosition , Point mousePosition){
         return tilePosition.x <= mousePosition.x && mousePosition.x <= tilePosition.x + 104
                 && tilePosition.y <= mousePosition.y && mousePosition.y <= tilePosition.y + 104;
     }
@@ -91,18 +78,6 @@ public class BoardView extends JPanel{
         goBackBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         return goBackBtn;
     }
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g2d = (Graphics2D) g;
-        Point origin = new Point(80, 70);
-        if(level.getShape()=='H') {
-            createHexagoneBoard(g2d,  origin);
-        }else {
-            createSquareBoard(g2d, origin);
-        }
-    }
-
 
     private void createHexagoneBoard(Graphics2D g2d, Point origin){
         HashMap<String, BufferedImage> grayTiles = createGrayHexagoneTiles();
@@ -111,7 +86,6 @@ public class BoardView extends JPanel{
             Tile tile = board.getBoard().get(i);
             int posX = tile.getPositionX();
             int posY = tile.getPositionY();
-            //TODO c'est inversé je sais pas pourquoi mais ça marche comme ça :)
             int x = origin.x + (posX * 104);
             int y = origin.y + (posY * 104);
             String role = tile.getRole().toString().toLowerCase();
@@ -156,99 +130,88 @@ public class BoardView extends JPanel{
     }
     private void createSquareBoard(Graphics2D g2d, Point origin) {
         tileViews.clear();
-        HashMap<String, BufferedImage> grayTiles = createGraySquareTiles();
         board = new Board( level.getHeight() , level.getWidth(), level.getTileConfig(), true);
         for (int i = 0; i < board.getBoard().size(); i++) {
             Tile tile = board.getBoard().get(i);
-            int x = origin.x + (tile.getPositionX() * 120);
-            int y = origin.y + (tile.getPositionY() * 120);
-            String role = tile.getRole().toString().toLowerCase();
-            BufferedImage image;
-            BufferedImage squareImage = grayTiles.get("square");
-            BufferedImage connection = grayTiles.get("connection");
-            g2d.drawImage(squareImage, x, y, null);
-            if (!role.equalsIgnoreCase("empty")) {
-                image = grayTiles.get(role);
-                for (int e : tile.getEdges()) {
-                    switch (e) {
-                        case 0 -> {
-                            System.out.println(tile.getRole() + " + " + e);
-                            g2d.drawImage(connection, x, y, null);
-                        }
-                        case 1 -> {
-                            g2d.drawImage(rotateImage(connection, 90), x, y, null);
-                        }
-                        case 2 -> {
-                            g2d.drawImage(connection, x, y + 90, null);
-                        }
-                        case 3 -> {
-                            g2d.drawImage(rotateImage(connection, 90), x - 90, y, null);
-                        }
-                    }
-                }
-                g2d.drawImage(image, x, y, null);
-
-            } else {
-                ArrayList<Integer> edges = tile.getEdges();
-                if(edges.size() == 2 ){
-                    image = grayTiles.get("line");
-                    if (edges.get(0) == 0 && edges.get(1)== 2 ) {
-                        g2d.drawImage(image, x, y, null);
-                    }
-                    else if((edges.get(0) == 1 && edges.get(1)== 3)){
-                        g2d.drawImage(rotateImage(image, 90) , x, y, null);
-                    }else if(edges.get(0) == 0 && edges.get(1)== 3){
-                        image = grayTiles.get("curve");
-                        g2d.drawImage(rotateImage(image, 270), x, y, null);
-                    }else if(edges.get(0) == 1 && edges.get(1)== 2){
-                        image = grayTiles.get("curve");
-                        g2d.drawImage(rotateImage(image, 90), x, y, null);
-
-                    }else if(edges.get(0) == 2 && edges.get(1)== 3){
-                        image = grayTiles.get("curve");
-                        g2d.drawImage(rotateImage(image, 180), x, y, null);
-
-                    }
-                    else{
-                        image = grayTiles.get("curve");
-                        g2d.drawImage(image, x, y, null);
-                    }
-                    tileViews.add(new TileView(tile, image, new Point(x , y)));
-
-                }else if (edges.size()==3){
-                    int edge0 = edges.get(0);
-                    int edge1 = edges.get(1);
-                    int edge2 = edges.get(2);
-                   if(edge0 == 0 && edge1 ==1 && edge2 ==2 ) {
-                       image = grayTiles.get("curve");
-                       g2d.drawImage(image, x, y, null);
-                       g2d.drawImage(rotateImage(image, 90), x, y, null);
-                   }else if(edge0 == 0 && edge1==2 && edge2==3){
-                       image = grayTiles.get("line");
-                       g2d.drawImage(image, x, y, null);
-                       image = grayTiles.get("curve");
-                       g2d.drawImage(rotateImage(image, 180), x, y, null);
-
-                   }else if(edge0== 1 && edge1 == 2 && edge2 == 3){
-                       image = grayTiles.get("curve");
-                       g2d.drawImage(rotateImage(image, 90), x, y, null);
-                       g2d.drawImage(rotateImage(image, 180), x, y, null);
-                   }else{
-                       System.out.println("ici");
-                   }
-
-                }else if(edges.size()== 4){
-                    //edges size = 4
-                    image = grayTiles.get("line");
-                    g2d.drawImage(image, x, y, null);
-                    g2d.drawImage(rotateImage(image, 90), x, y, null);
-                    tileViews.add(new TileView(tile, image, new Point(x , y)));
-                }
-            }
+            tileViews.addAll(drawSquareTile(origin, tile));
         }
     }
+    private ArrayList<TileView> drawSquareTile(Point origin, Tile tile){
+        int x = origin.x + (tile.getPositionX() * 120);
+        int y = origin.y + (tile.getPositionY() * 120);
+        ArrayList<TileView> temporaryTileViews = new ArrayList<>();
+        String role = tile.getRole().toString().toLowerCase();
+        BufferedImage image;
+        BufferedImage connection = squareGrayTiles.get("connection");
+        BufferedImage squareImage = squareGrayTiles.get("square");
+        g2d.drawImage(squareImage, x, y, null);
+        temporaryTileViews.add(new TileView(tile, squareImage, new Point(x , y)));
+        if (!role.equalsIgnoreCase("empty")) {
+            image = squareGrayTiles.get(role);
+            for (int e : tile.getEdges()) {
+                switch (e) {
+                    case 0 -> {
+                        System.out.println(tile.getRole() + " + " + e);
+                        g2d.drawImage(connection, x, y, null);
+                    }
+                    case 1 -> {
+                        g2d.drawImage(rotateImage(connection, 90), x, y, null);
+                    }
+                    case 2 -> {
+                        g2d.drawImage(connection, x, y + 90, null);
+                    }
+                    case 3 -> {
+                        g2d.drawImage(rotateImage(connection, 90), x - 90, y, null);
+                    }
+                }
+            }
+            g2d.drawImage(image, x, y, null);
 
-    private BufferedImage rotateImage(BufferedImage img, int degree){
+        } else {//connection tiles
+            ArrayList<Integer> edges = tile.getEdges();
+            BufferedImage line = squareGrayTiles.get("line");
+            BufferedImage curve = squareGrayTiles.get("curve");
+            if(edges.size() == 2 ){
+                if (edges.get(0) == 0 && edges.get(1)== 2 ) {
+                    g2d.drawImage(line, x, y, null);
+                }
+                else if((edges.get(0) == 1 && edges.get(1)== 3)){
+                    g2d.drawImage(rotateImage(line, 90) , x, y, null);
+                }else if(edges.get(0) == 0 && edges.get(1)== 3){
+                    g2d.drawImage(rotateImage(curve, 270), x, y, null);
+                }else if(edges.get(0) == 1 && edges.get(1)== 2){
+                    g2d.drawImage(rotateImage(curve, 90), x, y, null);
+                }else if(edges.get(0) == 2 && edges.get(1)== 3){
+                    g2d.drawImage(rotateImage(curve, 180), x, y, null);
+                }
+                else{
+                    g2d.drawImage(curve, x, y, null);
+                }
+            }else if (edges.size()==3){
+                int edge0 = edges.get(0);
+                int edge1 = edges.get(1);
+                int edge2 = edges.get(2);
+                if(edge0 == 0 && edge1 ==1 && edge2 ==2 ) {
+                    g2d.drawImage(curve, x, y, null);
+                    g2d.drawImage(rotateImage(curve, 90), x, y, null);
+                }else if(edge0 == 0 && edge1==2 && edge2==3){
+                    g2d.drawImage(line, x, y, null);
+                    g2d.drawImage(rotateImage(curve, 180), x, y, null);
+                }else {
+                    g2d.drawImage(rotateImage(curve, 90), x, y, null);
+                    g2d.drawImage(rotateImage(curve, 180), x, y, null);
+                }
+
+            }else if(edges.size()== 4){
+                //edges size = 4
+                g2d.drawImage(line, x, y, null);
+                g2d.drawImage(rotateImage(line, 90), x, y, null);
+            }
+        }
+        return temporaryTileViews;
+    }
+
+    public BufferedImage rotateImage(BufferedImage img, int degree){
         AffineTransform tx = new AffineTransform();
         tx.rotate(Math.toRadians(degree), img.getWidth() / 2, img.getHeight() / 2);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
