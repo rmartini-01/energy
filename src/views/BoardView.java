@@ -186,11 +186,65 @@ public class BoardView extends JPanel{
                         }
                     }
                 }
+                g2d.drawImage(image, x, y, null);
+
             } else {
-                image = grayTiles.get("curve");
+                ArrayList<Integer> edges = tile.getEdges();
+                if(edges.size() == 2 ){
+                    image = grayTiles.get("line");
+                    if (edges.get(0) == 0 && edges.get(1)== 2 ) {
+                        g2d.drawImage(image, x, y, null);
+                    }
+                    else if((edges.get(0) == 1 && edges.get(1)== 3)){
+                        g2d.drawImage(rotateImage(image, 90) , x, y, null);
+                    }else if(edges.get(0) == 0 && edges.get(1)== 3){
+                        image = grayTiles.get("curve");
+                        g2d.drawImage(rotateImage(image, 270), x, y, null);
+                    }else if(edges.get(0) == 1 && edges.get(1)== 2){
+                        image = grayTiles.get("curve");
+                        g2d.drawImage(rotateImage(image, 90), x, y, null);
+
+                    }else if(edges.get(0) == 2 && edges.get(1)== 3){
+                        image = grayTiles.get("curve");
+                        g2d.drawImage(rotateImage(image, 180), x, y, null);
+
+                    }
+                    else{
+                        image = grayTiles.get("curve");
+                        g2d.drawImage(image, x, y, null);
+                    }
+                    tileViews.add(new TileView(tile, image, new Point(x , y)));
+
+                }else if (edges.size()==3){
+                    int edge0 = edges.get(0);
+                    int edge1 = edges.get(1);
+                    int edge2 = edges.get(2);
+                   if(edge0 == 0 && edge1 ==1 && edge2 ==2 ) {
+                       image = grayTiles.get("curve");
+                       g2d.drawImage(image, x, y, null);
+                       g2d.drawImage(rotateImage(image, 90), x, y, null);
+                   }else if(edge0 == 0 && edge1==2 && edge2==3){
+                       image = grayTiles.get("line");
+                       g2d.drawImage(image, x, y, null);
+                       image = grayTiles.get("curve");
+                       g2d.drawImage(rotateImage(image, 180), x, y, null);
+
+                   }else if(edge0== 1 && edge1 == 2 && edge2 == 3){
+                       image = grayTiles.get("curve");
+                       g2d.drawImage(rotateImage(image, 90), x, y, null);
+                       g2d.drawImage(rotateImage(image, 180), x, y, null);
+                   }else{
+                       System.out.println("ici");
+                   }
+
+                }else if(edges.size()== 4){
+                    //edges size = 4
+                    image = grayTiles.get("line");
+                    g2d.drawImage(image, x, y, null);
+                    g2d.drawImage(rotateImage(image, 90), x, y, null);
+                    tileViews.add(new TileView(tile, image, new Point(x , y)));
+                }
             }
-            g2d.drawImage(image, x, y, null);
-            tileViews.add(new TileView(tile, image, new Point(x , y)));
         }
     }
 
@@ -199,7 +253,6 @@ public class BoardView extends JPanel{
         tx.rotate(Math.toRadians(degree), img.getWidth() / 2, img.getHeight() / 2);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         BufferedImage rotatedImage = op.filter(img, null);
-
         return rotatedImage;
     }
 
