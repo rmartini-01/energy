@@ -10,12 +10,8 @@ public class HomepageView extends JPanel {
         private JFrame frame;
         private HomepageController controller;
 
-    public int getSelectedLevel() {
-        return (int) selectLevel.getSelectedItem();
-    }
 
     JComboBox<Integer> selectLevel = new JComboBox<>();
-
         public HomepageView(JFrame frame, HomepageController controller) {
             this.frame = frame;
             this.controller = controller;
@@ -67,7 +63,6 @@ public class HomepageView extends JPanel {
             verticalBox.setAlignmentY(CENTER_ALIGNMENT);
             verticalBox.setAlignmentX(CENTER_ALIGNMENT);
 
-
             add(verticalBox);
             //TODO bouton paramètres
             setVisible(true);
@@ -81,6 +76,9 @@ public class HomepageView extends JPanel {
         return logo;
     }
 
+    public int getSelectedLevel() {
+        return (int) selectLevel.getSelectedItem();
+    }
     public void settingsListener(ActionEvent event) {
         JOptionPane.showMessageDialog(this, "Button clicked !");
         //NavigationController.getInstance(frame).navigateTo(this, new SettingsView(frame));

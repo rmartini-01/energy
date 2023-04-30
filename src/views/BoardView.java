@@ -1,5 +1,6 @@
 package views;
 
+import controllers.BoardController;
 import listeners.NavigateBackListener;
 import models.*;
 import javax.imageio.ImageIO;
@@ -17,21 +18,17 @@ import java.util.HashMap;
 
 public class BoardView extends JPanel{
     private  Level level;
-    private Board board;
     private  JFrame frame;
     private ArrayList<TileView> tileViews;
     private Graphics2D g2d;
     private HashMap<String, BufferedImage> squareGrayTiles = createGraySquareTiles();
-    public void setBoard(Board board) {
-        this.board = board;
-    }
-
+    private BoardController boardController;
     public ArrayList<TileView> getTileViews() {
         return tileViews;
     }
 
     // Update the constructor to accept a BoardController parameter
-    public BoardView(JFrame frame, int level) {
+    public BoardView(JFrame frame, int level, BoardController boardController) {
         this.frame = frame;
         this.level = new Level(level);
         tileViews = new ArrayList<>();
@@ -81,9 +78,8 @@ public class BoardView extends JPanel{
 
     private void createHexagoneBoard(Graphics2D g2d, Point origin){
         HashMap<String, BufferedImage> grayTiles = createGrayHexagoneTiles();
-        board = new Board( level.getHeight() , level.getWidth(), level.getTileConfig(), false);
-        for (int i = 0; i < board.getBoard().size(); i++){
-            Tile tile = board.getBoard().get(i);
+        for (int i = 0; i < boardController.getBoard().getBoard().size(); i++){
+            Tile tile = boardController.getBoard().getBoard().get(i);
             int posX = tile.getPositionX();
             int posY = tile.getPositionY();
             int x = origin.x + (posX * 104);
@@ -130,9 +126,8 @@ public class BoardView extends JPanel{
     }
     private void createSquareBoard(Graphics2D g2d, Point origin) {
         tileViews.clear();
-        board = new Board( level.getHeight() , level.getWidth(), level.getTileConfig(), true);
-        for (int i = 0; i < board.getBoard().size(); i++) {
-            Tile tile = board.getBoard().get(i);
+        for (int i = 0; i < boardController.getBoard().getBoard().size(); i++) {
+            Tile tile = boardController.getBoard().getBoard().get(i);
             tileViews.addAll(drawSquareTile(origin, tile));
         }
     }

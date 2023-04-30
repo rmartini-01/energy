@@ -16,7 +16,7 @@ public class HomepageController{
     }
 
     public void newGameAction() {
-        NavigationController.getInstance(frame).navigateTo(view, new BoardView(frame,  view.getSelectedLevel()));
+       // NavigationController.getInstance(frame).navigateTo(view, new BoardView(frame,  view.getSelectedLevel()));
     }
 
     public void settingsAction() {
