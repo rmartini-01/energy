@@ -1,6 +1,6 @@
 package controllers;
 import models.Board;
-import models.Level;
+import models.Tile;
 import views.BoardView;
 import views.TileView;
 
@@ -16,7 +16,7 @@ public class BoardController extends Controller {
         this.board =board;
         this.navigationController = nc;
         this.view = view;
-
+        this.board.addObserver(this.view);
         this.view.getPanel(). addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -27,16 +27,12 @@ public class BoardController extends Controller {
     }
     public void handleTileClick(MouseEvent e) {
         Point clickPosition = e.getPoint();
-        System.out.println(
-                "ici"
-        );
-        System.out.println(view.getTileViews());
-        view.repaint();
         for (TileView tileView : view.getTileViews()) {
             Point tilePosition = tileView.getPosition();
             if (view.contains(tilePosition, clickPosition , tileView.getImage().getWidth(), tileView.getImage().getHeight())) {
-                tileView.setImage(view.rotateImage(tileView.getImage(), 90));
-
+                Tile t = tileView.getTile();
+                t.setRotation( (t.getRotation()+90 )%360);
+                board.rotateTile(t);
             }
         }
     }

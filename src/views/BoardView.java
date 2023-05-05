@@ -5,8 +5,6 @@ import models.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -15,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class BoardView extends JPanel{
+public class BoardView extends JPanel implements Observer{
     private Level level;
     private JFrame frame;
     private ArrayList<TileView> tileViews;
@@ -49,11 +47,10 @@ public class BoardView extends JPanel{
                 createSquareBoard(g2d, origin);
             }
         }else{
-            System.out.println("should repaint ");
             ArrayList<TileView> newTileView = new ArrayList<>();
-            for(TileView tv : tileViews) {
-                Tile tile = tv.getTile();
+            for(Tile tile : board.getBoard()) {
                 newTileView.addAll(drawSquareTile(origin, tile));
+                System.out.println(tile.getRotation());
             }
             tileViews.clear();
             tileViews.addAll(newTileView);
@@ -133,6 +130,7 @@ public class BoardView extends JPanel{
             tileViews.addAll(drawSquareTile(origin, tile));
         }
     }
+
     private ArrayList<TileView> drawSquareTile(Point origin, Tile tile){
         int x = origin.x + (tile.getPositionX() * 120);
         int y = origin.y + (tile.getPositionY() * 120);
@@ -147,18 +145,18 @@ public class BoardView extends JPanel{
             image = squareGrayTiles.get(role);
             for (int e : tile.getEdges()) {
                 switch (e) {
-                    case 0 -> {
-                        System.out.println(tile.getRole() + " + " + e);
-                        g2d.drawImage(connection, x, y, null);
+                    case 0-> {
+                        g2d.drawImage(rotateImage(connection, tile.getRotation()), x, y, null);
                     }
                     case 1 -> {
-                        g2d.drawImage(rotateImage(connection, 90), x, y, null);
+                        g2d.drawImage(rotateImage(connection, 90+tile.getRotation()), x, y, null);
                     }
                     case 2 -> {
-                        g2d.drawImage(connection, x, y + 90, null);
+                        g2d.drawImage(rotateImage(connection, 180 + tile.getRotation()), x, y, null);
                     }
                     case 3 -> {
-                        g2d.drawImage(rotateImage(connection, 90), x - 90, y, null);
+                        System.out.println("hrjekz");
+                        g2d.drawImage(rotateImage(connection, 270 + tile.getRotation()), x , y, null);
                     }
                 }
             }
@@ -170,39 +168,39 @@ public class BoardView extends JPanel{
             BufferedImage curve = squareGrayTiles.get("curve");
             if(edges.size() == 2 ){
                 if (edges.get(0) == 0 && edges.get(1)== 2 ) {
-                    g2d.drawImage(line, x, y, null);
+                    g2d.drawImage(rotateImage(line, tile.getRotation()), x, y, null);
                 }
                 else if((edges.get(0) == 1 && edges.get(1)== 3)){
-                    g2d.drawImage(rotateImage(line, 90) , x, y, null);
+                    g2d.drawImage(rotateImage(line, 90+tile.getRotation()) , x, y, null);
                 }else if(edges.get(0) == 0 && edges.get(1)== 3){
-                    g2d.drawImage(rotateImage(curve, 270), x, y, null);
+                    g2d.drawImage(rotateImage(curve, 270 + tile.getRotation()), x, y, null);
                 }else if(edges.get(0) == 1 && edges.get(1)== 2){
-                    g2d.drawImage(rotateImage(curve, 90), x, y, null);
+                    g2d.drawImage(rotateImage(curve, 90+ tile.getRotation()), x, y, null);
                 }else if(edges.get(0) == 2 && edges.get(1)== 3){
-                    g2d.drawImage(rotateImage(curve, 180), x, y, null);
+                    g2d.drawImage(rotateImage(curve, 180+tile.getRotation()), x, y, null);
                 }
                 else{
-                    g2d.drawImage(curve, x, y, null);
+                    g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
                 }
             }else if (edges.size()==3){
                 int edge0 = edges.get(0);
                 int edge1 = edges.get(1);
                 int edge2 = edges.get(2);
                 if(edge0 == 0 && edge1 ==1 && edge2 ==2 ) {
-                    g2d.drawImage(curve, x, y, null);
-                    g2d.drawImage(rotateImage(curve, 90), x, y, null);
+                    g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
+                    g2d.drawImage(rotateImage(curve, 90+tile.getRotation()), x, y, null);
                 }else if(edge0 == 0 && edge1==2 && edge2==3){
-                    g2d.drawImage(line, x, y, null);
-                    g2d.drawImage(rotateImage(curve, 180), x, y, null);
+                    g2d.drawImage(rotateImage(line, tile.getRotation()), x, y, null);
+                    g2d.drawImage(rotateImage(curve, 180+tile.getRotation()), x, y, null);
                 }else {
-                    g2d.drawImage(rotateImage(curve, 90), x, y, null);
-                    g2d.drawImage(rotateImage(curve, 180), x, y, null);
+                    g2d.drawImage(rotateImage(curve, 90+tile.getRotation()), x, y, null);
+                    g2d.drawImage(rotateImage(curve, 180+tile.getRotation()), x, y, null);
                 }
 
             }else if(edges.size()== 4){
                 //edges size = 4
-                g2d.drawImage(line, x, y, null);
-                g2d.drawImage(rotateImage(line, 90), x, y, null);
+                g2d.drawImage(rotateImage(line, tile.getRotation()), x, y, null);
+                g2d.drawImage(rotateImage(line, 90+tile.getRotation()), x, y, null);
             }
         }
         return temporaryTileViews;
@@ -275,5 +273,11 @@ public class BoardView extends JPanel{
 
     public ArrayList<TileView> getTileViews() {
         return tileViews;
+    }
+
+    @Override
+    public void update(Board b ) {
+        this.board = b;
+        repaint();
     }
 }

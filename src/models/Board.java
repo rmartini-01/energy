@@ -1,24 +1,24 @@
 package models;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
 
-public class Board {
+public class Board implements Observable {
     protected int rows;
     protected int columns;
     protected int score;
     protected ArrayList<Tile> board;
     protected ArrayList<Integer>[] neighborsList; // storing the neighbors of each vertex in the graph. connected
     protected boolean isSquare; // 0 = square, 1 = Hexagone
-
+    private ArrayList<Observer> observers;
     public Board(int r, int c, ArrayList<Tile> tl,boolean isSquare) {
         rows = r;
         columns = c;
         score = 0;
         board = tl;
         neighborsList = (ArrayList<Integer>[]) new ArrayList[tl.size()];
+        observers = new ArrayList<>();
         for (int i = 0; i < tl.size(); i++) {
             neighborsList[i] = new ArrayList<Integer>();
         }
@@ -51,6 +51,14 @@ public class Board {
         return true;
     }
 
+    public void rotateTile(Tile t ){
+        for(Tile tile : board){
+            if (tile.equals(t)){
+                tile.setRotation(t.getRotation());
+            }
+        }
+        notifyObservers();
+    }
     public boolean DFS(int t1, int t2) { // arguments are tiles' id, checks if there's a way between two tiles
         boolean[] visited = new boolean[board.size()];
         Stack<Integer> stack = new Stack<Integer>();
@@ -318,5 +326,20 @@ public class Board {
     }
 
 
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
 
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(this);
+        }
+    }
 }
