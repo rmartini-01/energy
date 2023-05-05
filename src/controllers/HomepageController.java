@@ -1,5 +1,7 @@
 package controllers;
 
+import models.Board;
+import models.Level;
 import views.BoardView;
 import views.EditGameView;
 import views.HomepageView;
@@ -11,25 +13,26 @@ public class HomepageController extends  Controller{
     private JFrame frame;
 
 
-    public HomepageController(JFrame frame) {
-        this.frame = frame;
-        this.view = new HomepageView(frame, this);
-    }
+    public HomepageController(HomepageView view) {
+        this.view = view;
+        this.view.getNewGameBtn().addActionListener(e -> {
 
-    public void newGameAction() {
-        BoardController bc = new BoardController(frame, getView().getSelectedLevel(), navigationController);
-        navigationController.navigateTo(view, new BoardView(frame,  view.getSelectedLevel(), bc.getBoard(), bc));
-    }
+            Level level = new Level(view.getSelectedLevel());
+            Board board = new Board(level.getHeight(), level.getWidth(), level.getTileConfig(), level.getShape() == 'S');
+            BoardView boardView = new BoardView(frame,  level, board);
+            BoardController bc = new BoardController(boardView, board, navigationController);
+            navigationController.navigateTo(view,boardView);
+        });
 
-    public void settingsAction() {
-        // Add logic for settings action
-        //TODO
-    }
 
-    public void editGameAction() {
-        // Add logic for edit game action
-        NavigationController.getInstance(frame).navigateTo(view, new EditGameView(frame,  view.getSelectedLevel(),null));
+        this.view.getEditGameBtn().addActionListener(e->{
+            NavigationController.getInstance(frame).navigateTo(view, new EditGameView(frame,  view.getSelectedLevel(),null));
 
+        });
+
+        this.view.getSettings().addActionListener(e->{
+            System.out.println("settings btn clicked ");
+        });
     }
 
     public HomepageView getView() {

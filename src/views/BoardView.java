@@ -1,13 +1,12 @@
 package views;
 
-import controllers.BoardController;
 import listeners.NavigateBackListener;
 import models.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -17,25 +16,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class BoardView extends JPanel{
-    private  Level level;
-    private  JFrame frame;
+    private Level level;
+    private JFrame frame;
     private ArrayList<TileView> tileViews;
     private Graphics2D g2d;
     private HashMap<String, BufferedImage> squareGrayTiles = createGraySquareTiles();
-    private BoardController boardController;
     private Board board;
-    public ArrayList<TileView> getTileViews() {
-        return tileViews;
+
+
+    public BoardView(JFrame frame, Level level, Board board) {
+        this.frame = frame;
+        this.level = level;
+        this.board = board;
+        tileViews = new ArrayList<>();
+        setName("Board");
+        add(goBackBtn());
+
     }
 
-    // Update the constructor to accept a BoardController parameter
-    public BoardView(JFrame frame, int level, Board b, BoardController boardController) {
-        this.frame = frame;
-        this.level = new Level(level);
-        tileViews = new ArrayList<>();
-        this.board = b;
-        setName("Board");
-        add(goBackBtn(), BorderLayout.PAGE_START);
+    public JPanel getPanel(){
+        return this;
     }
     @Override
     protected void paintComponent(Graphics g) {
@@ -55,15 +55,15 @@ public class BoardView extends JPanel{
                 Tile tile = tv.getTile();
                 newTileView.addAll(drawSquareTile(origin, tile));
             }
-
-            tileViews = newTileView;
+            tileViews.clear();
+            tileViews.addAll(newTileView);
         }
 
     }
 
-    public boolean contains(Point tilePosition , Point mousePosition){
-        return tilePosition.x <= mousePosition.x && mousePosition.x <= tilePosition.x + 104
-                && tilePosition.y <= mousePosition.y && mousePosition.y <= tilePosition.y + 104;
+    public boolean contains(Point tilePosition , Point mousePosition, int width , int height ){
+        return tilePosition.x <= mousePosition.x && mousePosition.x <= tilePosition.x + width
+                && tilePosition.y <= mousePosition.y && mousePosition.y <= tilePosition.y + height;
     }
     private JButton goBackBtn(){
         JButton goBackBtn = new JButton();
@@ -271,5 +271,9 @@ public class BoardView extends JPanel{
             e.printStackTrace();
         }
         return grayImages;
+    }
+
+    public ArrayList<TileView> getTileViews() {
+        return tileViews;
     }
 }
