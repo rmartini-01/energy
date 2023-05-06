@@ -1,41 +1,36 @@
 package views;
 
-import controllers.NavigationController;
-import models.Board;
-import models.Tile;
-
+import controllers.HomepageController;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.util.ArrayList;
+
 
 public class HomepageView extends JPanel {
     private JFrame frame;
+    private HomepageController controller;
     JComboBox<Integer> selectLevel = new JComboBox<>();
 
-    public HomepageView(JFrame frame) {
+    public HomepageView(JFrame frame, HomepageController controller) {
         this.frame = frame;
-        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-
+        this.controller = controller;
+        // Other code ...
         JButton newGameBtn = new JButton("Start game");
-        newGameBtn.addActionListener(this::newGameListener);
         JButton settings = new JButton("Settings");
-        settings.addActionListener(this::settingsListener);
         JButton editGameBtn = new JButton("Edit mode");
-        editGameBtn.addActionListener(this::editGameListener);
 
+        newGameBtn.addActionListener(e -> controller.newGameAction());
+        settings.addActionListener(e -> controller.settingsAction());
+        editGameBtn.addActionListener(e -> controller.editGameAction());
+        // Other code ...
+        JLabel level = new JLabel("Select a level: "); //JLabel Creation Box
         for (int i = 1; i < 12; i++) {
             selectLevel.addItem(i);
         }
-        selectLevel.setPreferredSize(new Dimension(150, 40));
-        selectLevel.setMaximumSize(new Dimension(150, 40));
         newGameBtn.setPreferredSize(new Dimension(150, 40));
         newGameBtn.setMaximumSize(new Dimension(150, 40));
-
-
-        JLabel level = new JLabel("Select a level: "); //JLabel Creation
+        selectLevel.setPreferredSize(new Dimension(150, 40));
+        selectLevel.setMaximumSize(new Dimension(150, 40));
         Box verticalBox = Box.createVerticalBox();
         Box horizontalBox = Box.createHorizontalBox();
         horizontalBox.add(Box.createHorizontalGlue());
@@ -67,12 +62,11 @@ public class HomepageView extends JPanel {
         verticalBox.setAlignmentY(CENTER_ALIGNMENT);
         verticalBox.setAlignmentX(CENTER_ALIGNMENT);
 
-
-      add(verticalBox);
-      //TODO bouton paramètres
+        add(verticalBox);
+        //TODO bouton paramètres
         setVisible(true);
-
     }
+
 
     private JLabel addLogo() {
         JLabel logo = new JLabel(); //JLabel Creation
@@ -81,18 +75,8 @@ public class HomepageView extends JPanel {
         return logo;
     }
 
-    public void newGameListener(ActionEvent event) {
-        JOptionPane.showMessageDialog(this, "Button clicked !");
-        NavigationController.getInstance(frame).navigateTo(this, new BoardView(frame, (Integer) selectLevel.getSelectedItem()));
-    }
-
-    public void settingsListener(ActionEvent event) {
-        JOptionPane.showMessageDialog(this, "Button clicked !");
-        //NavigationController.getInstance(frame).navigateTo(this, new SettingsView(frame));
-    }
-
-    public void editGameListener(ActionEvent event) {
-        NavigationController.getInstance(frame).navigateTo(this, new EditGameView(frame, (Integer) selectLevel.getSelectedItem(),null));
+    public int getSelectedLevel() {
+        return (int) selectLevel.getSelectedItem();
     }
 
 
