@@ -20,12 +20,55 @@ public class Tile {
 
     public Tile(int i, int x, int y, char s, Role r, ArrayList<Integer> e) {
         this.id = i;
-        this.rotation = 0;
         this.pos_x = x;
         this.pos_y = y;
         this.role = r;
         this.edges = e;
         this.shape = s;
+        if(e.size()!= 0 && this.shape == 'S'){
+            switch (e.get(0)) {
+                case 0 -> {
+                    if(e.size() ==2){
+                        if(e.get(1) == 1)
+                            this.rotation = 0;
+                        else this.rotation = 270;
+                    }else {
+                        this.rotation = 0;
+                    }
+                }
+                case 1 -> {
+                    this.rotation = 90;
+                }
+                case 2 -> {
+                    this.rotation = 180;
+                }
+                case 3 -> {
+                    this.rotation = 270;
+                }
+            }
+        }else if(e.size() != 0 && shape == 'H'){
+
+            switch (e.get(0)) {
+                case 0 -> {
+                    this.rotation = 0;
+                }
+                case 1 -> {
+                    this.rotation = 60;
+                }
+                case 2 -> {
+                    this.rotation = 120;
+                }
+                case 3 -> {
+                    this.rotation = 180;
+                }
+                case 4 -> {
+                    this.rotation = 240;
+                }
+                case 5 -> {
+                    this.rotation = 300;
+                }
+            }
+        }
         image = null;
 
     }

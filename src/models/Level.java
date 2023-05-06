@@ -35,20 +35,12 @@ public class Level {
             Tile tmp_tile;
             Role tmp_r;
             ArrayList<Integer> tmp_edge = new ArrayList<Integer>();
-            switch (this.configuration.get(i)) {
-                case 'S':
-                    tmp_r = Role.SOURCE;
-                    break;
-                case 'L':
-                    tmp_r = Role.LAMP;
-                    break;
-                case 'W':
-                    tmp_r = Role.WIFI;
-                    break;
-                default:
-                    tmp_r = Role.EMPTY;
-                    break;
-            }
+            tmp_r = switch (this.configuration.get(i)) {
+                case 'S' -> Role.SOURCE;
+                case 'L' -> Role.LAMP;
+                case 'W' -> Role.WIFI;
+                default -> Role.EMPTY;
+            };
 
             while (Character.isDigit(this.configuration.get(i + 1))) {
                 tmp_edge.add(Character.getNumericValue(this.configuration.get(i + 1)));
@@ -67,26 +59,26 @@ public class Level {
             ArrayList<Integer> tmp_edge = new ArrayList<Integer>();
             Tile tmp_tile;
             switch (last_element) {
-                case 'S':
+                case 'S' -> {
                     tmp_tile = new Tile(id, 0, 0, this.shape, Role.SOURCE, tmp_edge);
                     this.tiles_config.add(tmp_tile);
                     this.tiles_config_win.add(tmp_tile);
-                    break;
-                case 'L':
+                }
+                case 'L' -> {
                     tmp_tile = new Tile(id, 0, 0, this.shape, Role.LAMP, tmp_edge);
                     this.tiles_config.add(tmp_tile);
                     this.tiles_config_win.add(tmp_tile);
-                    break;
-                case 'W':
-                    tmp_tile = new Tile(id, 0, 0,this.shape, Role.WIFI, tmp_edge);
+                }
+                case 'W' -> {
+                    tmp_tile = new Tile(id, 0, 0, this.shape, Role.WIFI, tmp_edge);
                     this.tiles_config.add(tmp_tile);
                     this.tiles_config_win.add(tmp_tile);
-                    break;
-                default:
+                }
+                default -> {
                     tmp_tile = new Tile(id, 0, 0, this.shape, Role.EMPTY, tmp_edge);
                     this.tiles_config.add(tmp_tile);
                     this.tiles_config_win.add(tmp_tile);
-                    break;
+                }
             }
 
         }

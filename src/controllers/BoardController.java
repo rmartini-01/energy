@@ -21,17 +21,26 @@ public class BoardController extends Controller {
             @Override
             public void mouseClicked(MouseEvent e) {
                 handleTileClick(e);
-                System.out.println("clicked");
             }
         });
     }
     public void handleTileClick(MouseEvent e) {
         Point clickPosition = e.getPoint();
+        System.out.println("clicked");
+
         for (TileView tileView : view.getTileViews()) {
             Point tilePosition = tileView.getPosition();
             if (view.contains(tilePosition, clickPosition , tileView.getImage().getWidth(), tileView.getImage().getHeight())) {
                 Tile t = tileView.getTile();
-                t.setRotation( (t.getRotation()+90 )%360);
+                System.out.println( t.getEdges());
+                if(t.getShape()=='S'){
+                    t.setRotation((t.getRotation()+90)%360);
+
+                }else{
+                    System.out.println( "rotaion: " +( t.getRotation()+60) %360);
+                    t.setRotation((t.getRotation()+60)%360);
+
+                }
                 board.rotateTile(t);
             }
         }
