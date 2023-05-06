@@ -136,11 +136,9 @@ public class BoardView extends JPanel implements Observer{
                     if (diff == 1) {
                         g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
                         temporaryTileViews.add(new TileView(tile, curve, new Point(x, y)));
-
                     } else if (diff == 2) {
                         g2d.drawImage(rotateImage(large_curve, tile.getRotation()), x, y, null);
                         temporaryTileViews.add(new TileView(tile, large_curve, new Point(x, y)));
-
                     } else if (diff == 3) {
                         g2d.drawImage(rotateImage(line, tile.getRotation()), x, y, null);
                         temporaryTileViews.add(new TileView(tile, line, new Point(x, y)));
@@ -154,16 +152,14 @@ public class BoardView extends JPanel implements Observer{
                             if (findMinDifference(edges) == 1) {
                                 g2d.drawImage(rotateImage(curve, (currentEdge * 60) + tile.getRotation()), x, y, null);
                                 temporaryTileViews.add(new TileView(tile, curve, new Point(x, y)));
-
                             } else {
                                 g2d.drawImage(rotateImage(large_curve, (currentEdge * 60) + tile.getRotation()), x, y, null);
                                 temporaryTileViews.add(new TileView(tile, large_curve, new Point(x, y)));
-
                             }
                         }
 
                     } else {
-                        for (int e = 0; e < tile.getEdges().size(); e++) {
+                     /*   for (int e = 0; e < tile.getEdges().size(); e++) {
                             int currentEdge = edges.get(e);
                             int closestEdge = findClosestEdge(currentEdge, edges);
                             System.out.println("edge = " + edges.get(e) + " closest  " + closestEdge);
@@ -175,13 +171,36 @@ public class BoardView extends JPanel implements Observer{
                                 }
                                 temporaryTileViews.add(new TileView(tile, curve, new Point(x, y)));
 
-                            } else if (closestEdge - currentEdge > 0 || (closestEdge == 0 && currentEdge == 4)) {
+                            } else if (closestEdge - currentEdge > 0
+                                    || (closestEdge == 0 && currentEdge == 4)
+                            ||(closestEdge == 3 && currentEdge == 5) ) {
                                 System.out.println("drawing " + currentEdge + " - " + closestEdge);
                                 g2d.drawImage(rotateImage(large_curve, (currentEdge * 60) + tile.getRotation()), x, y, null);
                                 temporaryTileViews.add(new TileView(tile, large_curve, new Point(x, y)));
-
                             }
-
+                        }*/
+                        int previousEdge = -1;
+                        for (int e = 0; e < tile.getEdges().size(); e++) {
+                            int currentEdge = edges.get(e);
+                            if (previousEdge != currentEdge) { // vérifier si l'arête actuelle est différente de l'arête précédente
+                                int closestEdge = findClosestEdge(currentEdge, edges);
+                                System.out.println("edge = " + edges.get(e) + " closest  " + closestEdge);
+                                if (closestEdge - currentEdge == 1 || (closestEdge == 0 && currentEdge == 5)) {
+                                    if (currentEdge != 0) {
+                                        g2d.drawImage(rotateImage(curve, (currentEdge * 60) + tile.getRotation()), x, y, null);
+                                    } else {
+                                        g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
+                                    }
+                                    temporaryTileViews.add(new TileView(tile, curve, new Point(x, y)));
+                                } else if (closestEdge - currentEdge > 0
+                                        || (closestEdge == 0 && currentEdge == 4)
+                                        || (closestEdge == 3 && currentEdge == 5)) {
+                                    System.out.println("drawing " + currentEdge + " - " + closestEdge);
+                                    g2d.drawImage(rotateImage(large_curve, (currentEdge * 60) + tile.getRotation()), x, y, null);
+                                    temporaryTileViews.add(new TileView(tile, large_curve, new Point(x, y)));
+                                }
+                            }
+                            previousEdge = currentEdge;
                         }
                     }
 
@@ -192,19 +211,22 @@ public class BoardView extends JPanel implements Observer{
     }
     private int findClosestEdge(int edge, ArrayList<Integer> edges) {
         int minDiff = Integer.MAX_VALUE;
-        int closestEdge = -1;
-        for (int e : edges) {
+        int closestEdge = 0;
+        int startIndex = edges.indexOf(edge);
+        for (int i  = startIndex; i< edges.size(); i++) {
+            int e = edges.get(i);
             if(e !=edge){
-                int diff;
-                if (edges.indexOf(e) < edges.indexOf(edge)) {
-                    diff = edges.size() - (edge - e);
-                } else {
-                    diff = e - edge;
+                int  diff= Math.abs(e - edge);;
+                if(edge==5 && e == 0){
+                diff = 0;
                 }
+                System.out.println("diff " + e +"- " + edge +" = " +diff  + " VS minDiff =" + minDiff);
+
                 if (diff <= minDiff) {
                     minDiff = diff;
                     closestEdge = e;
                 }
+
             }
         }
         return closestEdge;
@@ -277,19 +299,11 @@ public class BoardView extends JPanel implements Observer{
             BufferedImage line = squareGrayTiles.get("line");
             BufferedImage curve = squareGrayTiles.get("curve");
             if(edges.size() == 2 ){
-                if (edges.get(0) == 0 && edges.get(1)== 2 ) {
+                if (edges.get(1) -edges.get(0)== 2 ) {
                     g2d.drawImage(rotateImage(line, tile.getRotation()), x, y, null);
-                }
-                else if((edges.get(0) == 1 && edges.get(1)== 3)){
-                    g2d.drawImage(rotateImage(line, tile.getRotation()) , x, y, null);
-                }else if(edges.get(0) == 0 && edges.get(1)== 3){
-                    g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
-                }else if(edges.get(0) == 1 && edges.get(1)== 2){
-                    g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
-                }else if(edges.get(0) == 2 && edges.get(1)== 3){
-                    g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
-                }
-                else{
+                }else if((edges.get(0) == 0 && edges.get(1)== 3)
+                || (edges.get(0) == 1 && edges.get(1)== 2)
+                || ( edges.get(0) == 2 && edges.get(1)== 3)){
                     g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
                 }
             }else if (edges.size()==3){
@@ -298,21 +312,22 @@ public class BoardView extends JPanel implements Observer{
                 int edge2 = edges.get(2);
                 if(edge0 == 0 && edge1 ==1 && edge2 ==2 ) {
                     g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
-                    g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
+                    g2d.drawImage(rotateImage(curve, 90+tile.getRotation()), x, y, null);
                 }else if(edge0 == 0 && edge1==2 && edge2==3){
                     g2d.drawImage(rotateImage(line, tile.getRotation()), x, y, null);
-                    g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
+                    g2d.drawImage(rotateImage(curve, 180+tile.getRotation()), x, y, null);
                 }else {
-                    g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
-                    g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
+                    g2d.drawImage(rotateImage(curve, 90+tile.getRotation()), x, y, null);
+                    g2d.drawImage(rotateImage(curve, 180+tile.getRotation()), x, y, null);
                 }
 
             }else if(edges.size()== 4){
                 //edges size = 4
                 g2d.drawImage(rotateImage(line, tile.getRotation()), x, y, null);
-                g2d.drawImage(rotateImage(line, tile.getRotation()), x, y, null);
+                g2d.drawImage(rotateImage(line, 90+ tile.getRotation()), x, y, null);
             }
         }
+
         return temporaryTileViews;
     }
 

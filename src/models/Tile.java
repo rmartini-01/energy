@@ -29,9 +29,9 @@ public class Tile {
             switch (e.get(0)) {
                 case 0 -> {
                     if(e.size() ==2){
-                        if(e.get(1) == 1)
-                            this.rotation = 0;
-                        else this.rotation = 270;
+                        if(e.get(1) == 3)
+                            this.rotation = 270;
+                        else this.rotation = 0;
                     }else {
                         this.rotation = 0;
                     }
@@ -47,7 +47,6 @@ public class Tile {
                 }
             }
         }else if(e.size() != 0 && shape == 'H'){
-
             switch (e.get(0)) {
                 case 0 -> {
                     this.rotation = 0;
