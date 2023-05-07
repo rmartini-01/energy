@@ -31,6 +31,12 @@ public class BoardController extends Controller {
             if (view.contains(tilePosition, clickPosition , tileView.getImage().getWidth(), tileView.getImage().getHeight())) {
                 Tile t = tileView.getTile();
                 board.rotateTile(t);
+                if(!board.isBoardWinningConfig()){
+                   System.out.println("pas connecté");
+                }else{
+                   System.out.println("tout est lié ");
+
+                }
             }
         }
     }

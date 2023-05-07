@@ -14,7 +14,7 @@ public class Tile {
     private int pos_y;
     private Role role;
     private char shape;
-    private boolean lit = false;
+    private boolean lit;
     private BufferedImage image ;
 
     public Tile(int i, int x, int y, char s, Role r, ArrayList<Integer> e) {
@@ -24,6 +24,7 @@ public class Tile {
         this.role = r;
         this.edges = e;
         this.shape = s;
+        this.lit = getRole() == Role.SOURCE;
         image = null;
 
     }
