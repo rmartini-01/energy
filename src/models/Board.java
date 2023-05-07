@@ -51,10 +51,10 @@ public class Board implements Observable {
         return true;
     }
 
-    public void rotateTile(Tile t ){
+    public void rotateTile(Tile t , int rotation){
         for(Tile tile : board){
             if (tile.equals(t)){
-                tile.setRotation(t.getRotation());
+                tile.setRotation(rotation);
             }
         }
         notifyObservers();

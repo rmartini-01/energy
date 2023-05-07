@@ -10,8 +10,6 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Array;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -55,6 +53,7 @@ public class BoardView extends JPanel implements Observer{
             if(level.getShape()=='H'){
                 System.out.println("hehre");
                 for(Tile tile : board.getBoard()) {
+                    System.out.println("tile : "  + tile.getRole() + " edges : " + tile.getEdges());
                     newTileView.addAll(drawHexaTiles(origin, tile));
                 }
             }else{
@@ -134,6 +133,7 @@ public class BoardView extends JPanel implements Observer{
                 int diff = findMinDifference(edges);
                 if (nbEdges == 2) {
                     if (diff == 1) {
+                        System.out.println("tile rotation =  "+ tile.getRotation());
                         g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
                         temporaryTileViews.add(new TileView(tile, curve, new Point(x, y)));
                     } else if (diff == 2) {
@@ -142,15 +142,18 @@ public class BoardView extends JPanel implements Observer{
                     } else if (diff == 3) {
                         g2d.drawImage(rotateImage(line, tile.getRotation()), x, y, null);
                         temporaryTileViews.add(new TileView(tile, line, new Point(x, y)));
+                    }else if(diff == 4){
+                        g2d.drawImage(rotateImage(large_curve, tile.getRotation()), x, y, null);
+                        temporaryTileViews.add(new TileView(tile, large_curve, new Point(x, y)));
                     }
                 } else if (nbEdges >= 3) {
                     System.out.println(edges);
                     if (hasSameDifference(edges)) {
-                        System.out.println("same diff");
+                       // System.out.println("same diff");
                         for (int e = 0; e < tile.getEdges().size(); e++) {
                             int currentEdge = edges.get(e);
                             if (findMinDifference(edges) == 1) {
-                                g2d.drawImage(rotateImage(curve, (currentEdge * 60) + tile.getRotation()), x, y, null);
+                                g2d.drawImage(rotateImage(curve,  tile.getRotation()), x, y, null);
                                 temporaryTileViews.add(new TileView(tile, curve, new Point(x, y)));
                             } else {
                                 g2d.drawImage(rotateImage(large_curve, (currentEdge * 60) + tile.getRotation()), x, y, null);
@@ -192,10 +195,10 @@ public class BoardView extends JPanel implements Observer{
                                         g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
                                     }
                                     temporaryTileViews.add(new TileView(tile, curve, new Point(x, y)));
-                                } else if (closestEdge - currentEdge > 0
+                                } else if ((closestEdge - currentEdge > 0 && closestEdge- currentEdge <= 2)
                                         || (closestEdge == 0 && currentEdge == 4)
                                         || (closestEdge == 3 && currentEdge == 5)) {
-                                    System.out.println("drawing " + currentEdge + " - " + closestEdge);
+                                   // System.out.println("drawing " + currentEdge + " - " + closestEdge);
                                     g2d.drawImage(rotateImage(large_curve, (currentEdge * 60) + tile.getRotation()), x, y, null);
                                     temporaryTileViews.add(new TileView(tile, large_curve, new Point(x, y)));
                                 }
@@ -213,20 +216,21 @@ public class BoardView extends JPanel implements Observer{
         int minDiff = Integer.MAX_VALUE;
         int closestEdge = 0;
         int startIndex = edges.indexOf(edge);
-        for (int i  = startIndex; i< edges.size(); i++) {
+        for(int i  = startIndex; i< edges.size(); i++) {
             int e = edges.get(i);
             if(e !=edge){
-                int  diff= Math.abs(e - edge);;
+                int diff = Math.abs(e - edge);
                 if(edge==5 && e == 0){
-                diff = 0;
+                diff = 1;
                 }
-                System.out.println("diff " + e +"- " + edge +" = " +diff  + " VS minDiff =" + minDiff);
-
+                if(edge==4 && e == 0){
+                    diff = 2;
+                }
+               // System.out.println("diff " + e +"- " + edge +" = " +diff  + " VS minDiff =" + minDiff);
                 if (diff <= minDiff) {
                     minDiff = diff;
                     closestEdge = e;
                 }
-
             }
         }
         return closestEdge;

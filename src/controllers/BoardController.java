@@ -33,15 +33,16 @@ public class BoardController extends Controller {
             if (view.contains(tilePosition, clickPosition , tileView.getImage().getWidth(), tileView.getImage().getHeight())) {
                 Tile t = tileView.getTile();
                 System.out.println( t.getEdges());
+                int rotation = t.getRotation();
                 if(t.getShape()=='S'){
-                    t.setRotation((t.getRotation()+90)%360);
+                   rotation += 90%360;
 
                 }else{
                     System.out.println( "rotaion: " +( t.getRotation()+60) %360);
-                    t.setRotation((t.getRotation()+60)%360);
-
+                   // t.setRotation((t.getRotation()+60)%360);
+                    rotation += 30 %360;
                 }
-                board.rotateTile(t);
+                board.rotateTile(t, rotation);
             }
         }
     }
