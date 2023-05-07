@@ -59,7 +59,7 @@ public class BoardView extends JPanel implements Observer {
                 }
             } else {
                 for (Tile tile : board.getBoard()) {
-                    newTileView.addAll(drawSquareTile(origin, tile));
+                    newTileView.addAll(drawSquareTiles(origin, tile));
                     System.out.println(tile.getRotation());
                 }
             }
@@ -107,108 +107,41 @@ public class BoardView extends JPanel implements Observer {
         BufferedImage image;
         ArrayList<TileView> temporaryTileViews = new ArrayList<>();
         temporaryTileViews.add(new TileView(tile, hexaImage, new Point(x, y)));
+        g2d.drawImage(hexaImage, x, y, null);
         if (!role.equalsIgnoreCase("empty")) {
             image = hexaGrayTiles.get(role);
             for (int e = 0; e < tile.getEdges().size(); e++) {
-                if (tile.getEdges().size() == 2 && e == 1) {
-                    g2d.drawImage(
-                            rotateImage(connection,
-                                    ((tile.getEdges().get(1) - tile.getEdges().get(0)) * 60) + tile.getRotation()),
+                g2d.drawImage(rotateImage(connection,
+                                    (tile.getEdges().get(e) * 60) ),
                             x, y, null);
-                } else {
-                    g2d.drawImage(rotateImage(connection, tile.getRotation()), x, y, null);
-                }
             }
-            temporaryTileViews.add(new TileView(tile, connection, new Point(x, y)));
-            g2d.drawImage(hexaImage, x, y, null);
             g2d.drawImage(image, x, y, null);
         } else {
-            g2d.drawImage(hexaImage, x, y, null);
+
             if (tile.getEdges().size() != 0) {
                 ArrayList<Integer> edges = tile.getEdges();
                 BufferedImage line = hexaGrayTiles.get("line");
                 BufferedImage curve = hexaGrayTiles.get("curve");
                 BufferedImage large_curve = hexaGrayTiles.get("large_curve");
 
-                int nbEdges = edges.size();
-                int diff = findMinDifference(edges);
-                if (nbEdges == 2) {
-                    if (diff == 1) {
-                        g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
-                        temporaryTileViews.add(new TileView(tile, curve, new Point(x, y)));
-                    } else if (diff == 2) {
-                        g2d.drawImage(rotateImage(large_curve, tile.getRotation()), x, y, null);
-                        temporaryTileViews.add(new TileView(tile, large_curve, new Point(x, y)));
-                    } else if (diff == 3) {
-                        g2d.drawImage(rotateImage(line, tile.getRotation()), x, y, null);
-                        temporaryTileViews.add(new TileView(tile, line, new Point(x, y)));
-                    }else if (diff==4){
-                        g2d.drawImage(rotateImage(large_curve, tile.getRotation()), x, y, null);
-                        temporaryTileViews.add(new TileView(tile, large_curve, new Point(x, y)));
-
-                    }
-                } else if (nbEdges >= 3) {
-                    System.out.println(edges);
-                    if (hasSameDifference(edges)) {
-                        System.out.println("same diff");
-                        for (int e = 0; e < tile.getEdges().size(); e++) {
-                            int currentEdge = edges.get(e);
-                            if (findMinDifference(edges) == 1) {
-                                g2d.drawImage(rotateImage(curve, (currentEdge * 60) + tile.getRotation()), x, y, null);
-                                temporaryTileViews.add(new TileView(tile, curve, new Point(x, y)));
-                            } else {
-                                g2d.drawImage(rotateImage(large_curve, (currentEdge * 60) + tile.getRotation()), x, y,
-                                        null);
-                                temporaryTileViews.add(new TileView(tile, large_curve, new Point(x, y)));
-                            }
-                        }
-
-                    } else {
-                        /*   for (int e = 0; e < tile.getEdges().size(); e++) {
-                            int currentEdge = edges.get(e);
-                            int closestEdge = findClosestEdge(currentEdge, edges);
-                            System.out.println("edge = " + edges.get(e) + " closest  " + closestEdge);
-                            if (closestEdge - currentEdge == 1 || (closestEdge == 0 && currentEdge == 5)) {
-                                if (currentEdge != 0) {
-                                    g2d.drawImage(rotateImage(curve, (currentEdge * 60) + tile.getRotation()), x, y, null);
-                                } else {
-                                    g2d.drawImage(rotateImage(curve, tile.getRotation()), x, y, null);
-                                }
-                                temporaryTileViews.add(new TileView(tile, curve, new Point(x, y)));
-
-                            } else if (closestEdge - currentEdge > 0
-                                    || (closestEdge == 0 && currentEdge == 4)
-                            ||(closestEdge == 3 && currentEdge == 5) ) {
-                                System.out.println("drawing " + currentEdge + " - " + closestEdge);
-                                g2d.drawImage(rotateImage(large_curve, (currentEdge * 60) + tile.getRotation()), x, y, null);
-                                temporaryTileViews.add(new TileView(tile, large_curve, new Point(x, y)));
-                            }
-                        }*/
-                        int previousEdge = edges.get(edges.size() - 1);
-                        for (int e = 0; e < tile.getEdges().size(); e++) {
-                            int currentEdge = edges.get(e);
-                            if (previousEdge != currentEdge) { // vérifier si l'arête actuelle est différente de l'arête précédente
-                                int difference = edgeDifference(previousEdge, currentEdge);
-                                System.out.println("previous " + previousEdge + " current " + currentEdge
-                                        + " difference" + difference);
-                                if (difference == 1) {
-                                    System.out.println("drawing " + previousEdge + " to " + currentEdge
-                                            + " with difference " + difference);
-                                    g2d.drawImage(rotateImage(curve, (previousEdge * 60) + tile.getRotation()), x,
-                                            y, null);
-                                    temporaryTileViews.add(new TileView(tile, curve, new Point(x, y)));
-                                } else if (difference == 2) {
-                                    System.out.println("drawing " + previousEdge + " to " + currentEdge
-                                            + " with difference " + difference);
-                                    System.out.println(tile.getRotation());
-                                    g2d.drawImage(rotateImage(large_curve, (previousEdge * 60) + tile.getRotation()), x,
-                                            y, null);
-                                    temporaryTileViews.add(new TileView(tile, large_curve, new Point(x, y)));
-                                }
-                            }
-                            previousEdge = currentEdge;
+                int previousEdge = edges.get(edges.size() - 1);
+                for (int e = 0; e < tile.getEdges().size(); e++) {
+                    int currentEdge = edges.get(e);
+                    if (previousEdge != currentEdge) { // vérifier si l'arête actuelle est différente de l'arête précédente
+                        int difference = edgeDifference(previousEdge, currentEdge, 6);
+                       if (difference == 1) {
+                            g2d.drawImage(rotateImage(curve, (previousEdge * 60)), x,
+                                    y, null);
+                        } else if (difference == 2) {
+                           g2d.drawImage(rotateImage(large_curve, (previousEdge * 60)), x,
+                                    y, null);
+                        }else if (difference ==3 && edges.size()==2){
+                            g2d.drawImage(rotateImage(line, (previousEdge * 60)), x,
+                                    y, null);
                         }
                     }
+                    previousEdge = currentEdge;
+
 
                 }
             }
@@ -216,58 +149,65 @@ public class BoardView extends JPanel implements Observer {
         return temporaryTileViews;
     }
 
-    private int edgeDifference(int edge1, int edge2) {
+    private int edgeDifference(int edge1, int edge2, int max) {
         int diff = edge2 - edge1;
         if (diff < 0) {
-            diff = 6 + diff;
+            diff = max + diff;
         }
         return diff;
-    }
-
-    private boolean hasSameDifference(ArrayList<Integer> edges) {
-        if (edges.size() < 2) {
-            return false;
-        }
-        int diff = Math.abs(edges.get(1) - edges.get(0));
-        int lastIndex = edges.size() - 1;
-        for (int i = 1; i < edges.size(); i++) {
-            int currentDiff = Math.abs(edges.get(i) - edges.get(i - 1));
-            if (currentDiff != diff) {
-                return false;
-            }
-        }
-        // Check the difference between the last and first elements
-        int lastDiff = Math.abs(edges.get(0) - edges.get(lastIndex) + diff);
-        if (lastDiff != diff) {
-            return false;
-        }
-        return true;
-    }
-
-    public static int findMinDifference(ArrayList<Integer> numbers) {
-        if (numbers.size() < 2) {
-            return -1;
-        }
-
-        int minDifference = Integer.MAX_VALUE;
-        for (int i = 0; i < numbers.size() - 1; i++) {
-            for (int j = i + 1; j < numbers.size(); j++) {
-                int difference = Math.abs(numbers.get(i) - numbers.get(j));
-                minDifference = Math.min(minDifference, difference);
-            }
-        }
-
-        return minDifference;
     }
 
     private void createSquareBoard(Graphics2D g2d, Point origin) {
         tileViews.clear();
         for (int i = 0; i < board.getBoard().size(); i++) {
             Tile tile = board.getBoard().get(i);
-            tileViews.addAll(drawSquareTile(origin, tile));
+            tileViews.addAll(drawSquareTiles(origin, tile));
         }
     }
 
+
+    private ArrayList<TileView> drawSquareTiles(Point origin, Tile tile){
+        int x = origin.x + (tile.getPositionX() * 120);
+        int y = origin.y + (tile.getPositionY() * 120);
+        ArrayList<TileView> temporaryTileViews = new ArrayList<>();
+        String role = tile.getRole().toString().toLowerCase();
+        BufferedImage image;
+        BufferedImage connection = squareGrayTiles.get("connection");
+        BufferedImage squareImage = squareGrayTiles.get("square");
+        g2d.drawImage(squareImage, x, y, null);
+        temporaryTileViews.add(new TileView(tile, squareImage, new Point(x, y)));
+        if (!role.equalsIgnoreCase("empty")) {
+            image = squareGrayTiles.get(role);
+            for (int e : tile.getEdges()) {
+                g2d.drawImage(rotateImage(connection,  e * 90 ), x, y, null);
+            }
+            g2d.drawImage(image, x, y, null);
+
+        } else {//connection tiles
+            if (tile.getEdges().size() != 0) {
+            ArrayList<Integer> edges = tile.getEdges();
+            BufferedImage line = squareGrayTiles.get("line");
+            BufferedImage curve = squareGrayTiles.get("curve");
+            int previousEdge = edges.get(edges.size() - 1);
+                System.out.println(edges);
+            for (int e = 0; e < tile.getEdges().size(); e++) {
+                    int currentEdge = edges.get(e);
+                    if (previousEdge != currentEdge) { // vérifier si l'arête actuelle est différente de l'arête précédente
+                        int difference = edgeDifference(previousEdge, currentEdge, 4);
+                        if (difference == 1) {
+                            g2d.drawImage(rotateImage(curve, (previousEdge * 90)), x,
+                                    y, null);
+                        }else if (difference ==2 ){
+                            g2d.drawImage(rotateImage(line, (previousEdge * 90)), x,
+                                    y, null);
+                        }
+                    }
+                    previousEdge = currentEdge;
+                }
+            }
+        }
+    return temporaryTileViews;
+  }
     private ArrayList<TileView> drawSquareTile(Point origin, Tile tile) {
         int x = origin.x + (tile.getPositionX() * 120);
         int y = origin.y + (tile.getPositionY() * 120);
