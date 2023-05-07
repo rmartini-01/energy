@@ -3,6 +3,7 @@ package models;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.function.BiPredicate;
 
 public class Board implements Observable {
     protected int rows;
@@ -23,6 +24,50 @@ public class Board implements Observable {
             neighborsList[i] = new ArrayList<Integer>();
         }
         this.isSquare = isSquare;
+       // initNeighborsList();
+
+        //TODO fix this
+        for (Tile currentTile : board) {
+            System.out.println("tile + " + currentTile.getRole() + " x = " + currentTile.getPositionX() + "y = "+ currentTile.getPositionY());
+            for (int row = 0; row <= rows+2; row++) {
+                for (int col = 0; col <= columns; col++) {
+                    Tile nextTile = getTileByPosition(row, col);
+                    if(nextTile!= null){
+                        if(nextTile.equals(currentTile)){
+                                // Check and add the neighbors: up, down, left, and right
+                                if (row > 0) {
+                                    Tile topNeighbor = getTileByPosition(row - 1, col);
+                                    if(topNeighbor!=null){
+                                        currentTile.addNeighbor(topNeighbor);
+                                    }
+                                }
+                                if (row < rows - 1) {
+                                    Tile bottomNeighbor = getTileByPosition(row + 1, col);
+                                    if(bottomNeighbor!=null) {
+                                        currentTile.addNeighbor(bottomNeighbor);
+                                    }
+                                }
+                                if (col > 0) {
+                                    Tile leftNeighbor = getTileByPosition(row, col - 1);
+                                    if(leftNeighbor!=null){
+                                        currentTile.addNeighbor(leftNeighbor);
+                                    }
+                                }
+                                if (col < columns - 1) {
+                                    Tile rightNeighbor = getTileByPosition(row, col + 1);
+                                    if(rightNeighbor!= null){
+                                        currentTile.addNeighbor(rightNeighbor);
+                                    }
+                                }
+
+
+                        }
+                    }
+
+                }
+            }
+        }
+
     }
 
     public int getRows() {
@@ -43,6 +88,16 @@ public class Board implements Observable {
         return board;
     }
 
+    public Tile getTileByPosition(int x, int y){
+        for(Tile t : board){
+            if(t.getPositionX()==x && t.getPositionY()==y){
+                System.out.println("return tile at position " + x + " " + y);
+                return t;
+            }
+        }
+        return null;
+    }
+
     public ArrayList<Integer>[] getneighborsList() {
         return neighborsList;
     }
@@ -59,9 +114,11 @@ public class Board implements Observable {
         }
         notifyObservers();
     }
-    public boolean DFS(int t1, int t2) { // arguments are tiles' id, checks if there's a way between two tiles
+    public boolean DFS(Tile tile1, Tile tile2) { // arguments are tiles' id, checks if there's a way between two tiles
         boolean[] visited = new boolean[board.size()];
         Stack<Integer> stack = new Stack<Integer>();
+        int t1 = tile1.getId();
+        int t2= tile2.getId();
         visited[t1] = true;
         stack.push(t1);
 
@@ -70,9 +127,8 @@ public class Board implements Observable {
             if (currentVertix == t2) {
                 return true;
             }
-            Iterator<Integer> i = neighborsList[currentVertix].listIterator();
-            while (i.hasNext()) {
-                int m = i.next();
+            for (Tile neighbor : tile1.getNeighbors()) {
+                int m = neighbor.getId();
                 if (!visited[m]) {
                     visited[m] = true;
                     stack.push(m);
@@ -128,7 +184,32 @@ public class Board implements Observable {
         return connect; // not next to each other on the board
     }
 
-    public boolean areConnectedSquare(Tile t1, Tile t2) { // check if two tiles are next to each other and connected on
+    public boolean areConnectedSquareFunctional(Tile t1, Tile t2) {
+        BiPredicate<Tile, Tile> areVerticallyAdjacent = (tile1, tile2) ->
+                tile1.getPositionX() == tile2.getPositionX() &&
+                        Math.abs(tile1.getPositionY() - tile2.getPositionY()) == 1;
+
+        BiPredicate<Tile, Tile> areHorizontallyAdjacent = (tile1, tile2) ->
+                tile1.getPositionY() == tile2.getPositionY() &&
+                        Math.abs(tile1.getPositionX() - tile2.getPositionX()) == 1;
+
+        BiPredicate<Tile, Tile> haveConnectedEdges = (tile1, tile2) -> {
+            int edge1 = (tile1.getPositionY() > tile2.getPositionY()) ? 0 : 2;
+            int edge2 = (tile1.getPositionY() > tile2.getPositionY()) ? 2 : 0;
+            return tile1.getEdges().contains(edge1) && tile2.getEdges().contains(edge2);
+        };
+
+        BiPredicate<Tile, Tile> haveConnectedEdgesHorizontal = (tile1, tile2) -> {
+            int edge1 = (tile1.getPositionX() > tile2.getPositionX()) ? 3 : 1;
+            int edge2 = (tile1.getPositionX() > tile2.getPositionX()) ? 1 : 3;
+            return tile1.getEdges().contains(edge1) && tile2.getEdges().contains(edge2);
+        };
+
+        return areVerticallyAdjacent.test(t1, t2) && haveConnectedEdges.test(t1, t2) ||
+                areHorizontallyAdjacent.test(t1, t2) && haveConnectedEdgesHorizontal.test(t1, t2);
+    }
+    public boolean areConnectedSquare(Tile t1, Tile t2) {
+        // check if two tiles are next to each other and connected on
         // the board with their edges
         boolean connect = false;
         if (t1.getPositionX() == t2.getPositionX() && (t2.getPositionY() == t1.getPositionY() - 1)) { // t2 top
@@ -159,7 +240,7 @@ public class Board implements Observable {
         for (int i = 0; i < this.board.size(); i++) {
             ArrayList<Tile> tmp2 = new ArrayList<Tile>();
             for (int j = 0; j < this.board.size(); j++) {
-                if (areConnectedSquare(board.get(i), board.get(j)) && i != j) {
+                if (areConnectedSquareFunctional(board.get(i), board.get(j)) && i != j) {
                     if (!tmp2.contains(board.get(j))) {
                         tmp2.add(board.get(j));
                     }
@@ -195,7 +276,7 @@ public class Board implements Observable {
                 }
                 Tile t2 = board.get(j);
                 if (isSquare){
-                    if (areConnectedSquare(t1, t2)) {
+                    if (areConnectedSquareFunctional(t1, t2)) {
                         neighborsList[i].add(j);
                     }
                 }else{
@@ -219,7 +300,7 @@ public class Board implements Observable {
                 Tile tile2 = board.get(j);
 
                 if (isSquare){
-                    if (areConnectedSquare(tile1, tile2)) {
+                    if (areConnectedSquareFunctional(tile1, tile2)) {
                         // if the j-th tile is a neighbor of the i-th tile, add it to the list of
                         // neighbors
                         neighborsList[i].add(j);
@@ -234,7 +315,7 @@ public class Board implements Observable {
     }
 
     public void LightON(Tile a, Tile b) {
-        if (DFS(a.getId(), b.getId())) {
+        if (DFS(a, b)) {
             if (a.getRole() == Role.LAMP
                     && (b.getRole() == Role.SOURCE || (b.getRole() == Role.WIFI && b.getLit()))) {
                 a.setLit(true);
@@ -257,20 +338,55 @@ public class Board implements Observable {
         }
     }
 
-    public boolean isBoardWinningConfig(){ // don't work
-        ArrayList<Tile> tmp_board = this.board;
-        for (Tile t1 : this.board){
-            for (Tile t2 : tmp_board) {
-                if (t1.getId() != t2.getId()) {
-                    if (!DFS(t1.getId(), t2.getId())) {
-                        System.out.println("pas de chemin ente "+t1.getId()+ " et "+t2.getId());
-                        return false;
+
+
+
+    public boolean areTilesConnected(Tile tile1, Tile tile2) {
+        for (int edge1 : tile1.getEdges()) {
+            for (int edge2 : tile2.getEdges()) {
+                if (tile1.getNeighbors().contains(tile2) && tile2.getNeighbors().contains(tile1)) {
+                    if (tile1.getOppositeEdge(edge1) == edge2) {
+                        return true;
                     }
                 }
             }
         }
+        return false;
+    }
+
+
+    public void connectNeighborTiles(Tile previous, Tile tile) {
+        if (tile.getLit()) {
+            for (Tile neighbor : tile.getNeighbors()) {
+                System.out.println("tile : " + tile.getRole() + " neighbors " + neighbor.getRole());
+
+                if(( previous==null || previous!= neighbor) && neighbor.getEdges().size()!=0 ){
+                    if (areConnectedSquare(tile, neighbor)) {
+                      //  System.out.println("Tile " + tile.getId() + " is connected to Tile " + neighbor.getId());
+                        neighbor.setLit(true);
+                        connectNeighborTiles(tile, neighbor);
+                    }else{
+                        //System.out.println("Tile " + tile.getId() + " is NOT connected to Tile " + neighbor.getId());
+
+                    }
+                }
+
+            }
+        }
+    }
+    public boolean isBoardWinningConfig() {
+
+        for (Tile tile : board) {
+            if (tile.getEdges().size() != 0) {
+                if (!tile.getLit()) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
+
 
     public Tile lastTileAdded(){
         int id_tmp = 0;
