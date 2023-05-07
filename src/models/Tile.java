@@ -10,7 +10,6 @@ public class Tile {
     private ArrayList<Tile> neighbors; // exists an edge between "this" and the tiles in "neighbors"
     private ArrayList<Integer> edges; // ex : [1,4,3] -> edges at position 1 4 3 of the tile
     private int id;
-    private int rotation; // useful ? IG?
     private int pos_x;
     private int pos_y;
     private Role role;
@@ -25,79 +24,12 @@ public class Tile {
         this.role = r;
         this.edges = e;
         this.shape = s;
-        if(e.size()!= 0 && this.shape == 'S'){
-            switch (e.get(0)) {
-                case 0 -> {
-                    if(e.size() ==2){
-                        if(e.get(1) == 3)
-                            this.rotation = 270;
-                        else this.rotation = 0;
-                    }else {
-                        this.rotation = 0;
-                    }
-                }
-                case 1 -> {
-                    this.rotation = 90;
-                }
-                case 2 -> {
-                    this.rotation = 180;
-                }
-                case 3 -> {
-                    this.rotation = 270;
-                }
-            }
-        }else if(e.size() != 0 && shape == 'H'){
-            switch (e.get(0)) {
-                case 0 -> {
-                    if(e.size() >=2){
-                        if(e.get(1) > 2) {
-                            System.out.println("ici");
-                            this.rotation = e.get(1) * 60;
-                        }
-                        else this.rotation = 0;
-                    }else {
-                        this.rotation = 0;
-                    }
-                }
-                case 1 -> {
-                    if(e.size() >=2){
-                        if(e.get(1) > 3)
-                            this.rotation = e.get(1) * 60;
-                        else this.rotation = 60;
-                    }else {
-                        this.rotation = 60;
-                    }
-                }
-                case 2 -> {
-                    if(e.size() >=2){
-                        if(e.get(1) > 4)
-                            this.rotation = e.get(1) * 60;
-                        else this.rotation = 120;
-                    }else {
-                        this.rotation = 120;
-                    }
-                }
-                case 3 -> {
-                        this.rotation = 180;
-                }
-                case 4 -> {
-                    this.rotation = 240;
-                }
-                case 5 -> {
-                    this.rotation = 300;
-                }
-            }
-        }
         image = null;
 
     }
 
     public void setId(int i) {
         this.id = i;
-    }
-
-    public void setRotation(int r) {
-        this.rotation = r;
     }
 
     public void setPositionX(int x) {
@@ -125,10 +57,6 @@ public class Tile {
 
     public int getId() {
         return this.id;
-    }
-
-    public int getRotation() {
-        return this.rotation;
     }
 
     public int getPositionX() {

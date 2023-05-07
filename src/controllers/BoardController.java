@@ -26,16 +26,11 @@ public class BoardController extends Controller {
     }
     public void handleTileClick(MouseEvent e) {
         Point clickPosition = e.getPoint();
-        System.out.println("clicked");
-
         for (TileView tileView : view.getTileViews()) {
             Point tilePosition = tileView.getPosition();
             if (view.contains(tilePosition, clickPosition , tileView.getImage().getWidth(), tileView.getImage().getHeight())) {
                 Tile t = tileView.getTile();
-                System.out.println("edges before rotate"+  t.getEdges());
                 board.rotateTile(t);
-                System.out.println("edges after rotate"+  t.getEdges());
-
             }
         }
     }
