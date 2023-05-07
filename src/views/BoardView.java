@@ -195,7 +195,7 @@ public class BoardView extends JPanel implements Observer {
                         if (difference == 1) {
                             g2d.drawImage(rotateImage(curve, (previousEdge * 90)), x,
                                     y, null);
-                        }else if (difference ==2 ){
+                        }else if (difference ==2  && edges.size() ==2){
                             g2d.drawImage(rotateImage(line, (previousEdge * 90)), x,
                                     y, null);
                         }
