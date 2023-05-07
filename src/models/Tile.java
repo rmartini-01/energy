@@ -50,8 +50,10 @@ public class Tile {
             switch (e.get(0)) {
                 case 0 -> {
                     if(e.size() >=2){
-                        if(e.get(1) > 2)
+                        if(e.get(1) > 2) {
+                            System.out.println("ici");
                             this.rotation = e.get(1) * 60;
+                        }
                         else this.rotation = 0;
                     }else {
                         this.rotation = 0;
@@ -67,10 +69,16 @@ public class Tile {
                     }
                 }
                 case 2 -> {
-                    this.rotation = 120;
+                    if(e.size() >=2){
+                        if(e.get(1) > 4)
+                            this.rotation = e.get(1) * 60;
+                        else this.rotation = 120;
+                    }else {
+                        this.rotation = 120;
+                    }
                 }
                 case 3 -> {
-                    this.rotation = 180;
+                        this.rotation = 180;
                 }
                 case 4 -> {
                     this.rotation = 240;
