@@ -1,10 +1,7 @@
 package controllers;
 
-import listeners.NavigateBackListener;
-
 import javax.swing.*;
 
-import java.awt.*;
 import java.util.Stack;
 
 public class NavigationController {
@@ -29,7 +26,6 @@ public class NavigationController {
         // Remove the current scene from the JFrame
         if(currentScene!=null){
             jframe.getContentPane().remove(currentScene);
-
         }
 
         // Add the new scene to the JFrame
