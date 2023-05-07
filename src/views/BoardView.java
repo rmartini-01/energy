@@ -23,6 +23,9 @@ public class BoardView extends JPanel implements Observer {
     private HashMap<String, BufferedImage> squareGrayTiles = createGraySquareTiles();
     private HashMap<String, BufferedImage> hexaGrayTiles = createGrayHexagoneTiles();
 
+    private HashMap<String, BufferedImage> squareWhiteTiles = createWhiteSquareTiles();
+    private HashMap<String, BufferedImage> hexaWhiteTiles = createWhiteHexagoneTiles();
+
     private Board board;
 
     public BoardView(JFrame frame, Level level, Board board) {
@@ -100,14 +103,19 @@ public class BoardView extends JPanel implements Observer {
         int x = origin.x + (posX * 104);
         int y = origin.y + (posY * 104);
         String role = tile.getRole().toString().toLowerCase();
-        BufferedImage hexaImage = hexaGrayTiles.get("hexagone");
-        BufferedImage connection = hexaGrayTiles.get("connection");
+         HashMap<String, BufferedImage> tiles = hexaGrayTiles;
+         if(tile.getLit()){
+             tiles = hexaWhiteTiles;
+         }
+
+        BufferedImage hexaImage = tiles.get("hexagone");
+        BufferedImage connection = tiles.get("connection");
         BufferedImage image;
         ArrayList<TileView> temporaryTileViews = new ArrayList<>();
         temporaryTileViews.add(new TileView(tile, hexaImage, new Point(x, y)));
         g2d.drawImage(hexaImage, x, y, null);
         if (!role.equalsIgnoreCase("empty")) {
-            image = hexaGrayTiles.get(role);
+            image = tiles.get(role);
             for (int e = 0; e < tile.getEdges().size(); e++) {
                 g2d.drawImage(rotateImage(connection,
                                 (tile.getEdges().get(e) * 60) ),
@@ -118,9 +126,9 @@ public class BoardView extends JPanel implements Observer {
 
             if (tile.getEdges().size() != 0) {
                 ArrayList<Integer> edges = tile.getEdges();
-                BufferedImage line = hexaGrayTiles.get("line");
-                BufferedImage curve = hexaGrayTiles.get("curve");
-                BufferedImage large_curve = hexaGrayTiles.get("large_curve");
+                BufferedImage line = tiles.get("line");
+                BufferedImage curve = tiles.get("curve");
+                BufferedImage large_curve = tiles.get("large_curve");
 
                 int previousEdge = edges.get(edges.size() - 1);
                 for (int e = 0; e < tile.getEdges().size(); e++) {
@@ -139,8 +147,6 @@ public class BoardView extends JPanel implements Observer {
                         }
                     }
                     previousEdge = currentEdge;
-
-
                 }
             }
         }
@@ -169,13 +175,17 @@ public class BoardView extends JPanel implements Observer {
         int y = origin.y + (tile.getPositionY() * 120);
         ArrayList<TileView> temporaryTileViews = new ArrayList<>();
         String role = tile.getRole().toString().toLowerCase();
+        HashMap<String, BufferedImage> tiles = squareGrayTiles;
+        if(tile.getLit()){
+            tiles = squareWhiteTiles;
+        }
         BufferedImage image;
-        BufferedImage connection = squareGrayTiles.get("connection");
-        BufferedImage squareImage = squareGrayTiles.get("square");
+        BufferedImage connection = tiles.get("connection");
+        BufferedImage squareImage = tiles.get("square");
         g2d.drawImage(squareImage, x, y, null);
         temporaryTileViews.add(new TileView(tile, squareImage, new Point(x, y)));
         if (!role.equalsIgnoreCase("empty")) {
-            image = squareGrayTiles.get(role);
+            image = tiles.get(role);
             for (int e : tile.getEdges()) {
                 g2d.drawImage(rotateImage(connection,  e * 90 ), x, y, null);
             }
@@ -184,10 +194,9 @@ public class BoardView extends JPanel implements Observer {
         } else {//connection tiles
             if (tile.getEdges().size() != 0) {
             ArrayList<Integer> edges = tile.getEdges();
-            BufferedImage line = squareGrayTiles.get("line");
-            BufferedImage curve = squareGrayTiles.get("curve");
+            BufferedImage line = tiles.get("line");
+            BufferedImage curve = tiles.get("curve");
             int previousEdge = edges.get(edges.size() - 1);
-                System.out.println(edges);
             for (int e = 0; e < tile.getEdges().size(); e++) {
                     int currentEdge = edges.get(e);
                     if (previousEdge != currentEdge) { // vérifier si l'arête actuelle est différente de l'arête précédente
@@ -225,6 +234,32 @@ public class BoardView extends JPanel implements Observer {
             BufferedImage connection = gridImage.getSubimage(0, 240, 120, 120);
             BufferedImage curve = gridImage.getSubimage(120, 240, 120, 120);
             BufferedImage line = gridImage.getSubimage(240, 240, 120, 120);
+           // BufferedImage source = gridImage.getSubimage(0, 480, 120, 120);
+
+            grayImages.put("square", square);
+            grayImages.put("wifi", wifi);
+            grayImages.put("lamp", lamp);
+            grayImages.put("connection", connection);
+            grayImages.put("curve", curve);
+            grayImages.put("line", line);
+            //grayImages.put("source", source);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return grayImages;
+    }
+    private HashMap<String, BufferedImage> createWhiteSquareTiles() {
+        BufferedImage gridImage = null;
+        HashMap<String, BufferedImage> grayImages = new HashMap<>();
+        try {
+            gridImage = ImageIO.read(new File("src/res/tuiles.png"));
+            BufferedImage square = gridImage.getSubimage(0, 0+ 3*120, 120, 120);
+            BufferedImage wifi = gridImage.getSubimage(120 , 120+ 3*120, 120, 120);
+            BufferedImage lamp = gridImage.getSubimage(240, 120+ 3*120, 120, 120);
+            BufferedImage connection = gridImage.getSubimage(0, 240+ 3*120, 120, 120);
+            BufferedImage curve = gridImage.getSubimage(120, 240+ 3*120, 120, 120);
+            BufferedImage line = gridImage.getSubimage(240, 240+ 3*120, 120, 120);
             BufferedImage source = gridImage.getSubimage(0, 480, 120, 120);
 
             grayImages.put("square", square);
@@ -254,6 +289,36 @@ public class BoardView extends JPanel implements Observer {
             BufferedImage curve = gridImage.getSubimage(480, 240, 120, 104);
             BufferedImage large_curve = gridImage.getSubimage(600, 240, 120, 104);
             BufferedImage line = gridImage.getSubimage(720, 240, 120, 104);
+            //BufferedImage source = gridImage.getSubimage(360, 480, 120, 104);
+
+            grayImages.put("hexagone", hexagone);
+            grayImages.put("wifi", wifi);
+            grayImages.put("lamp", lamp);
+            grayImages.put("connection", connection);
+            grayImages.put("curve", curve);
+            grayImages.put("large_curve", large_curve);
+            grayImages.put("line", line);
+           // grayImages.put("source", source);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return grayImages;
+    }
+
+    private HashMap<String, BufferedImage> createWhiteHexagoneTiles() {
+
+        HashMap<String, BufferedImage> grayImages = new HashMap<>();
+        try {
+            BufferedImage gridImage = ImageIO.read(new File("src/res/tuiles.png"));
+            BufferedImage hexagone = gridImage.getSubimage(360, 0+ 3*120, 120, 104);
+            BufferedImage wifi = gridImage.getSubimage(480, 120 + 3*120, 120, 104);
+            BufferedImage lamp = gridImage.getSubimage(600, 120+ 3*120, 120, 104);
+
+            BufferedImage connection = gridImage.getSubimage(360, 240 + 3*120, 120, 104);
+            BufferedImage curve = gridImage.getSubimage(480, 240+ 3*120, 120, 104);
+            BufferedImage large_curve = gridImage.getSubimage(600, 240 + 3*120, 120, 104);
+            BufferedImage line = gridImage.getSubimage(720, 240+ 3*120, 120, 104);
             BufferedImage source = gridImage.getSubimage(360, 480, 120, 104);
 
             grayImages.put("hexagone", hexagone);
