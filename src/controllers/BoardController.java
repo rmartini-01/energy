@@ -17,6 +17,7 @@ public class BoardController extends Controller {
         this.navigationController = nc;
         this.view = view;
         this.board.addObserver(this.view);
+
         this.view.getPanel(). addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -31,10 +32,11 @@ public class BoardController extends Controller {
             if (view.contains(tilePosition, clickPosition , tileView.getImage().getWidth(), tileView.getImage().getHeight())) {
                 Tile t = tileView.getTile();
                 board.rotateTile(t);
+                board.connectNeighborTiles(null, t);
                 if(!board.isBoardWinningConfig()){
-                   System.out.println("pas connecté");
+                  // System.out.println("pas connecté");
                 }else{
-                   System.out.println("tout est lié ");
+                  // System.out.println("tout est lié ");
 
                 }
             }
