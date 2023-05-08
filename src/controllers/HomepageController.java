@@ -26,7 +26,11 @@ public class HomepageController extends  Controller{
 
 
         this.view.getEditGameBtn().addActionListener(e->{
-            NavigationController.getInstance(frame).navigateTo(view, new EditGameView(frame,  view.getSelectedLevel(),null));
+            Level level = new Level(view.getSelectedLevel());
+            Board board = new Board(level.getHeight(), level.getWidth(), level.getTileConfig(), level.getShape() == 'S');
+            EditGameView editView = new EditGameView(frame,view.getSelectedLevel(),board);
+            EditmodeController editController = new EditmodeController(frame,editView,board,navigationController);
+            navigationController.navigateTo(view, editView);
 
         });
 

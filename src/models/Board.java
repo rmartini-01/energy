@@ -48,7 +48,7 @@ public class Board implements Observable {
     }
 
     public boolean isSquare(){
-        return true;
+        return this.isSquare;
     }
 
     public void rotateTile(Tile t ){
@@ -272,44 +272,74 @@ public class Board implements Observable {
         return true;
     }
 
-    public Tile lastTileAdded(){
+
+
+    public int lastTileAdded(){
+        if (this.isEmptyBoard()){
+            return 0;
+        }
         int id_tmp = 0;
         Tile tile_tmp= this.board.get(0);
         for (Tile t : this.board){ // to find the last tile in the board
             if (id_tmp<t.getId()) {
                 id_tmp = t.getId();
-                tile_tmp = t;
             }
         }
-        return  tile_tmp;
+        return  id_tmp;
     }
 
+
     public int [] getPosToAddColumn(){ // to add tile on the right of the board
+        if (this.board.isEmpty()){
+            int [] pos ={0,0};
+            this.columns++;
+            return pos;
+        }
         int[] position = new int[2];
-        Tile last = this.lastTileAdded();
-        if (last.getPositionX()==((this.columns)-1) && last.getPositionY()==((this.rows)-1)){ // case when adding to a new column
+        int last = this.lastTileAdded();
+        Tile last_tile = this.board.get(0);
+        for (Tile t : this.board){
+            if (t.getId()==last){
+                last_tile=t;
+            }
+        }
+        if (last_tile.getPositionX()==((this.columns)-1) && last_tile.getPositionY()==((this.rows)-1)){ // case when adding to a new column
             position[0] = this.columns;
             position[1]=0;
             this.columns+=1;
         }else{ // case when adding to an existing column
             position[0] = this.columns-1;
-            position[1] = last.getPositionY()+1;
+            position[1] = last_tile.getPositionY()+1;
         }
         return position;
     }
+
     public int [] getPosToAddRow(){ // to add tile at the bottom of the board
+        if (this.board.isEmpty()){
+            int [] pos ={0,0};
+            this.rows++;
+            return pos;
+        }
         int[] position = new int[2];
-        Tile last = this.lastTileAdded();
-        if (last.getPositionX()==((this.columns)-1) && last.getPositionY()==((this.rows)-1)){ // case when adding to a new row
+        int last = this.lastTileAdded();
+        Tile last_tile = this.board.get(0);
+        for (Tile t : this.board){
+            if (t.getId()==last){
+                last_tile=t;
+            }
+        }
+        if (last_tile.getPositionX()==((this.columns)-1) && last_tile.getPositionY()==((this.rows)-1)){ // case when adding to a new row
             position[0] = 0;
             position[1]=this.rows;
             this.rows+=1;
         }else{ // case when adding to an existing row
-            position[0] = last.getPositionX()+1;
+            position[0] = last_tile.getPositionX()+1;
             position[1] = this.rows-1;
         }
         return position;
     }
+
+
 
     public void changeTile(Tile t1, Tile t2){ // change t1 into t2
 
@@ -324,6 +354,18 @@ public class Board implements Observable {
         this.board.add(t);
         updateNeighborsList();
     }
+
+
+    public char getShape(){
+        return this.isSquare()? 'S':'H';
+    }
+
+
+    public void addTile(Tile t) {
+        this.board.add(t);
+        initNeighborsList();
+    }
+
 
 
     @Override

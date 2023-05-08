@@ -110,8 +110,8 @@ public class BoardView extends JPanel implements Observer {
             image = hexaGrayTiles.get(role);
             for (int e = 0; e < tile.getEdges().size(); e++) {
                 g2d.drawImage(rotateImage(connection,
-                                    (tile.getEdges().get(e) * 60) ),
-                            x, y, null);
+                                (tile.getEdges().get(e) * 60) ),
+                        x, y, null);
             }
             g2d.drawImage(image, x, y, null);
         } else {
@@ -127,11 +127,11 @@ public class BoardView extends JPanel implements Observer {
                     int currentEdge = edges.get(e);
                     if (previousEdge != currentEdge) { // vérifier si l'arête actuelle est différente de l'arête précédente
                         int difference = edgeDifference(previousEdge, currentEdge, 6);
-                       if (difference == 1) {
+                        if (difference == 1) {
                             g2d.drawImage(rotateImage(curve, (previousEdge * 60)), x,
                                     y, null);
                         } else if (difference == 2) {
-                           g2d.drawImage(rotateImage(large_curve, (previousEdge * 60)), x,
+                            g2d.drawImage(rotateImage(large_curve, (previousEdge * 60)), x,
                                     y, null);
                         }else if (difference ==3 && edges.size()==2){
                             g2d.drawImage(rotateImage(line, (previousEdge * 60)), x,

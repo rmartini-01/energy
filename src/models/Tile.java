@@ -92,7 +92,7 @@ public class Tile {
     }
 
     public void rotateTile() { // update neighbors/edges and when this function is used, need to change the
-                               // board's edgeList too
+        // board's edgeList too
         if (this.shape == 'S') { // square
             for (int i = 0; i < this.edges.size(); i++) {
                 int tmp = (edges.get(i) + 1) % 4;
