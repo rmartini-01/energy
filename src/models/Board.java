@@ -34,8 +34,6 @@ public class Board implements Observable {
                    connectHexagonalTiles(currentTile, row, col);
                }
         }
-
-
         lightsUp();
     }
 
@@ -75,16 +73,24 @@ public class Board implements Observable {
 
     }
 
-
     private void connectHexagonalTiles(Tile currentTile, int row, int col) {
-        int[][] evenRowOffsets = {{0, -1}, {1, -1}, {-1, 0}, {1, 0}, {0, 1}, {1, 1}};
-        int[][] oddRowOffsets = {{-1, -1}, {0, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}};
+        int[][] directions;
 
-        int[][] offsets = (row % 2 == 0) ? evenRowOffsets : oddRowOffsets;
+        if (col % 2 == 0) {
+            directions = new int[][]{
+                    {-1, -1}, {-1, 0}, {0, -1},
+                    {1, 0}, {0, 1}, {-1, 1}
+            };
+        } else {
+            directions = new int[][]{
+                    {-1, 0}, {1, 0}, {1, 1},
+                    {0, 1}, {1, -1}, {0, -1}
+            };
+        }
 
-        for (int[] offset : offsets) {
-            int newRow = row + offset[0];
-            int newCol = col + offset[1];
+        for (int[] direction : directions) {
+            int newRow = row + direction[0];
+            int newCol = col + direction[1];
 
             if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < columns) {
                 Tile neighbor = getTileByPosition(newRow, newCol);
@@ -94,6 +100,7 @@ public class Board implements Observable {
             }
         }
     }
+
 
     public int getRows() {
         return rows;
@@ -351,7 +358,6 @@ public class Board implements Observable {
     }
 
     public void lightUpWifi(){
-        if(!isSquare){
             boolean isWifiLit= false;
             for(Tile t : board){
                 if (t.getRole() == Role.WIFI && t.getLit()) {
@@ -367,7 +373,7 @@ public class Board implements Observable {
                     }
                 }
             }
-        }
+
     }
     public void lightUpNeighbors(Tile tile){
         for(Tile neighbor : tile.getNeighbors()){
