@@ -9,6 +9,7 @@ import java.awt.*;
 public class HomepageView extends JPanel {
     private JButton newGameBtn;
     private JButton settingsBtn;
+
     private JButton editGameBtn;
 
     JComboBox<Integer> selectLevel = new JComboBox<>();
@@ -47,12 +48,19 @@ public class HomepageView extends JPanel {
         horizontalBoxEditMode.add(Box.createHorizontalGlue());
         verticalBox.add(horizontalBoxEditMode);
 
+        Box verticalBoxButtons = Box.createVerticalBox();
+        verticalBoxButtons.add(newGameBtn);
+        verticalBoxButtons.add(editGameBtn);
+        horizontalBox.add(verticalBoxButtons);
 
-public class HomepageView extends JPanel {
-    private JButton newGameBtn;
-    private JButton settingsBtn;
+        horizontalBox.add(Box.createHorizontalGlue());
 
-    private JButton editGameBtn;
+
+        add(Box.createVerticalGlue());
+        verticalBox.add(addLogo());
+        verticalBox.add(horizontalBox);
+        verticalBox.setAlignmentY(CENTER_ALIGNMENT);
+        verticalBox.setAlignmentX(CENTER_ALIGNMENT);
 
         add(verticalBox);
         //TODO bouton paramètres
