@@ -1,5 +1,6 @@
 package controllers;
 import models.Board;
+import models.Role;
 import models.Tile;
 import views.BoardView;
 import views.TileView;
@@ -32,11 +33,12 @@ public class BoardController extends Controller {
             if (view.contains(tilePosition, clickPosition , tileView.getImage().getWidth(), tileView.getImage().getHeight())) {
                 Tile t = tileView.getTile();
                 board.rotateTile(t);
-                board.connectNeighborTiles(null, t);
+                board.lightsUp();
+
                 if(!board.isBoardWinningConfig()){
                   // System.out.println("pas connecté");
                 }else{
-                  // System.out.println("tout est lié ");
+                  // System.out.println("tout est connecté ");
 
                 }
             }

@@ -35,7 +35,6 @@ public class BoardView extends JPanel implements Observer {
         tileViews = new ArrayList<>();
         setName("Board");
         add(goBackBtn());
-
     }
 
     public JPanel getPanel() {
