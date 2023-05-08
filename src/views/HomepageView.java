@@ -1,28 +1,27 @@
 package views;
 
-import controllers.HomepageController;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
+
 
 
 public class HomepageView extends JPanel {
-    private JFrame frame;
-    private HomepageController controller;
+    private JButton newGameBtn;
+    private JButton settingsBtn;
+    private JButton editGameBtn;
+
     JComboBox<Integer> selectLevel = new JComboBox<>();
+    public HomepageView() {
 
-    public HomepageView(JFrame frame, HomepageController controller) {
-        this.frame = frame;
-        this.controller = controller;
-        // Other code ...
-        JButton newGameBtn = new JButton("Start game");
-        JButton settings = new JButton("Settings");
-        JButton editGameBtn = new JButton("Edit mode");
+        newGameBtn = new JButton("Start game");
+        settingsBtn = new JButton("Settings");
+        editGameBtn = new JButton("Edit mode");
 
-        newGameBtn.addActionListener(e -> controller.newGameAction());
-        settings.addActionListener(e -> controller.settingsAction());
-        editGameBtn.addActionListener(e -> controller.editGameAction());
-        // Other code ...
+       /*     newGameBtn.addActionListener(e -> controller.newGameAction());
+            settings.addActionListener(e -> controller.settingsAction());
+            editGameBtn.addActionListener(e -> controller.editGameAction());*/
+
         JLabel level = new JLabel("Select a level: "); //JLabel Creation Box
         for (int i = 1; i < 12; i++) {
             selectLevel.addItem(i);
@@ -77,6 +76,19 @@ public class HomepageView extends JPanel {
 
     public int getSelectedLevel() {
         return (int) selectLevel.getSelectedItem();
+    }
+
+
+    public JButton getNewGameBtn() {
+        return newGameBtn;
+    }
+
+    public JButton getSettings() {
+        return settingsBtn;
+    }
+
+    public JButton getEditGameBtn() {
+        return editGameBtn;
     }
 
 

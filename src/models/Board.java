@@ -1,24 +1,24 @@
 package models;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
 
-public class Board {
+public class Board implements Observable {
     protected int rows;
     protected int columns;
     protected int score;
     protected ArrayList<Tile> board;
     protected ArrayList<Integer>[] neighborsList; // storing the neighbors of each vertex in the graph. connected
     protected boolean isSquare; // 0 = square, 1 = Hexagone
-
+    private ArrayList<Observer> observers;
     public Board(int r, int c, ArrayList<Tile> tl,boolean isSquare) {
         rows = r;
         columns = c;
         score = 0;
         board = tl;
         neighborsList = (ArrayList<Integer>[]) new ArrayList[tl.size()];
+        observers = new ArrayList<>();
         for (int i = 0; i < tl.size(); i++) {
             neighborsList[i] = new ArrayList<Integer>();
         }
@@ -51,6 +51,14 @@ public class Board {
         return this.isSquare;
     }
 
+    public void rotateTile(Tile t ){
+        for(Tile tile : board){
+            if (tile.equals(t)){
+                t.rotateTile();
+            }
+        }
+        notifyObservers();
+    }
     public boolean DFS(int t1, int t2) { // arguments are tiles' id, checks if there's a way between two tiles
         boolean[] visited = new boolean[board.size()];
         Stack<Integer> stack = new Stack<Integer>();
@@ -264,6 +272,8 @@ public class Board {
         return true;
     }
 
+
+
     public int lastTileAdded(){
         if (this.isEmptyBoard()){
             return 0;
@@ -277,6 +287,7 @@ public class Board {
         }
         return  id_tmp;
     }
+
 
     public int [] getPosToAddColumn(){ // to add tile on the right of the board
         if (this.board.isEmpty()){
@@ -302,6 +313,7 @@ public class Board {
         }
         return position;
     }
+
     public int [] getPosToAddRow(){ // to add tile at the bottom of the board
         if (this.board.isEmpty()){
             int [] pos ={0,0};
@@ -327,19 +339,49 @@ public class Board {
         return position;
     }
 
-    public void changeTile(Tile t1, Tile t2){ // change t1 into t2 // here use updatNiehborlist
+
+
+    public void changeTile(Tile t1, Tile t2){ // change t1 into t2
 
     }
 
-    public void addTile(Tile t) {
+    public void addTileHexa(Tile t){
         this.board.add(t);
-        initNeighborsList();
+        updateNeighborsList();
     }
+
+    public void addTileSquare(Tile t){
+        this.board.add(t);
+        updateNeighborsList();
+    }
+
 
     public char getShape(){
         return this.isSquare()? 'S':'H';
     }
 
 
+    public void addTile(Tile t) {
+        this.board.add(t);
+        initNeighborsList();
+    }
 
+
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(this);
+        }
+    }
 }

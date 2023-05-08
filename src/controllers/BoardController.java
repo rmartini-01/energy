@@ -1,10 +1,9 @@
 package controllers;
 import models.Board;
-import models.Level;
+import models.Tile;
 import views.BoardView;
 import views.TileView;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -12,31 +11,26 @@ import java.awt.event.MouseEvent;
 public class BoardController extends Controller {
     private BoardView view;
     private Board board;
-    private Level level;
 
-    public BoardController(JFrame frame, int l, NavigationController nc) {
-        this.level = new Level(l);
-        this.board = new Board(level.getHeight(), level.getWidth(), level.getTileConfig(), level.getShape() == 'S');
+    public BoardController(BoardView view, Board board, NavigationController nc) {
+        this.board =board;
         this.navigationController = nc;
-        this.view = new BoardView(frame, l,board, this);
-        view.addMouseListener(new MouseAdapter() {
+        this.view = view;
+        this.board.addObserver(this.view);
+        this.view.getPanel(). addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 handleTileClick(e);
             }
         });
     }
-    public Board getBoard() {
-        return board;
-    }
-
-    private void handleTileClick(MouseEvent e) {
+    public void handleTileClick(MouseEvent e) {
         Point clickPosition = e.getPoint();
         for (TileView tileView : view.getTileViews()) {
             Point tilePosition = tileView.getPosition();
-            if (view.contains(tilePosition, clickPosition)) {
-                tileView.setImage(view.rotateImage(tileView.getImage(), 90));
-                view.repaint();
+            if (view.contains(tilePosition, clickPosition , tileView.getImage().getWidth(), tileView.getImage().getHeight())) {
+                Tile t = tileView.getTile();
+                board.rotateTile(t);
             }
         }
     }

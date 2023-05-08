@@ -88,6 +88,7 @@ public class EditmodeController extends Controller {
     }
 
 
+
     public void emptyBoardListener() {// TODO update view
         this.modification_board.clearBoard();
         JDialog dialog = new JDialog(this.frame, "Board Cleared", true);

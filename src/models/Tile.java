@@ -1,5 +1,8 @@
 package models;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -13,6 +16,7 @@ public class Tile {
     private Role role;
     private char shape;
     private boolean lit = false;
+    private BufferedImage image ;
 
     public Tile(int i, int x, int y, char s, Role r, ArrayList<Integer> e) {
         this.id = i;
@@ -22,6 +26,7 @@ public class Tile {
         this.role = r;
         this.edges = e;
         this.shape = s;
+        image = null;
 
     }
 
@@ -41,6 +46,13 @@ public class Tile {
         this.pos_y = y;
     }
 
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
     public void setRole(Role r) {
         this.role = r;
     }
@@ -90,7 +102,7 @@ public class Tile {
     }
 
     public void rotateTile() { // update neighbors/edges and when this function is used, need to change the
-                               // board's edgeList too
+        // board's edgeList too
         if (this.shape == 'S') { // square
             for (int i = 0; i < this.edges.size(); i++) {
                 int tmp = (edges.get(i) + 1) % 4;
