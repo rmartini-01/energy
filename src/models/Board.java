@@ -31,9 +31,10 @@ public class Board implements Observable {
                if(isSquare){
                    connectSquareTiles(currentTile, row, col);
                }else{
-                   connectHexagonTiles(currentTile, row, col);
+                   connectHexagonalTiles(currentTile, row, col);
                }
         }
+
 
         lightsUp();
     }
@@ -75,22 +76,13 @@ public class Board implements Observable {
     }
 
 
-    private void connectHexagonTiles(Tile currentTile, int row, int col) {
-        int[][] evenRowNeighbors = {
-                {0, -1}, {1, -1},
-                {-1, 0}, {1, 0},
-                {0, 1}, {1, 1}
-        };
+    private void connectHexagonalTiles(Tile currentTile, int row, int col) {
+        int[][] evenRowOffsets = {{0, -1}, {1, -1}, {-1, 0}, {1, 0}, {0, 1}, {1, 1}};
+        int[][] oddRowOffsets = {{-1, -1}, {0, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}};
 
-        int[][] oddRowNeighbors = {
-                {-1, -1}, {0, -1},
-                {-1, 0}, {1, 0},
-                {-1, 1}, {0, 1}
-        };
+        int[][] offsets = (row % 2 == 0) ? evenRowOffsets : oddRowOffsets;
 
-        int[][] neighbors = (row % 2 == 0) ? evenRowNeighbors : oddRowNeighbors;
-
-        for (int[] offset : neighbors) {
+        for (int[] offset : offsets) {
             int newRow = row + offset[0];
             int newCol = col + offset[1];
 
@@ -214,7 +206,6 @@ public class Board implements Observable {
         }
         return connect; // not next to each other on the board
     }
-
 
 
     public boolean areConnectedSquare(Tile t1, Tile t2) {
@@ -353,7 +344,6 @@ public class Board implements Observable {
         }
         for(Tile t : board){
             if(t.getRole()==Role.SOURCE){
-                System.out.println("lights up ");
                 lightUpNeighbors(t);
             }
         }

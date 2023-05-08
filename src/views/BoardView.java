@@ -15,6 +15,8 @@ import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static java.lang.Math.sqrt;
+
 public class BoardView extends JPanel implements Observer {
     private Level level;
     private JFrame frame;
@@ -92,6 +94,7 @@ public class BoardView extends JPanel implements Observer {
         tileViews.clear();
         for (int i = 0; i < board.getBoard().size(); i++) {
             Tile tile = board.getBoard().get(i);
+
             tileViews.addAll(drawHexaTiles(origin, tile));
         }
     }
@@ -99,14 +102,13 @@ public class BoardView extends JPanel implements Observer {
     private ArrayList<TileView> drawHexaTiles(Point origin, Tile tile) {
         int posX = tile.getPositionX();
         int posY = tile.getPositionY();
-        int x = origin.x + (posX * 104);
-        int y = origin.y + (posY * 104);
+        int x = origin.x + (posX * 104) - posX * 15;
+        int y = origin.y + (posY * 104) + (posX%2==0 ? 0 : 52);
         String role = tile.getRole().toString().toLowerCase();
          HashMap<String, BufferedImage> tiles = hexaGrayTiles;
          if(tile.getLit()){
              tiles = hexaWhiteTiles;
          }
-
         BufferedImage hexaImage = tiles.get("hexagone");
         BufferedImage connection = tiles.get("connection");
         BufferedImage image;
