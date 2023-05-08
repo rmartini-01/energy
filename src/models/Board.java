@@ -31,6 +31,8 @@ public class Board implements Observable {
             // Check and add the neighbors: up, down, left, and right
                if(isSquare){
                    connectSquareTiles(currentTile, row, col);
+               }else{
+                   connectHexagonTiles(currentTile, row, col);
                }
         }
 
@@ -72,6 +74,36 @@ public class Board implements Observable {
         }
 
     }
+
+
+    private void connectHexagonTiles(Tile currentTile, int row, int col) {
+        int[][] evenRowNeighbors = {
+                {0, -1}, {1, -1},
+                {-1, 0}, {1, 0},
+                {0, 1}, {1, 1}
+        };
+
+        int[][] oddRowNeighbors = {
+                {-1, -1}, {0, -1},
+                {-1, 0}, {1, 0},
+                {-1, 1}, {0, 1}
+        };
+
+        int[][] neighbors = (row % 2 == 0) ? evenRowNeighbors : oddRowNeighbors;
+
+        for (int[] offset : neighbors) {
+            int newRow = row + offset[0];
+            int newCol = col + offset[1];
+
+            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < columns) {
+                Tile neighbor = getTileByPosition(newRow, newCol);
+                if (neighbor != null && neighbor.getEdges().size() != 0) {
+                    currentTile.addNeighbor(neighbor);
+                }
+            }
+        }
+    }
+
     public int getRows() {
         return rows;
     }
@@ -323,11 +355,32 @@ public class Board implements Observable {
         }
         for(Tile t : board){
             if(t.getRole()==Role.SOURCE){
+                System.out.println("lights up ");
                 lightUpNeighbors(t);
             }
         }
+        lightUpWifi();
     }
 
+    public void lightUpWifi(){
+        if(!isSquare){
+            boolean isWifiLit= false;
+            for(Tile t : board){
+                if (t.getRole() == Role.WIFI && t.getLit()) {
+                    isWifiLit = true;
+                    break;
+                }
+            }
+            if(isWifiLit){
+                for (Tile t : board){
+                    if(t.getRole()==Role.WIFI){
+                        t.setLit(true);
+                        lightUpNeighbors(t);
+                    }
+                }
+            }
+        }
+    }
     public void lightUpNeighbors(Tile tile){
         for(Tile neighbor : tile.getNeighbors()){
             boolean connected;
@@ -345,16 +398,13 @@ public class Board implements Observable {
         }
     }
     public boolean isBoardWinningConfig() {
-
         for (Tile tile : board) {
             if (tile.getEdges().size() != 0) {
                 if (!tile.getLit()) {
-                    System.out.println("tile  " +tile.getRole()  + " is not lit.");
                     return false;
                 }
             }
         }
-
         return true;
     }
 
