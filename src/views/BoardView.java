@@ -183,12 +183,12 @@ public class BoardView extends JPanel implements Observer {
 
         } else {//connection tiles
             if (tile.getEdges().size() != 0) {
-                ArrayList<Integer> edges = tile.getEdges();
-                BufferedImage line = squareGrayTiles.get("line");
-                BufferedImage curve = squareGrayTiles.get("curve");
-                int previousEdge = edges.get(edges.size() - 1);
+            ArrayList<Integer> edges = tile.getEdges();
+            BufferedImage line = squareGrayTiles.get("line");
+            BufferedImage curve = squareGrayTiles.get("curve");
+            int previousEdge = edges.get(edges.size() - 1);
                 System.out.println(edges);
-                for (int e = 0; e < tile.getEdges().size(); e++) {
+            for (int e = 0; e < tile.getEdges().size(); e++) {
                     int currentEdge = edges.get(e);
                     if (previousEdge != currentEdge) { // vérifier si l'arête actuelle est différente de l'arête précédente
                         int difference = edgeDifference(previousEdge, currentEdge, 4);
@@ -204,8 +204,8 @@ public class BoardView extends JPanel implements Observer {
                 }
             }
         }
-        return temporaryTileViews;
-    }
+    return temporaryTileViews;
+  }
     public BufferedImage rotateImage(BufferedImage img, int degree) {
         AffineTransform tx = new AffineTransform();
         tx.rotate(Math.toRadians(degree), img.getWidth() / 2, img.getHeight() / 2);

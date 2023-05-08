@@ -47,19 +47,12 @@ public class HomepageView extends JPanel {
         horizontalBoxEditMode.add(Box.createHorizontalGlue());
         verticalBox.add(horizontalBoxEditMode);
 
-        Box verticalBoxButtons = Box.createVerticalBox();
-        verticalBoxButtons.add(newGameBtn);
-        verticalBoxButtons.add(editGameBtn);
-        horizontalBox.add(verticalBoxButtons);
 
-        horizontalBox.add(Box.createHorizontalGlue());
+public class HomepageView extends JPanel {
+    private JButton newGameBtn;
+    private JButton settingsBtn;
 
-
-        add(Box.createVerticalGlue());
-        verticalBox.add(addLogo());
-        verticalBox.add(horizontalBox);
-        verticalBox.setAlignmentY(CENTER_ALIGNMENT);
-        verticalBox.setAlignmentX(CENTER_ALIGNMENT);
+    private JButton editGameBtn;
 
         add(verticalBox);
         //TODO bouton paramètres

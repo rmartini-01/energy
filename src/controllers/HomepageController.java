@@ -16,6 +16,7 @@ public class HomepageController extends  Controller{
     public HomepageController(HomepageView view) {
         this.view = view;
         this.view.getNewGameBtn().addActionListener(e -> {
+
             Level level = new Level(view.getSelectedLevel());
             Board board = new Board(level.getHeight(), level.getWidth(), level.getTileConfig(), level.getShape() == 'S');
             BoardView boardView = new BoardView(frame,  level, board);
@@ -42,3 +43,4 @@ public class HomepageController extends  Controller{
         return view;
     }
 }
+
