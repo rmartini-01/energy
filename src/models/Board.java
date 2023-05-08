@@ -23,6 +23,76 @@ public class Board implements Observable {
             neighborsList[i] = new ArrayList<Integer>();
         }
         this.isSquare = isSquare;
+
+        for (Tile currentTile : board) {
+            int row = currentTile.getPositionY();
+            int col = currentTile.getPositionX();
+            // Check and add the neighbors: up, down, left, and right
+               if(isSquare){
+                   connectSquareTiles(currentTile, row, col);
+               }else{
+                   connectHexagonalTiles(currentTile, row, col);
+               }
+        }
+
+
+        lightsUp();
+    }
+
+    private void connectSquareTiles(Tile currentTile, int row , int col){
+        if (row > 0) {
+            Tile topNeighbor = getTileByPosition(row - 1, col);
+            if (topNeighbor != null) {
+                if(topNeighbor.getEdges().size()!=0){
+                    currentTile.addNeighbor(topNeighbor);
+                }
+            }
+        }
+        if (row < rows - 1) {
+            Tile bottomNeighbor = getTileByPosition(row + 1, col);
+            if (bottomNeighbor != null) {
+                if(bottomNeighbor.getEdges().size()!=0) {
+                    currentTile.addNeighbor(bottomNeighbor);
+                }
+            }
+        }
+        if (col > 0) {
+            Tile leftNeighbor = getTileByPosition(row, col - 1);
+            if (leftNeighbor != null) {
+                if(leftNeighbor.getEdges().size()!=0) {
+                    currentTile.addNeighbor(leftNeighbor);
+                }
+            }
+        }
+        if (col < columns - 1) {
+            Tile rightNeighbor = getTileByPosition(row, col + 1);
+            if (rightNeighbor != null) {
+                if(rightNeighbor.getEdges().size()!=0) {
+                    currentTile.addNeighbor(rightNeighbor);
+                }
+            }
+        }
+
+    }
+
+
+    private void connectHexagonalTiles(Tile currentTile, int row, int col) {
+        int[][] evenRowOffsets = {{0, -1}, {1, -1}, {-1, 0}, {1, 0}, {0, 1}, {1, 1}};
+        int[][] oddRowOffsets = {{-1, -1}, {0, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}};
+
+        int[][] offsets = (row % 2 == 0) ? evenRowOffsets : oddRowOffsets;
+
+        for (int[] offset : offsets) {
+            int newRow = row + offset[0];
+            int newCol = col + offset[1];
+
+            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < columns) {
+                Tile neighbor = getTileByPosition(newRow, newCol);
+                if (neighbor != null && neighbor.getEdges().size() != 0) {
+                    currentTile.addNeighbor(neighbor);
+                }
+            }
+        }
     }
 
     public int getRows() {
@@ -41,6 +111,15 @@ public class Board implements Observable {
 
     public ArrayList<Tile> getBoard() {
         return board;
+    }
+
+    public Tile getTileByPosition(int row, int col){
+        for(Tile t : board){
+            if(t.getPositionX()==col && t.getPositionY()==row){
+                return t;
+            }
+        }
+        return null;
     }
 
     public ArrayList<Integer>[] getneighborsList() {
@@ -128,7 +207,9 @@ public class Board implements Observable {
         return connect; // not next to each other on the board
     }
 
-    public boolean areConnectedSquare(Tile t1, Tile t2) { // check if two tiles are next to each other and connected on
+
+    public boolean areConnectedSquare(Tile t1, Tile t2) {
+        // check if two tiles are next to each other and connected on
         // the board with their edges
         boolean connect = false;
         if (t1.getPositionX() == t2.getPositionX() && (t2.getPositionY() == t1.getPositionY() - 1)) { // t2 top
@@ -148,12 +229,10 @@ public class Board implements Observable {
             if (t1.getEdges().contains(3) && t2.getEdges().contains(1)) {
                 connect = true;
             }
-
         }
         return connect; // not next to each other on the board
 
     }
-
 
     public void setNeighborsSquare() { // sets the neighbors of each square tile
         for (int i = 0; i < this.board.size(); i++) {
@@ -257,15 +336,60 @@ public class Board implements Observable {
         }
     }
 
-    public boolean isBoardWinningConfig(){ // don't work
-        ArrayList<Tile> tmp_board = this.board;
-        for (Tile t1 : this.board){
-            for (Tile t2 : tmp_board) {
-                if (t1.getId() != t2.getId()) {
-                    if (!DFS(t1.getId(), t2.getId())) {
-                        System.out.println("pas de chemin ente "+t1.getId()+ " et "+t2.getId());
-                        return false;
+    public void lightsUp(){
+        for(Tile t: board){
+            if(t.getRole()!=Role.SOURCE){
+               t.setLit(false);
+            }
+        }
+        for(Tile t : board){
+            if(t.getRole()==Role.SOURCE){
+                lightUpNeighbors(t);
+            }
+        }
+        lightUpWifi();
+    }
+
+    public void lightUpWifi(){
+        if(!isSquare){
+            boolean isWifiLit= false;
+            for(Tile t : board){
+                if (t.getRole() == Role.WIFI && t.getLit()) {
+                    isWifiLit = true;
+                    break;
+                }
+            }
+            if(isWifiLit){
+                for (Tile t : board){
+                    if(t.getRole()==Role.WIFI){
+                        t.setLit(true);
+                        lightUpNeighbors(t);
                     }
+                }
+            }
+        }
+    }
+    public void lightUpNeighbors(Tile tile){
+        for(Tile neighbor : tile.getNeighbors()){
+            boolean connected;
+            if(isSquare){
+                connected = areConnectedSquare(tile, neighbor);
+            }else{
+                connected = areConnectedHex(tile, neighbor);
+            }
+            if(connected){
+                if(!neighbor.getLit()){
+                    neighbor.setLit(true);
+                    lightUpNeighbors(neighbor);
+                }
+            }
+        }
+    }
+    public boolean isBoardWinningConfig() {
+        for (Tile tile : board) {
+            if (tile.getEdges().size() != 0) {
+                if (!tile.getLit()) {
+                    return false;
                 }
             }
         }

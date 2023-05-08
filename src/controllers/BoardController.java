@@ -1,5 +1,6 @@
 package controllers;
 import models.Board;
+import models.Role;
 import models.Tile;
 import views.BoardView;
 import views.TileView;
@@ -17,6 +18,7 @@ public class BoardController extends Controller {
         this.navigationController = nc;
         this.view = view;
         this.board.addObserver(this.view);
+
         this.view.getPanel(). addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -31,6 +33,13 @@ public class BoardController extends Controller {
             if (view.contains(tilePosition, clickPosition , tileView.getImage().getWidth(), tileView.getImage().getHeight())) {
                 Tile t = tileView.getTile();
                 board.rotateTile(t);
+                board.lightsUp();
+                if(!board.isBoardWinningConfig()){
+                  // System.out.println("pas connecté");
+                }else{
+                  // System.out.println("tout est connecté ");
+
+                }
             }
         }
     }

@@ -14,7 +14,7 @@ public class Tile {
     private int pos_y;
     private Role role;
     private char shape;
-    private boolean lit = false;
+    private boolean lit;
     private BufferedImage image ;
 
     public Tile(int i, int x, int y, char s, Role r, ArrayList<Integer> e) {
@@ -24,8 +24,9 @@ public class Tile {
         this.role = r;
         this.edges = e;
         this.shape = s;
+        this.lit = getRole() == Role.SOURCE;
         image = null;
-
+        neighbors = new ArrayList<>();
     }
 
     public void setId(int i) {
@@ -40,6 +41,15 @@ public class Tile {
         this.pos_y = y;
     }
 
+    public int getOppositeEdge(int edge) {
+        return switch (edge) {
+            case 0 -> 2;
+            case 2 -> 0;
+            case 3 -> 1;
+            case 1 -> 3;
+            default -> throw new IllegalArgumentException("Invalid direction");
+        };
+    }
     public BufferedImage getImage() {
         return image;
     }
@@ -81,6 +91,9 @@ public class Tile {
 
     public void setNeighbors(ArrayList<Tile> n) {
         this.neighbors = n;
+    }
+    public void addNeighbor(Tile t){
+        this.neighbors.add(t);
     }
 
     public void setLit(boolean b) {
