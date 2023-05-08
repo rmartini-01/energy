@@ -34,7 +34,6 @@ public class BoardController extends Controller {
                 Tile t = tileView.getTile();
                 board.rotateTile(t);
                 board.lightsUp();
-
                 if(!board.isBoardWinningConfig()){
                   // System.out.println("pas connecté");
                 }else{
