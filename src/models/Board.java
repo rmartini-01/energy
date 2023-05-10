@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Stack;
 
@@ -27,12 +28,19 @@ public class Board implements Observable {
         for (Tile currentTile : board) {
             int row = currentTile.getPositionY();
             int col = currentTile.getPositionX();
-            // Check and add the neighbors: up, down, left, and right
-               if(isSquare){
-                   connectSquareTiles(currentTile, row, col);
-               }else{
-                   connectHexagonalTiles(currentTile, row, col);
-               }
+            if(currentTile.getEdges().size()!=0){
+                // Check and add the neighbors: up, down, left, and right
+                if(isSquare){
+                    connectSquareTiles(currentTile, row, col);
+                }else{
+                    connectHexagonalTiles(currentTile, row, col);
+                }
+                System.out.println("Tile " + currentTile.getRole() + "x:" + currentTile.getPositionX()+ "y:"+ currentTile.getPositionY()+" neighbors : ");
+                /*for(Tile t : currentTile.getNeighbors()){
+                    System.out.println(t.getRole() + " x:  " + t.getPositionX() + " y:" + t.getPositionY());
+                }*/
+            }
+
         }
         lightsUp();
     }
@@ -179,14 +187,25 @@ public class Board implements Observable {
     }
     public boolean areConnectedHex(Tile t1, Tile t2) { // same as areConnectedSquare but on hex board
         boolean connect = false;
+        System.out.println("comparing "+ t1.getPositionX()  + " - " + t1.getPositionY() + " edges : " + t1.getEdges());
+        System.out.println("with "+ t2.getPositionX()  + " - " + t2.getPositionY()+ " edges : " + t2.getEdges());
+
         if (t1.getPositionX() == t2.getPositionX() && (t2.getPositionY() == t1.getPositionY() - 1)) { // t2 top
             if (t1.getEdges().contains(0) && t2.getEdges().contains(3)) {
                 connect = true;
             }
         } else if ((t2.getPositionX() == t1.getPositionX() + 1) && t1.getPositionY() == t2.getPositionY()) { // t2 top
             // right
-            if (t1.getEdges().contains(1) && t2.getEdges().contains(4)) {
-                connect = true;
+            if ( t2.getEdges().contains(5)){
+                if(t1.getEdges().contains(2)){
+                    connect = true;
+                }
+            }
+            else if(t2.getEdges().contains(4)) {
+                if (t1.getEdges().contains(1)) {
+                    connect = true;
+                }
+
             }
         } else if ((t2.getPositionX() == t1.getPositionX() + 1) && t2.getPositionY() == t1.getPositionY() + 1) { // t2
             // down
@@ -204,16 +223,44 @@ public class Board implements Observable {
             // down
             if (t1.getEdges().contains(4) && t2.getEdges().contains(1)) {
                 connect = true;
+
             }
         } else if ((t2.getPositionX() == t1.getPositionX() - 1) && t1.getPositionY() == t2.getPositionY()) { // t2 left
             // top
             if (t1.getEdges().contains(5) && t2.getEdges().contains(2)) {
                 connect = true;
-            }
-        }
-        return connect; // not next to each other on the board
-    }
 
+            }
+        }else if(t2.getPositionX() == t1.getPositionX()-1  && t2.getPositionY() ==t1.getPositionY() -1){
+            if (t1.getEdges().contains(5) && t2.getEdges().contains(2)|| t1.getEdges().contains(2) && t2.getEdges().contains(5)) {
+                connect = true;
+
+            }
+        }else if(t1.getPositionX() == t2.getPositionX()-1  && t1.getPositionY() ==t2.getPositionY()){
+            if(t1.getEdges().contains(0) && t2.getEdges().contains(5) ||t1.getEdges().contains(5) && t2.getEdges().contains(0)  ){
+                connect = true;
+            }
+        }else if(t1.getPositionX() == t2.getPositionX()+1  && t1.getPositionY() == t2.getPositionY()-1){
+            if(t1.getEdges().contains(1) && t2.getEdges().contains(4)){
+                connect = true;
+            }
+        }else{
+            if(t1.getPositionX() == t2.getPositionX()-1  && t1.getPositionY() == t2.getPositionY()+1){
+               if(t1.getEdges().contains(5)){
+                    if (t2.getEdges().contains(0)) {
+                        connect = true;
+                    }
+                }else if(t1.getEdges().contains(1)){
+                   if(t2.getEdges().contains(4)){
+                       connect = true;
+                   }
+               }
+               System.out.printf("ici");
+            }
+            System.out.println("todo?");
+        }
+        return connect;
+    }
 
     public boolean areConnectedSquare(Tile t1, Tile t2) {
         // check if two tiles are next to each other and connected on
@@ -351,10 +398,12 @@ public class Board implements Observable {
         }
         for(Tile t : board){
             if(t.getRole()==Role.SOURCE){
+                System.out.println("lighting up  "+ t.getPositionX()  + " - " + t.getPositionY());
                 lightUpNeighbors(t);
             }
         }
         lightUpWifi();
+        notifyObservers();
     }
 
     public void lightUpWifi(){
@@ -373,22 +422,27 @@ public class Board implements Observable {
                     }
                 }
             }
-
     }
     public void lightUpNeighbors(Tile tile){
         for(Tile neighbor : tile.getNeighbors()){
+            System.out.println("comparing "+ tile.getPositionX()  + " - " + tile.getPositionY() + " edges : " + tile.getEdges());
+            System.out.println("with "+ neighbor.getPositionX()  + " - " + neighbor.getPositionY()+ " edges : " + neighbor.getEdges());
+
             boolean connected;
             if(isSquare){
                 connected = areConnectedSquare(tile, neighbor);
             }else{
                 connected = areConnectedHex(tile, neighbor);
             }
+            System.out.println("connected? " + connected);
             if(connected){
                 if(!neighbor.getLit()){
                     neighbor.setLit(true);
+                    System.out.println("lighting up  "+ neighbor.getPositionX()  + " - " + neighbor.getPositionY());
                     lightUpNeighbors(neighbor);
                 }
             }
+            System.out.println();
         }
     }
     public boolean isBoardWinningConfig() {

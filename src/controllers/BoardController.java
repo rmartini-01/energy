@@ -32,6 +32,7 @@ public class BoardController extends Controller {
             Point tilePosition = tileView.getPosition();
             if (view.contains(tilePosition, clickPosition , tileView.getImage().getWidth(), tileView.getImage().getHeight())) {
                 Tile t = tileView.getTile();
+                System.out.println("__________________________");
                 board.rotateTile(t);
                 board.lightsUp();
                 if(!board.isBoardWinningConfig()){
