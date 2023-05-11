@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Board implements Observable {
     protected int rows;
@@ -35,16 +36,22 @@ public class Board implements Observable {
                 }else{
                     connectHexagonalTiles(currentTile, row, col);
                 }
-                System.out.println("Tile " + currentTile.getRole() + "x:" + currentTile.getPositionX()+ "y:"+ currentTile.getPositionY()+" neighbors : ");
-                /*for(Tile t : currentTile.getNeighbors()){
-                    System.out.println(t.getRole() + " x:  " + t.getPositionX() + " y:" + t.getPositionY());
-                }*/
             }
 
         }
+        shuffle();
         lightsUp();
-    }
 
+    }
+    public void shuffle() {
+        int max = isSquare ? 4 : 6;
+        for (var tile : board) {
+            int randint = ThreadLocalRandom.current().nextInt(max);
+            for (int i = 0; i < randint; i++) {
+                tile.rotateTile();
+            }
+        }
+    }
     private void connectSquareTiles(Tile currentTile, int row , int col){
         if (row > 0) {
             Tile topNeighbor = getTileByPosition(row - 1, col);
@@ -189,8 +196,6 @@ public class Board implements Observable {
     public boolean areConnectedHex(Tile t1, Tile t2) {
         int t1Direction = neighborHexDirection(t1, t2);
         int t2Direction = (t1Direction + 3)%6;
-        System.out.printf("t1x: %d, t1y: %d, t2x: %d, t2y: %d,t1dir: %d",
-                t1.getPositionX(), t1.getPositionY(), t2.getPositionX(), t2.getPositionY(), t1Direction);
         return t1.getEdges().contains(t1Direction) && t2.getEdges().contains(t2Direction);
     }
 
@@ -399,7 +404,6 @@ public class Board implements Observable {
                     lightUpNeighbors(neighbor);
                 }
             }
-            System.out.println();
         }
     }
     public boolean isBoardWinningConfig() {

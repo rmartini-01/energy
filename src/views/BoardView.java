@@ -1,13 +1,17 @@
 package views;
 
+import controllers.NavigationController;
 import listeners.NavigateBackListener;
 import models.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Array;
@@ -19,7 +23,7 @@ import static java.lang.Math.sqrt;
 
 public class BoardView extends JPanel implements Observer {
     private Level level;
-    private JFrame frame;
+    public JFrame frame;
     private ArrayList<TileView> tileViews;
     private Graphics2D g2d;
     private HashMap<String, BufferedImage> squareGrayTiles = createGraySquareTiles();
@@ -27,7 +31,8 @@ public class BoardView extends JPanel implements Observer {
 
     private HashMap<String, BufferedImage> squareWhiteTiles = createWhiteSquareTiles();
     private HashMap<String, BufferedImage> hexaWhiteTiles = createWhiteHexagoneTiles();
-
+    public JButton btnDialog;
+    public JDialog dialog;
     private Board board;
 
     public BoardView(JFrame frame, Level level, Board board) {
@@ -35,6 +40,8 @@ public class BoardView extends JPanel implements Observer {
         this.level = level;
         this.board = board;
         tileViews = new ArrayList<>();
+        btnDialog = new JButton("OK");
+
         setName("Board");
         add(goBackBtn());
     }
@@ -48,28 +55,53 @@ public class BoardView extends JPanel implements Observer {
         super.paintComponent(g);
         g2d = (Graphics2D) g;
         Point origin = new Point(80, 70);
-        if (tileViews.size() == 0) {
-            if (level.getShape() == 'H') {
-                createHexagoneBoard(g2d, origin);
+         if (tileViews.size() == 0) { //premier lancement
+                createBoard(origin);
             } else {
-                createSquareBoard(g2d, origin);
+                updateBoard(origin);
+
+            }
+
+    }
+
+    public void showWinningDialog(Component parentComponent) {
+        dialog = new JDialog();
+        dialog.setTitle("Congratulations");
+        dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+
+        JLabel l = new JLabel("The circuit is fully connected !");
+
+        JPanel p = new JPanel();
+        p.add(l);
+        p.add(btnDialog);
+        dialog.add(p);
+        dialog.setSize(200, 100);
+        dialog.setLocationRelativeTo(parentComponent);
+        dialog.setVisible(true);
+
+    }
+
+
+    public void createBoard(Point origin){
+        if (level.getShape() == 'H') {
+            createHexagoneBoard(g2d, origin);
+        } else {
+            createSquareBoard(g2d, origin);
+        }
+    }
+    public void updateBoard(Point origin){
+        ArrayList<TileView> newTileView = new ArrayList<>();
+        if (level.getShape() == 'H') {
+            for (Tile tile : board.getBoard()) {
+                newTileView.addAll(drawHexaTiles(origin, tile));
             }
         } else {
-            ArrayList<TileView> newTileView = new ArrayList<>();
-            if (level.getShape() == 'H') {
-                for (Tile tile : board.getBoard()) {
-                    newTileView.addAll(drawHexaTiles(origin, tile));
-                }
-            } else {
-                for (Tile tile : board.getBoard()) {
-                    newTileView.addAll(drawSquareTiles(origin, tile));
-                }
+            for (Tile tile : board.getBoard()) {
+                newTileView.addAll(drawSquareTiles(origin, tile));
             }
-            tileViews.clear();
-            tileViews.addAll(newTileView);
-
         }
-
+        tileViews.clear();
+        tileViews.addAll(newTileView);
     }
 
     public boolean contains(Point tilePosition, Point mousePosition, int width, int height) {
@@ -94,7 +126,6 @@ public class BoardView extends JPanel implements Observer {
         tileViews.clear();
         for (int i = 0; i < board.getBoard().size(); i++) {
             Tile tile = board.getBoard().get(i);
-
             tileViews.addAll(drawHexaTiles(origin, tile));
         }
     }
