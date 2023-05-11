@@ -6,6 +6,8 @@ import views.BoardView;
 import views.TileView;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -18,11 +20,17 @@ public class BoardController extends Controller {
         this.navigationController = nc;
         this.view = view;
         this.board.addObserver(this.view);
-
         this.view.getPanel(). addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 handleTileClick(e);
+            }
+        });
+        this.view.btnDialog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.dialog.dispose();
+                NavigationController.getInstance(view.frame).goBack();
             }
         });
     }
@@ -34,13 +42,11 @@ public class BoardController extends Controller {
                 Tile t = tileView.getTile();
                 board.rotateTile(t);
                 board.lightsUp();
-                if(!board.isBoardWinningConfig()){
-                  // System.out.println("pas connecté");
-                }else{
-                  // System.out.println("tout est connecté ");
 
-                }
             }
+        }
+        if(board.isBoardWinningConfig()){
+            view.showWinningDialog(view.getPanel());
         }
     }
 }

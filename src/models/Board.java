@@ -1,8 +1,10 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Board implements Observable {
     protected int rows;
@@ -27,18 +29,29 @@ public class Board implements Observable {
         for (Tile currentTile : board) {
             int row = currentTile.getPositionY();
             int col = currentTile.getPositionX();
-            // Check and add the neighbors: up, down, left, and right
-               if(isSquare){
-                   connectSquareTiles(currentTile, row, col);
-               }else{
-                   connectHexagonalTiles(currentTile, row, col);
-               }
+            if(currentTile.getEdges().size()!=0){
+                // Check and add the neighbors: up, down, left, and right
+                if(isSquare){
+                    connectSquareTiles(currentTile, row, col);
+                }else{
+                    connectHexagonalTiles(currentTile, row, col);
+                }
+            }
+
         }
-
-
+        shuffle();
         lightsUp();
-    }
 
+    }
+    public void shuffle() {
+        int max = isSquare ? 4 : 6;
+        for (var tile : board) {
+            int randint = ThreadLocalRandom.current().nextInt(max);
+            for (int i = 0; i < randint; i++) {
+                tile.rotateTile();
+            }
+        }
+    }
     private void connectSquareTiles(Tile currentTile, int row , int col){
         if (row > 0) {
             Tile topNeighbor = getTileByPosition(row - 1, col);
@@ -75,16 +88,24 @@ public class Board implements Observable {
 
     }
 
-
     private void connectHexagonalTiles(Tile currentTile, int row, int col) {
-        int[][] evenRowOffsets = {{0, -1}, {1, -1}, {-1, 0}, {1, 0}, {0, 1}, {1, 1}};
-        int[][] oddRowOffsets = {{-1, -1}, {0, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}};
+        int[][] directions;
 
-        int[][] offsets = (row % 2 == 0) ? evenRowOffsets : oddRowOffsets;
+        if (col % 2 == 0) {
+            directions = new int[][]{
+                    {-1, -1}, {-1, 0}, {0, -1},
+                    {1, 0}, {0, 1}, {-1, 1}
+            };
+        } else {
+            directions = new int[][]{
+                    {-1, 0}, {1, 0}, {1, 1},
+                    {0, 1}, {1, -1}, {0, -1}
+            };
+        }
 
-        for (int[] offset : offsets) {
-            int newRow = row + offset[0];
-            int newCol = col + offset[1];
+        for (int[] direction : directions) {
+            int newRow = row + direction[0];
+            int newCol = col + direction[1];
 
             if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < columns) {
                 Tile neighbor = getTileByPosition(newRow, newCol);
@@ -94,6 +115,7 @@ public class Board implements Observable {
             }
         }
     }
+
 
     public int getRows() {
         return rows;
@@ -170,43 +192,44 @@ public class Board implements Observable {
             System.out.println();
         }
     }
-    public boolean areConnectedHex(Tile t1, Tile t2) { // same as areConnectedSquare but on hex board
-        boolean connect = false;
-        if (t1.getPositionX() == t2.getPositionX() && (t2.getPositionY() == t1.getPositionY() - 1)) { // t2 top
-            if (t1.getEdges().contains(0) && t2.getEdges().contains(3)) {
-                connect = true;
-            }
-        } else if ((t2.getPositionX() == t1.getPositionX() + 1) && t1.getPositionY() == t2.getPositionY()) { // t2 top
-            // right
-            if (t1.getEdges().contains(1) && t2.getEdges().contains(4)) {
-                connect = true;
-            }
-        } else if ((t2.getPositionX() == t1.getPositionX() + 1) && t2.getPositionY() == t1.getPositionY() + 1) { // t2
-            // down
-            // right
-            if (t1.getEdges().contains(2) && t2.getEdges().contains(5)) {
-                connect = true;
-            }
-        } else if (t1.getPositionX() == t2.getPositionX() && (t2.getPositionY() == t1.getPositionY() + 1)) { // t2 down
-            if (t1.getEdges().contains(3) && t2.getEdges().contains(0)) {
-                connect = true;
-            }
 
-        } else if ((t2.getPositionX() == t1.getPositionX() - 1) && (t2.getPositionY() == t1.getPositionY() + 1)) { // t2
-            // left
-            // down
-            if (t1.getEdges().contains(4) && t2.getEdges().contains(1)) {
-                connect = true;
-            }
-        } else if ((t2.getPositionX() == t1.getPositionX() - 1) && t1.getPositionY() == t2.getPositionY()) { // t2 left
-            // top
-            if (t1.getEdges().contains(5) && t2.getEdges().contains(2)) {
-                connect = true;
-            }
-        }
-        return connect; // not next to each other on the board
+    public boolean areConnectedHex(Tile t1, Tile t2) {
+        int t1Direction = neighborHexDirection(t1, t2);
+        int t2Direction = (t1Direction + 3)%6;
+        return t1.getEdges().contains(t1Direction) && t2.getEdges().contains(t2Direction);
     }
 
+    /**
+     * récuperer la direction d'une tuile hexagonale par rapport à une autre (voisine)
+     * @param h1 tuile 1
+     * @param h2 tuile 2 le voisin
+     * @return côté connecté de la tuile 1
+     */
+    public int neighborHexDirection(Tile h1, Tile h2) {
+        int h1X = h1.getPositionX();
+        int h1Y = h1.getPositionY();
+        int h2X = h2.getPositionX();
+        int h2Y = h2.getPositionY();
+        int xDifference = h1X-h2X;
+        int yDifference = h1Y-h2Y;
+        if (h1X%2 == 0) {
+            if (xDifference == 0 && yDifference == 1) return 0;
+            if (xDifference == -1 && yDifference == 1) return 1;
+            if (xDifference == -1 && yDifference == 0) return 2;
+            if (xDifference == 0 && yDifference == -1) return 3;
+            if (xDifference == 1 && yDifference == 0) return 4;
+            if (xDifference == 1 && yDifference == 1) return 5;
+        }
+        else {
+            if (xDifference == 0 && yDifference == 1) return 0;
+            if (xDifference == -1 && yDifference == 0) return 1;
+            if (xDifference == -1 && yDifference == -1) return 2;
+            if (xDifference == 0 && yDifference == -1) return 3;
+            if (xDifference == 1 && yDifference == -1) return 4;
+            if (xDifference == 1 && yDifference == 0) return 5;
+        }
+        throw new IllegalArgumentException("Tiles are not neighbors");
+    }
 
     public boolean areConnectedSquare(Tile t1, Tile t2) {
         // check if two tiles are next to each other and connected on
@@ -351,7 +374,6 @@ public class Board implements Observable {
     }
 
     public void lightUpWifi(){
-        if(!isSquare){
             boolean isWifiLit= false;
             for(Tile t : board){
                 if (t.getRole() == Role.WIFI && t.getLit()) {
@@ -367,7 +389,6 @@ public class Board implements Observable {
                     }
                 }
             }
-        }
     }
     public void lightUpNeighbors(Tile tile){
         for(Tile neighbor : tile.getNeighbors()){
