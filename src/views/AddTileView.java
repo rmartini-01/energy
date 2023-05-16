@@ -28,15 +28,17 @@ public class AddTileView extends JPanel {
     public Box verticalBoxEdges = Box.createVerticalBox();
     public Box horizontalBox2 = Box.createHorizontalBox();
     public Box horizontalBox = Box.createHorizontalBox();
+    public Level level;
 
 
-    public AddTileView(JFrame frame,int level,char shape, Board modification_board) {
+    public AddTileView(JFrame frame,Level level,char shape, Board modification_board) {
+        this.level=level;
         this.modification_board=modification_board;
         this.frame = frame;
         this.checkListEdge=new ArrayList<JCheckBox>() ;
         this.checkListPosition=new ArrayList<JCheckBox>() ;
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-        setName("Edit Mode Level " + level + " -  Add a Tile");
+        setName("Edit Mode Level " + level.getNum() + " -  Add a Tile");
         horizontalBox.add(Box.createHorizontalGlue());
         verticalBox.setAlignmentY(CENTER_ALIGNMENT);
         verticalBox.setAlignmentX(CENTER_ALIGNMENT);

@@ -9,7 +9,7 @@ import java.awt.event.KeyEvent;
 public class MenuBarView extends JMenuBar{
     private JFrame frame;
     public MenuBarView(JFrame frame){
-    this.frame = frame;
+        this.frame = frame;
         JMenu menuFile = new JMenu( "Game" );
         menuFile.setMnemonic( 'G' );
 
@@ -31,10 +31,10 @@ public class MenuBarView extends JMenuBar{
     }
 
     public void newGameListener( ActionEvent event ) {
-       // JOptionPane.showMessageDialog( this, "Button clicked !" );
+        // JOptionPane.showMessageDialog( this, "Button clicked !" );
         NavigationController.getInstance(frame);
     }
     public void quitGameListener( ActionEvent event ) {
-       //todo
+        //todo
     }
 }

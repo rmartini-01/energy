@@ -1,20 +1,16 @@
 package views;
 
-import controllers.EditmodeController;
-import controllers.HomepageController;
-import controllers.NavigationController;
-import listeners.NavigateBackListener;
-import models.*;
+import models.Board;
+import models.Level;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class EditGameView extends JPanel {
+
+public class EditGameView extends BoardAbstract  {
     public JFrame frame;
-    int level;
+    public HomepageView frameHome;
     public JMenuBar editMenuBar = new JMenuBar();
     public JMenu editBoardMenu = new JMenu("Edit Board");
     public JMenu editTileMenu = new JMenu("Edit Tile");
@@ -24,17 +20,14 @@ public class EditGameView extends JPanel {
     public JMenuItem modifGeoBoardItem = new JMenuItem("Modify Board Shape");
     public JButton validateModif = new JButton ("Validate");
     public JButton goBackBtn = new JButton();
-    public Board board;
-    public Board modification_board;
 
-    public EditGameView(JFrame frame, int level, Board board) {
-        this.level=level;
-        Level l = new Level(level);
-        this.board = board;
-        this.board.initNeighborsList();
-        this.modification_board = this.board;
+    public EditGameView(JFrame frame, Level level, Board board, HomepageView home) {
         this.frame=frame;
-        setName("Edit Mode Level " + level);
+        this.frameHome=home;
+        this.level=level;
+        this.tileViews = new ArrayList<>();
+        this.board = board;
+        setName("Edit Mode Level " + level.getNum());
         ImageIcon icon = new ImageIcon("src/res/back-icon-white.png");
         Image image = icon.getImage();
         Image scaledImage = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
@@ -54,6 +47,10 @@ public class EditGameView extends JPanel {
         add(validateModif);
     }
 
-    public int getLevel(){return this.level;}
+    public Level getLevel(){return this.level;}
+
+    public JPanel getPanel() {
+        return this;
+    }
 
 }

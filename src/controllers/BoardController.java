@@ -5,6 +5,8 @@ import views.BoardView;
 import views.TileView;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -23,6 +25,13 @@ public class BoardController extends Controller {
                 handleTileClick(e);
             }
         });
+        this.view.btnDialog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.dialog.dispose();
+                NavigationController.getInstance(view.frame).goBack();
+            }
+        });
     }
     public void handleTileClick(MouseEvent e) {
         Point clickPosition = e.getPoint();
@@ -31,7 +40,12 @@ public class BoardController extends Controller {
             if (view.contains(tilePosition, clickPosition , tileView.getImage().getWidth(), tileView.getImage().getHeight())) {
                 Tile t = tileView.getTile();
                 board.rotateTile(t);
+                board.lightsUp();
+
             }
+        }
+        if(board.isBoardWinningConfig()){
+            view.showWinningDialog(view.getPanel());
         }
     }
 }

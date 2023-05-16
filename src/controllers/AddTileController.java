@@ -13,48 +13,48 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class AddTileController extends Controller {
-        private EditmodeController editController;
-        private EditGameView editView;
-        private JFrame frame;
-        private final AddTileView view;
-        private Board modification_board;
-        private char shape;
+    private EditmodeController editController;
+    private EditGameView editView;
+    private JFrame frame;
+    private final AddTileView view;
+    private Board modification_board;
+    private char shape;
 
-        public AddTileController(JFrame frame ,Board modif_board,AddTileView view, EditGameView editView,EditmodeController editController,NavigationController nc ) {
-            this.editView=editView;
-            this.editController = editController;
-            this.frame=frame;
-            this.view = view;
-            this.modification_board = modif_board;
-            this.navigationController=nc;
-            this.shape = (this.modification_board.isSquare()) ? 'S' : 'H';
-            CheckActionListener listenerCheckBoxEdge;
-            if (this.shape=='S'){
-                listenerCheckBoxEdge = new CheckActionListener(
-                        this.view.checkboxZero, this.view.checkboxOne, this.view.checkboxTwo, this.view.checkboxThree, this.view.checkboxNo);
-                this.view.checkboxZero.addActionListener(listenerCheckBoxEdge);
-                this.view.checkboxOne.addActionListener(listenerCheckBoxEdge);
-                this.view.checkboxTwo.addActionListener(listenerCheckBoxEdge);
-                this.view.checkboxThree.addActionListener(listenerCheckBoxEdge);
-            }
-            else{
-                listenerCheckBoxEdge = new CheckActionListener(
-                        this.view.checkboxZero, this.view.checkboxOne, this.view.checkboxTwo,
-                        this.view.checkboxThree, this.view.checkboxFour, this.view.checkboxFive, this.view.checkboxNo);
-                this.view.checkboxZero.addActionListener(listenerCheckBoxEdge);
-                this.view.checkboxOne.addActionListener(listenerCheckBoxEdge);
-                this.view.checkboxTwo.addActionListener(listenerCheckBoxEdge);
-                this.view.checkboxThree.addActionListener(listenerCheckBoxEdge);
-                this.view.checkboxFour.addActionListener(listenerCheckBoxEdge);
-                this.view.checkboxFive.addActionListener(listenerCheckBoxEdge);
-
-            }
-            this.view.checkboxNo.addActionListener(listenerCheckBoxEdge);
-            CheckActionListener listenerCheckBoxPosition = new CheckActionListener(this.view.checkboxColumn,this.view.checkboxRow);
-            this.view.checkboxColumn.addActionListener(listenerCheckBoxPosition);
-            this.view.checkboxRow.addActionListener(listenerCheckBoxPosition);
-            this.view.validate.addActionListener(e->createTileListener());
+    public AddTileController(JFrame frame ,Board modif_board,AddTileView view, EditGameView editView,EditmodeController editController,NavigationController nc ) {
+        this.editView=editView;
+        this.editController = editController;
+        this.frame=frame;
+        this.view = view;
+        this.modification_board = modif_board;
+        this.navigationController=nc;
+        this.shape = (this.modification_board.isSquare()) ? 'S' : 'H';
+        CheckActionListener listenerCheckBoxEdge;
+        if (this.shape=='S'){
+            listenerCheckBoxEdge = new CheckActionListener(
+                    this.view.checkboxZero, this.view.checkboxOne, this.view.checkboxTwo, this.view.checkboxThree, this.view.checkboxNo);
+            this.view.checkboxZero.addActionListener(listenerCheckBoxEdge);
+            this.view.checkboxOne.addActionListener(listenerCheckBoxEdge);
+            this.view.checkboxTwo.addActionListener(listenerCheckBoxEdge);
+            this.view.checkboxThree.addActionListener(listenerCheckBoxEdge);
         }
+        else{
+            listenerCheckBoxEdge = new CheckActionListener(
+                    this.view.checkboxZero, this.view.checkboxOne, this.view.checkboxTwo,
+                    this.view.checkboxThree, this.view.checkboxFour, this.view.checkboxFive, this.view.checkboxNo);
+            this.view.checkboxZero.addActionListener(listenerCheckBoxEdge);
+            this.view.checkboxOne.addActionListener(listenerCheckBoxEdge);
+            this.view.checkboxTwo.addActionListener(listenerCheckBoxEdge);
+            this.view.checkboxThree.addActionListener(listenerCheckBoxEdge);
+            this.view.checkboxFour.addActionListener(listenerCheckBoxEdge);
+            this.view.checkboxFive.addActionListener(listenerCheckBoxEdge);
+
+        }
+        this.view.checkboxNo.addActionListener(listenerCheckBoxEdge);
+        CheckActionListener listenerCheckBoxPosition = new CheckActionListener(this.view.checkboxColumn,this.view.checkboxRow);
+        this.view.checkboxColumn.addActionListener(listenerCheckBoxPosition);
+        this.view.checkboxRow.addActionListener(listenerCheckBoxPosition);
+        this.view.validate.addActionListener(e->createTileListener());
+    }
 
     private void createTileListener() {
         boolean filledPos = false;

@@ -2,6 +2,6 @@ package models;
 
 public interface Observer {
 
-     void update(Board b);
+    void update(Board b);
 
 }
