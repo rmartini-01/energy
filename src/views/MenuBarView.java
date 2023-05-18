@@ -1,15 +1,18 @@
 package views;
 
 import controllers.NavigationController;
+import listeners.NavigateBackListener;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-public class MenuBarView extends JMenuBar{
+public class MenuBarView extends JMenuBar {
     private JFrame frame;
-    public MenuBarView(JFrame frame){
+    private  HomepageView viewHome;
+    public MenuBarView(JFrame frame,HomepageView viewHome){
         this.frame = frame;
+        this.viewHome=viewHome;
         JMenu menuFile = new JMenu( "Game" );
         menuFile.setMnemonic( 'G' );
 
@@ -35,6 +38,6 @@ public class MenuBarView extends JMenuBar{
         NavigationController.getInstance(frame);
     }
     public void quitGameListener( ActionEvent event ) {
-        //todo
+        System.exit(0);
     }
 }

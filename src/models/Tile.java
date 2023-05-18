@@ -3,6 +3,7 @@ package models;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -127,6 +128,10 @@ public class Tile {
         }
         System.out.println();
 
+    }
+
+    public void setEdges(ArrayList<Integer> l){
+        this.edges=l;
     }
 
     public char getRoleChar(){

@@ -16,6 +16,7 @@ public class EditGameView extends BoardAbstract  {
     public JMenu editTileMenu = new JMenu("Edit Tile");
     public JMenuItem addTileItem = new JMenuItem("Add a Tile");
     public JMenuItem modifTileItem = new JMenuItem("Modify a Tile");
+    public JMenuItem removeTileItem = new JMenuItem("Remove a Tile");
     public JMenuItem emtpyBoardItem = new JMenuItem("Empty Board");
     public JMenuItem modifGeoBoardItem = new JMenuItem("Modify Board Shape");
     public JButton validateModif = new JButton ("Validate");
@@ -41,6 +42,7 @@ public class EditGameView extends BoardAbstract  {
         this.editBoardMenu.add(this.modifGeoBoardItem);
         this.editTileMenu.add(this.addTileItem);
         this.editTileMenu.add(this.modifTileItem);
+        this.editTileMenu.add(this.removeTileItem);
         this.editMenuBar.add(this.editBoardMenu);
         this.editMenuBar.add(this.editTileMenu);
         add(this.editMenuBar);
@@ -54,3 +56,4 @@ public class EditGameView extends BoardAbstract  {
     }
 
 }
+

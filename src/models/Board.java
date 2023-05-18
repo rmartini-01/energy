@@ -11,8 +11,8 @@ public class Board implements Observable {
     protected ArrayList<Integer>[] neighborsList; // storing the neighbors of each vertex in the graph. connected
     protected boolean isSquare; // 0 = square, 1 = Hexagone
     private ArrayList<Observer> observers;
-    private boolean editmode=false;
-    public Board(int r, int c, ArrayList<Tile> tl,boolean isSquare) {
+    private boolean editmode;
+    public Board(int r, int c, ArrayList<Tile> tl,boolean isSquare,boolean editmode ) {
         rows = r;
         columns = c;
         score = 0;
@@ -37,6 +37,7 @@ public class Board implements Observable {
             }
 
         }
+        this.editmode=editmode;
         shuffle();
         lightsUp();
         Collections.sort(this.board, Comparator.comparingInt(Tile::getId));
@@ -435,7 +436,7 @@ public class Board implements Observable {
     }
 
 
-    public int [] getPosToAddColumn(){ // to add tile on the right of the board
+    public int [] getPosToAddRight(){ // to add tile on the bottom of the board //TODO fix error when empty place
         if (this.board.isEmpty()){
             int [] pos ={0,0};
             this.columns++;
@@ -443,8 +444,8 @@ public class Board implements Observable {
             return pos;
         }
         int[] position = new int[2];
-        int lastX = this.columns-1;
-        int lastY = 0;
+        int lastX =this.columns-1;
+        int lastY =0;
         Tile last_tile = this.board.get(0);
         for (Tile t : this.board){
             if (t.getPositionY()>lastY && t.getPositionX()==lastX){
@@ -453,19 +454,23 @@ public class Board implements Observable {
             }
         }
         if (last_tile.getPositionX()==((this.columns)-1) && last_tile.getPositionY()==((this.rows)-1)){ // case when adding to a new column
-            System.out.println(("add to new column"));
             position[0] = this.columns;
             position[1]=0;
             this.columns+=1;
-        }else{ // case when adding to an existing column
-            System.out.println(("add to existing column"));
-            position[0] = this.columns-1;
+            for(int i = this.rows+1; i < this.board.size()-1;i++){
+                int tmp =this.board.get(i).getId();
+                this.board.get(i).setId(tmp+1);
+            }
+            this.board.get(this.board.size()-1).setId(this.rows+1);
+            Collections.sort(this.board, Comparator.comparingInt(Tile::getId));
+        }else{ // case when adding to an existing row
+            position[0] =this.columns-1;
             position[1] = last_tile.getPositionY()+1;
         }
         return position;
     }
 
-    public int [] getPosToAddRow(){ // to add tile at the bottom of the board
+    public int [] getPosToAddBottom(){ // to add tile at the right of the board
         if (this.board.isEmpty()){
             int [] pos ={0,0};
             this.columns++;
@@ -495,20 +500,6 @@ public class Board implements Observable {
 
 
 
-    public void changeTile(Tile t1, Tile t2){ // change t1 into t2
-
-    }
-
-    public void addTileHexa(Tile t){
-        this.board.add(t);
-        updateNeighborsList();
-    }
-
-    public void addTileSquare(Tile t){
-        this.board.add(t);
-        updateNeighborsList();
-    }
-
 
     public char getShape(){
         return this.isSquare()? 'S':'H';
@@ -517,7 +508,8 @@ public class Board implements Observable {
 
     public void addTile(Tile t) {
         this.board.add(t);
-        //initNeighborsList();
+        Collections.sort(this.board, Comparator.comparingInt(Tile::getId));
+        notifyObservers();
     }
 
     public void setEditmode(boolean b){
@@ -534,16 +526,38 @@ public class Board implements Observable {
         txt+=this.columns+ " ";
         txt+=this.getShape()+"\n";
         for (Tile t : this.board){
-            nextRow++;
-            if (nextRow == this.rows-1){
+            if (nextRow == this.columns){
                 txt+="\n";
+                nextRow=0;
             }
             txt+=t.getRoleChar()+" ";
+            nextRow++;
             for(Integer i : t.getEdges()){
                 txt+=i+" ";
             }
         }
         return txt;
+    }
+
+
+
+    public void modifyTile (int id,Role new_role,ArrayList<Integer> new_edges){
+        for (Tile t : this.board){
+            if (t.getId()==id){
+                t.setEdges(new_edges);
+                t.setRole(new_role);
+            }
+        }
+        Collections.sort(this.board, Comparator.comparingInt(Tile::getId));
+        notifyObservers();
+    }
+
+    public void removeTile (int id){
+        this.board.remove(id);
+        for (int i  =id+1 ; i< this.board.size();i++){
+            this.board.get(i).setId(this.board.get(i).getId()-1);
+        }
+        notifyObservers();
     }
 
 

@@ -21,7 +21,7 @@ public class Main {
         homepageController.setNavigationController(navigationController);
         navigationController.navigateTo(null , homepageController.getView());
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        frame.setJMenuBar(new MenuBarView(frame));
+        frame.setJMenuBar(new MenuBarView(frame,homepageView));
         frame.pack();
         frame.setVisible(true);
     }

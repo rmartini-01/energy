@@ -1,6 +1,8 @@
 package models;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -85,8 +87,8 @@ public class Level {
         int k = 0;
 
         // correctly place the tiles
-        for (int i = 0; i < this.height; i++) {// y axis
-            for (int j = 0; j < this.width; j++) {// x axis
+        for (int i = 0; i < this.height; i++) {// x axis
+            for (int j = 0; j < this.width; j++) {// y axis
                 this.tiles_config.get(k).setPositionX(j);
                 this.tiles_config.get(k).setPositionY(i);
                 this.tiles_config_win.get(k).setPositionX(j);
@@ -118,5 +120,16 @@ public class Level {
 
     public int getNum(){
         return this.numlevel;
+    }
+
+    public void saveChanges(String config){
+        try {
+            File file = new File("src/models/levels/level" + this.numlevel + ".nrg");
+            FileWriter writer = new FileWriter(file, false);
+            writer.write(config);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

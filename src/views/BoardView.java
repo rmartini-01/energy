@@ -16,7 +16,6 @@ public class BoardView extends BoardAbstract {
         this.board = board;
         this.tileViews = new ArrayList<>();
         this.btnDialog = new JButton("OK");
-
         setName("Board");
         add(goBackBtn());
     }
@@ -40,7 +39,6 @@ public class BoardView extends BoardAbstract {
         dialog.setSize(200, 100);
         dialog.setLocationRelativeTo(parentComponent);
         dialog.setVisible(true);
-
     }
 
 
