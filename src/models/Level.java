@@ -1,138 +1,137 @@
-package views;
+package models;
 
-import controllers.AddTileController;
-import models.*;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
-public class AddTileView extends JPanel {
-    public JFrame frame;
-    public ArrayList<JCheckBox> checkListEdge;
-    public ArrayList<JCheckBox> checkListPosition;
-    public JComboBox<String> selectRole;
-    public JCheckBox checkboxZero = new JCheckBox("Up");
-    public JCheckBox checkboxOne = new JCheckBox("Right");
-    public JCheckBox checkboxTwo = new JCheckBox("Down");
-    public JCheckBox checkboxThree = new JCheckBox("Left");
-    public JCheckBox checkboxFour = new JCheckBox("Down Left");
-    public JCheckBox checkboxFive = new JCheckBox("Upper Left");
-    public JCheckBox checkboxNo = new JCheckBox("No Edges");
-    public JCheckBox checkboxRow = new JCheckBox("Bottom");
-    public JCheckBox checkboxColumn = new JCheckBox("Right");
-    public JButton validate = new JButton ("Create new Tile");
-    public Board modification_board;
-    public Box verticalBox = Box.createVerticalBox();
-    public Box verticalBoxEdges = Box.createVerticalBox();
-    public Box horizontalBox2 = Box.createHorizontalBox();
-    public Box horizontalBox = Box.createHorizontalBox();
-    public Level level;
-    public JButton goBackBtn = new JButton();
+public class Level {
+    private int numlevel;
+    private int height;
+    private int width;
+    private char shape;
+    private ArrayList<Character> configuration = new ArrayList<Character>();
+    private ArrayList<Tile> tiles_config_win = new ArrayList<Tile>();
+    private ArrayList<Tile> tiles_config = new ArrayList<Tile>();
 
+    public Level(int l) {
+        this.numlevel=l;
+        try {
+            File levelFile = new File("src/models/levels/level" + l + ".nrg");
+            Scanner sc = new Scanner(levelFile);
+            this.height = sc.nextInt();
+            this.width = sc.nextInt();
+            this.shape = sc.next().charAt(0);
 
-
-    public AddTileView(JFrame frame,Level level,char shape, Board modification_board) {
-        this.level=level;
-        this.modification_board=modification_board;
-        this.frame = frame;
-        this.checkListEdge=new ArrayList<JCheckBox>() ;
-        this.checkListPosition=new ArrayList<JCheckBox>() ;
-        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-        setName("Edit Mode Level " + level.getNum() + " -  Add a Tile");
-        ImageIcon icon = new ImageIcon("src/res/back-icon-white.png");
-        Image image = icon.getImage();
-        Image scaledImage = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-        ImageIcon scaledIcon = new ImageIcon(scaledImage);
-        this.goBackBtn.setIcon(scaledIcon);
-        this.goBackBtn.setPreferredSize(new Dimension(25, 25));
-        this.goBackBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        horizontalBox.add(Box.createHorizontalGlue());
-        verticalBox.setAlignmentY(CENTER_ALIGNMENT);
-        verticalBox.setAlignmentX(CENTER_ALIGNMENT);
-        verticalBox.add(this.goBackBtn);
-        verticalBox.add(Box.createRigidArea(new Dimension(0, 50)));
-        JLabel label_edges = new JLabel("Choose Edges :");
-        this.checkListEdge.add(checkboxZero);
-        this.checkListEdge.add(checkboxOne);
-        this.checkListEdge.add(checkboxTwo);
-        this.checkListEdge.add(checkboxThree);
-        if (shape == 'S'){
-            this.checkListEdge.add(checkboxNo);
-            horizontalBox2.add(label_edges);
-            horizontalBox2.setAlignmentX(CENTER_ALIGNMENT);
-            horizontalBox2.setAlignmentY(CENTER_ALIGNMENT);
-            verticalBox.add(horizontalBox2);
-            verticalBoxEdges.add(Box.createRigidArea(new Dimension(0, 20)));
-            verticalBoxEdges.add(checkboxZero);
-            verticalBoxEdges.add(Box.createRigidArea(new Dimension(0, 10)));
-            verticalBoxEdges.add(checkboxOne);
-            verticalBoxEdges.add(Box.createRigidArea(new Dimension(0, 10)));
-            verticalBoxEdges.add(checkboxTwo);
-            verticalBoxEdges.add(Box.createRigidArea(new Dimension(0, 10)));
-            verticalBoxEdges.add(checkboxThree);
-        }else{
-            this.checkListEdge.add(checkboxFour);
-            this.checkListEdge.add(checkboxFive);
-            this.checkListEdge.add(checkboxNo);
-            horizontalBox2.add(label_edges);
-            verticalBox.add(horizontalBox2);
-            verticalBoxEdges.add(Box.createRigidArea(new Dimension(0, 20)));
-            verticalBoxEdges.add(checkboxZero);
-            verticalBoxEdges.add(Box.createRigidArea(new Dimension(0, 10)));
-            verticalBoxEdges.add(checkboxOne);
-            verticalBoxEdges.add(Box.createRigidArea(new Dimension(0, 10)));
-            verticalBoxEdges.add(checkboxTwo);
-            verticalBoxEdges.add(Box.createRigidArea(new Dimension(0, 10)));
-            verticalBoxEdges.add(checkboxThree);
-            verticalBoxEdges.add(Box.createRigidArea(new Dimension(0, 10)));
-            verticalBoxEdges.add(checkboxFour);
-            verticalBoxEdges.add(Box.createRigidArea(new Dimension(0, 10)));
-            verticalBoxEdges.add(checkboxFive);
+            while (sc.hasNext()) {
+                this.configuration.add(sc.next().charAt(0));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        verticalBoxEdges.add(Box.createRigidArea(new Dimension(0, 10)));
-        verticalBoxEdges.add(checkboxNo);
-        verticalBox.add(verticalBoxEdges);
-        verticalBox.add(Box.createRigidArea(new Dimension(0, 50)));
-        JLabel label_role = new JLabel("Choose a role :");
-        this.selectRole = new JComboBox<>();
-        selectRole.addItem("EMPTY");
-        selectRole.addItem("WIFI");
-        selectRole.addItem("LAMP");
-        selectRole.addItem("SOURCE");
 
-        selectRole.setPreferredSize(new Dimension(150, 40));
-        selectRole.setMaximumSize(new Dimension(150, 40));
-        horizontalBox.add(label_role);
-        horizontalBox.add(Box.createRigidArea(new Dimension(10, 0)));
-        horizontalBox.add(selectRole);
-        horizontalBox.add(Box.createHorizontalGlue());
+        int id = 0;
+        int h = this.configuration.size() - 1;
+        for (int i = 0; i < this.configuration.size() - 1; i++) {
+            Tile tmp_tile;
+            Role tmp_r;
+            ArrayList<Integer> tmp_edge = new ArrayList<Integer>();
+            switch (this.configuration.get(i)) {
+                case 'S' : tmp_r = Role.SOURCE;break;
+                case 'L' : tmp_r = Role.LAMP;break;
+                case 'W' : tmp_r = Role.WIFI;break;
+                default : tmp_r = Role.EMPTY;break;
+            };
 
-        Box horizontalBox3 = Box.createHorizontalBox();
-        JLabel label_position = new JLabel("Add to :");
-        this.checkListPosition.add(checkboxRow);
-        this.checkListPosition.add(checkboxColumn);
-        horizontalBox3.add(label_position);
-        horizontalBox3.add(Box.createRigidArea(new Dimension(40, 10)));
-        horizontalBox3.add(checkboxRow);
-        horizontalBox3.add(Box.createRigidArea(new Dimension(20, 10)));
-        horizontalBox3.add(checkboxColumn);
-        verticalBox.add(horizontalBox3);
-        verticalBox.add(Box.createRigidArea(new Dimension(0, 30)));
-        validate.setPreferredSize(new Dimension(150, 40));
-        validate.setMaximumSize(new Dimension(150, 40));
-        validate.setAlignmentX(CENTER_ALIGNMENT);
-        validate.setAlignmentY(CENTER_ALIGNMENT);
-        verticalBox.add(horizontalBox);
-        verticalBox.add(Box.createRigidArea(new Dimension(10, 50)));
-        verticalBox.add(validate);
-        add(verticalBox);
-        setVisible(true);
+            while (Character.isDigit(this.configuration.get(i + 1))) {
+                tmp_edge.add(Character.getNumericValue(this.configuration.get(i + 1)));
+                i++;
+                if (i == h) {
+                    break;
+                }
+            }
+            tmp_tile = new Tile(id, 0, 0, this.shape, tmp_r, tmp_edge);
+            id++;
+            this.tiles_config.add(tmp_tile);
+            this.tiles_config_win.add(tmp_tile);
+        }
+        char last_element = this.configuration.get(this.configuration.size() - 1);
+        if (!Character.isDigit(last_element)) {
+            ArrayList<Integer> tmp_edge = new ArrayList<Integer>();
+            Tile tmp_tile;
+            switch (last_element) {
+                case 'S' : {
+                    tmp_tile = new Tile(id, 0, 0, this.shape, Role.SOURCE, tmp_edge);
+                    this.tiles_config.add(tmp_tile);
+                    this.tiles_config_win.add(tmp_tile);
+                }
+                case 'L' : {
+                    tmp_tile = new Tile(id, 0, 0, this.shape, Role.LAMP, tmp_edge);
+                    this.tiles_config.add(tmp_tile);
+                    this.tiles_config_win.add(tmp_tile);
+                }
+                case 'W' : {
+                    tmp_tile = new Tile(id, 0, 0, this.shape, Role.WIFI, tmp_edge);
+                    this.tiles_config.add(tmp_tile);
+                    this.tiles_config_win.add(tmp_tile);
+                }
+                default : {
+                    tmp_tile = new Tile(id, 0, 0, this.shape, Role.EMPTY, tmp_edge);
+                    this.tiles_config.add(tmp_tile);
+                    this.tiles_config_win.add(tmp_tile);
+                }
+            }
+
+        }
+        int k = 0;
+
+        // correctly place the tiles
+        for (int i = 0; i < this.height; i++) {// x axis
+            for (int j = 0; j < this.width; j++) {// y axis
+                this.tiles_config.get(k).setPositionX(j);
+                this.tiles_config.get(k).setPositionY(i);
+                this.tiles_config_win.get(k).setPositionX(j);
+                this.tiles_config_win.get(k).setPositionY(i);
+                k++;
+            }
+        }
     }
 
+    public int getHeight() {
+        return this.height;
+    }
 
+    public int getWidth() {
+        return this.width;
+    }
 
+    public ArrayList<Character> getConfig() {
+        return this.configuration;
+    }
 
+    public ArrayList<Tile> getTileConfig() {
+        return this.tiles_config;
+    }
 
+    public char getShape() {
+        return this.shape;
+    }
+
+    public int getNum(){
+        return this.numlevel;
+    }
+
+    public void saveChanges(String config){
+        try {
+            File file = new File("src/models/custom_levels/level" + this.numlevel + "edit.nrg");
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+            FileWriter writer = new FileWriter(file, false);
+            writer.write(config);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
