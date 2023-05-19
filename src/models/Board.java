@@ -11,8 +11,7 @@ public class Board implements Observable {
     protected ArrayList<Integer>[] neighborsList; // storing the neighbors of each vertex in the graph. connected
     protected boolean isSquare; // 0 = square, 1 = Hexagone
     private ArrayList<Observer> observers;
-    private boolean editmode;
-    public Board(int r, int c, ArrayList<Tile> tl,boolean isSquare,boolean editmode ) {
+    public Board(int r, int c, ArrayList<Tile> tl,boolean isSquare) {
         rows = r;
         columns = c;
         score = 0;
@@ -37,21 +36,19 @@ public class Board implements Observable {
             }
 
         }
-        this.editmode=editmode;
         shuffle();
         lightsUp();
         Collections.sort(this.board, Comparator.comparingInt(Tile::getId));
     }
     public void shuffle() {
-        if (this.editmode==false) {
-            int max = isSquare ? 4 : 6;
-            for (var tile : board) {
-                int randint = ThreadLocalRandom.current().nextInt(max);
-                for (int i = 0; i < randint; i++) {
-                    tile.rotateTile();
-                }
+        int max = isSquare ? 4 : 6;
+        for (var tile : board) {
+            int randint = ThreadLocalRandom.current().nextInt(max);
+            for (int i = 0; i < randint; i++) {
+                tile.rotateTile();
             }
         }
+
     }
     private void connectSquareTiles(Tile currentTile, int row , int col){
         if (row > 0) {
@@ -512,12 +509,6 @@ public class Board implements Observable {
         notifyObservers();
     }
 
-    public void setEditmode(boolean b){
-        this.editmode=b;
-    }
-    public boolean getEditmode(){
-        return this.editmode;
-    }
 
     public String getLevelTxtFromBoard(){
         int nextRow = 0;

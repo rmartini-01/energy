@@ -13,17 +13,12 @@ public class HomepageView extends JPanel {
     private JButton editGameBtn;
 
     JComboBox<Integer> selectLevel = new JComboBox<>();
+    JComboBox<Integer> selectCustomLevel = new JComboBox<>();
     public HomepageView() {
         setName("Home");
-
         newGameBtn = new JButton("Start game");
         settingsBtn = new JButton("Settings");
         editGameBtn = new JButton("Edit mode");
-
-       /*     newGameBtn.addActionListener(e -> controller.newGameAction());
-            settings.addActionListener(e -> controller.settingsAction());
-            editGameBtn.addActionListener(e -> controller.editGameAction());*/
-
         JLabel level = new JLabel("Select a level: "); //JLabel Creation Box
         for (int i = 1; i < 12; i++) {
             selectLevel.addItem(i);
@@ -34,32 +29,33 @@ public class HomepageView extends JPanel {
         selectLevel.setMaximumSize(new Dimension(150, 40));
         Box verticalBox = Box.createVerticalBox();
         Box horizontalBox = Box.createHorizontalBox();
+        verticalBox.add(addLogo());
         horizontalBox.add(Box.createHorizontalGlue());
         horizontalBox.add(level);
         horizontalBox.add(Box.createRigidArea(new Dimension(10, 0)));
         horizontalBox.add(selectLevel);
         horizontalBox.add(Box.createRigidArea(new Dimension(10, 0)));
+        horizontalBox.add(newGameBtn);
 
         //edit mode
+        JLabel customLevel = new JLabel("Select custom level: ");
+        for (int i = 1; i < 12; i++) {
+            selectCustomLevel.addItem(i);
+        }
+
         editGameBtn.setPreferredSize(new Dimension(150, 40));
         editGameBtn.setMaximumSize(new Dimension(150, 40));
+        selectCustomLevel.setPreferredSize(new Dimension(150, 40));
+        selectCustomLevel.setMaximumSize(new Dimension(150, 40));
         Box horizontalBoxEditMode = Box.createHorizontalBox();
         horizontalBoxEditMode.add(Box.createHorizontalGlue());
+        horizontalBoxEditMode.add(customLevel);
+        horizontalBoxEditMode.add(Box.createRigidArea(new Dimension(10, 0)));
+        horizontalBoxEditMode.add(selectCustomLevel);
+        horizontalBoxEditMode.add(Box.createRigidArea(new Dimension(10, 0)));
         horizontalBoxEditMode.add(editGameBtn);
-        horizontalBoxEditMode.add(Box.createHorizontalGlue());
-        verticalBox.add(horizontalBoxEditMode);
-
-        Box verticalBoxButtons = Box.createVerticalBox();
-        verticalBoxButtons.add(newGameBtn);
-        verticalBoxButtons.add(editGameBtn);
-        horizontalBox.add(verticalBoxButtons);
-
-        horizontalBox.add(Box.createHorizontalGlue());
-
-
-        add(Box.createVerticalGlue());
-        verticalBox.add(addLogo());
         verticalBox.add(horizontalBox);
+        verticalBox.add(horizontalBoxEditMode);
         verticalBox.setAlignmentY(CENTER_ALIGNMENT);
         verticalBox.setAlignmentX(CENTER_ALIGNMENT);
 
@@ -78,6 +74,9 @@ public class HomepageView extends JPanel {
 
     public int getSelectedLevel() {
         return (int) selectLevel.getSelectedItem();
+    }
+    public int getCustomSelectedLevel() {
+        return (int) selectCustomLevel.getSelectedItem();
     }
 
 

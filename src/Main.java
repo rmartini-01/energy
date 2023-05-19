@@ -14,7 +14,7 @@ public class Main {
     public static void main(String[] args){
         FlatDarculaLaf.setup();
         JFrame frame = new JFrame(); // contains the main frame
-        frame.setPreferredSize(new Dimension(700, 900));
+        frame.setPreferredSize(new Dimension(800, 900));
         NavigationController navigationController = NavigationController.getInstance(frame);
         HomepageView homepageView = new HomepageView();
         HomepageController homepageController = new HomepageController(homepageView);
@@ -25,4 +25,6 @@ public class Main {
         frame.pack();
         frame.setVisible(true);
     }
+
+
 }

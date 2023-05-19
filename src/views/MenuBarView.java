@@ -16,11 +16,11 @@ public class MenuBarView extends JMenuBar {
         JMenu menuFile = new JMenu( "Game" );
         menuFile.setMnemonic( 'G' );
 
-        JMenuItem menuNewGame = new JMenuItem( "New game" );
-        menuNewGame.setMnemonic( 'N' );
-        menuNewGame.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK) );
-        menuNewGame.addActionListener( this::newGameListener );
-        menuFile.add(menuNewGame);
+        JMenuItem menuSolution = new JMenuItem( "Solution" );
+        menuSolution.setMnemonic( 'W' );
+        menuSolution.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK) );
+        menuSolution.addActionListener( this::solutionListener );
+        menuFile.add(menuSolution);
         menuFile.addSeparator();
 
 
@@ -33,9 +33,8 @@ public class MenuBarView extends JMenuBar {
         this.add(menuFile);
     }
 
-    public void newGameListener( ActionEvent event ) {
-        // JOptionPane.showMessageDialog( this, "Button clicked !" );
-        NavigationController.getInstance(frame);
+    public void solutionListener( ActionEvent event ) {
+
     }
     public void quitGameListener( ActionEvent event ) {
         System.exit(0);

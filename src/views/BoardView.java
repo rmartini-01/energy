@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class BoardView extends BoardAbstract {
     public JFrame frame;
-    public JButton btnDialog;
     public JDialog dialog;
+    public JButton btnDialog;
 
     public BoardView(JFrame frame, Level level, Board board) {
         this.frame = frame;
@@ -29,9 +29,7 @@ public class BoardView extends BoardAbstract {
         dialog = new JDialog();
         dialog.setTitle("Congratulations");
         dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-
         JLabel l = new JLabel("The circuit is fully connected !");
-
         JPanel p = new JPanel();
         p.add(l);
         p.add(btnDialog);

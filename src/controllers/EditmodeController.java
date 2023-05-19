@@ -24,6 +24,7 @@ public class EditmodeController extends Controller {
     private boolean remove_mode = false;
 
 
+
     public EditmodeController(EditGameView view, Board board,NavigationController nc) {
         this.navigationController = nc;
         this.view = view;
@@ -42,6 +43,7 @@ public class EditmodeController extends Controller {
                 handleTileClickEdit(e);
             }
         });
+        this.view.btnDialog.addActionListener( e-> view.dialog.dispose());
         this.addTileView = new AddTileView(this.view.frame,this.view.getLevel(),this.board.getShape(), this.board);
         AddTileController ac = new AddTileController(this.view.frame,this.board,this.addTileView,this.view,this,navigationController);
 
@@ -194,9 +196,13 @@ public class EditmodeController extends Controller {
                     board.lightsUp();
                 }
             }
+            if(board.isBoardWinningConfig()){
+                view.showWinningDialog(view.getPanel());
+            }
         }
-
     }
+
+
 
 
 

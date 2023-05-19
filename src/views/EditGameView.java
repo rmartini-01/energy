@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 public class EditGameView extends BoardAbstract  {
     public JFrame frame;
+    public JDialog dialog;
+    public JButton btnDialog;
     public HomepageView frameHome;
     public JMenuBar editMenuBar = new JMenuBar();
     public JMenu editBoardMenu = new JMenu("Edit Board");
@@ -45,6 +47,7 @@ public class EditGameView extends BoardAbstract  {
         this.editTileMenu.add(this.removeTileItem);
         this.editMenuBar.add(this.editBoardMenu);
         this.editMenuBar.add(this.editTileMenu);
+        this.btnDialog = new JButton("OK");
         add(this.editMenuBar);
         add(validateModif);
     }
@@ -53,6 +56,20 @@ public class EditGameView extends BoardAbstract  {
 
     public JPanel getPanel() {
         return this;
+    }
+
+    public void showWinningDialog(Component parentComponent) {
+        dialog = new JDialog();
+        dialog.setTitle("Congratulations");
+        dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        JLabel l = new JLabel("The circuit is fully connected !");
+        JPanel p = new JPanel();
+        p.add(l);
+        p.add(btnDialog);
+        dialog.add(p);
+        dialog.setSize(200, 100);
+        dialog.setLocationRelativeTo(parentComponent);
+        dialog.setVisible(true);
     }
 
 }
