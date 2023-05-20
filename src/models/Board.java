@@ -132,6 +132,35 @@ public class Board implements Observable {
         }
     }
 
+    private void connectHexagonalTiles(Tile currentTile, int row, int col) {
+        int[][] directions;
+
+        if (col % 2 == 0) {
+            directions = new int[][]{
+                    {-1, -1}, {-1, 0}, {0, -1},
+                    {1, 0}, {0, 1}, {-1, 1}
+            };
+        } else {
+            directions = new int[][]{
+                    {-1, 0}, {1, 0}, {1, 1},
+                    {0, 1}, {1, -1}, {0, -1}
+            };
+        }
+
+        for (int[] direction : directions) {
+            int newRow = row + direction[0];
+            int newCol = col + direction[1];
+
+            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < columns) {
+                Tile neighbor = getTileByPosition(newRow, newCol);
+                if (neighbor != null && neighbor.getEdges().size() != 0) {
+                    currentTile.addNeighbor(neighbor);
+                }
+            }
+        }
+    }
+
+
     public int getRows() {
         return rows;
     }
@@ -406,6 +435,30 @@ public class Board implements Observable {
                 }
             }
         }
+    }
+    public void lightUpNeighbors(Tile tile){
+        for(Tile neighbor : tile.getNeighbors()){
+            boolean connected;
+            if(isSquare){
+                connected = areConnectedSquare(tile, neighbor);
+            }else{
+                connected = areConnectedHex(tile, neighbor);
+            }
+            if(connected){
+                if(!neighbor.getLit()){
+                    neighbor.setLit(true);
+                    lightUpNeighbors(neighbor);
+                }
+            }
+        }
+    }
+    public boolean isBoardWinningConfig() {
+        for (Tile tile : board) {
+            if (tile.getEdges().size() != 0) {
+                if (!tile.getLit()) {
+                    return false;
+                }
+            }
     }
     public void lightUpNeighbors(Tile tile){
         for(Tile neighbor : tile.getNeighbors()){

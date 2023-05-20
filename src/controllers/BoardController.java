@@ -1,5 +1,6 @@
 package controllers;
 import models.Board;
+import models.Role;
 import models.Tile;
 import views.BoardView;
 import views.TileView;
