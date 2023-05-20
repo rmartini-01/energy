@@ -1,11 +1,13 @@
 package models;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Level {
-
+    private int numlevel;
     private int height;
     private int width;
     private char shape;
@@ -14,7 +16,7 @@ public class Level {
     private ArrayList<Tile> tiles_config = new ArrayList<Tile>();
 
     public Level(int l) {
-
+        this.numlevel=l;
         try {
             File levelFile = new File("src/models/levels/level" + l + ".nrg");
             Scanner sc = new Scanner(levelFile);
@@ -35,11 +37,11 @@ public class Level {
             Tile tmp_tile;
             Role tmp_r;
             ArrayList<Integer> tmp_edge = new ArrayList<Integer>();
-            tmp_r = switch (this.configuration.get(i)) {
-                case 'S' -> Role.SOURCE;
-                case 'L' -> Role.LAMP;
-                case 'W' -> Role.WIFI;
-                default -> Role.EMPTY;
+            switch (this.configuration.get(i)) {
+                case 'S' : tmp_r = Role.SOURCE;break;
+                case 'L' : tmp_r = Role.LAMP;break;
+                case 'W' : tmp_r = Role.WIFI;break;
+                default : tmp_r = Role.EMPTY;break;
             };
 
             while (Character.isDigit(this.configuration.get(i + 1))) {
@@ -59,22 +61,22 @@ public class Level {
             ArrayList<Integer> tmp_edge = new ArrayList<Integer>();
             Tile tmp_tile;
             switch (last_element) {
-                case 'S' -> {
+                case 'S' : {
                     tmp_tile = new Tile(id, 0, 0, this.shape, Role.SOURCE, tmp_edge);
                     this.tiles_config.add(tmp_tile);
                     this.tiles_config_win.add(tmp_tile);
                 }
-                case 'L' -> {
+                case 'L' : {
                     tmp_tile = new Tile(id, 0, 0, this.shape, Role.LAMP, tmp_edge);
                     this.tiles_config.add(tmp_tile);
                     this.tiles_config_win.add(tmp_tile);
                 }
-                case 'W' -> {
+                case 'W' : {
                     tmp_tile = new Tile(id, 0, 0, this.shape, Role.WIFI, tmp_edge);
                     this.tiles_config.add(tmp_tile);
                     this.tiles_config_win.add(tmp_tile);
                 }
-                default -> {
+                default : {
                     tmp_tile = new Tile(id, 0, 0, this.shape, Role.EMPTY, tmp_edge);
                     this.tiles_config.add(tmp_tile);
                     this.tiles_config_win.add(tmp_tile);
@@ -85,8 +87,8 @@ public class Level {
         int k = 0;
 
         // correctly place the tiles
-        for (int i = 0; i < this.height; i++) {// y axis
-            for (int j = 0; j < this.width; j++) {// x axis
+        for (int i = 0; i < this.height; i++) {// x axis
+            for (int j = 0; j < this.width; j++) {// y axis
                 this.tiles_config.get(k).setPositionX(j);
                 this.tiles_config.get(k).setPositionY(i);
                 this.tiles_config_win.get(k).setPositionX(j);
@@ -114,5 +116,22 @@ public class Level {
 
     public char getShape() {
         return this.shape;
+    }
+
+    public int getNum(){
+        return this.numlevel;
+    }
+
+    public void saveChanges(String config){
+        try {
+            File file = new File("src/models/custom_levels/level" + this.numlevel + "edit.nrg");
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+            FileWriter writer = new FileWriter(file, false);
+            writer.write(config);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

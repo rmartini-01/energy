@@ -1,23 +1,26 @@
 package views;
 
 import controllers.NavigationController;
+import listeners.NavigateBackListener;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-public class MenuBarView extends JMenuBar{
+public class MenuBarView extends JMenuBar {
     private JFrame frame;
-    public MenuBarView(JFrame frame){
-    this.frame = frame;
+    private  HomepageView viewHome;
+    public MenuBarView(JFrame frame,HomepageView viewHome){
+        this.frame = frame;
+        this.viewHome=viewHome;
         JMenu menuFile = new JMenu( "Game" );
         menuFile.setMnemonic( 'G' );
 
-        JMenuItem menuNewGame = new JMenuItem( "New game" );
-        menuNewGame.setMnemonic( 'N' );
-        menuNewGame.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK) );
-        menuNewGame.addActionListener( this::newGameListener );
-        menuFile.add(menuNewGame);
+        JMenuItem menuSolution = new JMenuItem( "Solution" );
+        menuSolution.setMnemonic( 'W' );
+        menuSolution.setAccelerator( KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK) );
+        menuSolution.addActionListener( this::solutionListener );
+        menuFile.add(menuSolution);
         menuFile.addSeparator();
 
 
@@ -30,11 +33,10 @@ public class MenuBarView extends JMenuBar{
         this.add(menuFile);
     }
 
-    public void newGameListener( ActionEvent event ) {
-       // JOptionPane.showMessageDialog( this, "Button clicked !" );
-        NavigationController.getInstance(frame);
+    public void solutionListener( ActionEvent event ) {
+
     }
     public void quitGameListener( ActionEvent event ) {
-       //todo
+        System.exit(0);
     }
 }

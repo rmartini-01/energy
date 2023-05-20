@@ -20,26 +20,39 @@ public class AddTileView extends JPanel {
     public JCheckBox checkboxFour = new JCheckBox("Down Left");
     public JCheckBox checkboxFive = new JCheckBox("Upper Left");
     public JCheckBox checkboxNo = new JCheckBox("No Edges");
-    public JCheckBox checkboxRow = new JCheckBox("Row"); // add to length of board
-    public JCheckBox checkboxColumn = new JCheckBox("Column"); //  add to width of board
+    public JCheckBox checkboxRow = new JCheckBox("Bottom");
+    public JCheckBox checkboxColumn = new JCheckBox("Right");
     public JButton validate = new JButton ("Create new Tile");
     public Board modification_board;
     public Box verticalBox = Box.createVerticalBox();
     public Box verticalBoxEdges = Box.createVerticalBox();
     public Box horizontalBox2 = Box.createHorizontalBox();
     public Box horizontalBox = Box.createHorizontalBox();
+    public Level level;
+    public JButton goBackBtn = new JButton();
 
 
-    public AddTileView(JFrame frame,int level,char shape, Board modification_board) {
+
+    public AddTileView(JFrame frame,Level level,char shape, Board modification_board) {
+        this.level=level;
         this.modification_board=modification_board;
         this.frame = frame;
         this.checkListEdge=new ArrayList<JCheckBox>() ;
         this.checkListPosition=new ArrayList<JCheckBox>() ;
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-        setName("Edit Mode Level " + level + " -  Add a Tile");
+        setName("Edit Mode Level " + level.getNum() + " -  Add a Tile");
+        ImageIcon icon = new ImageIcon("src/res/back-icon-white.png");
+        Image image = icon.getImage();
+        Image scaledImage = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(scaledImage);
+        this.goBackBtn.setIcon(scaledIcon);
+        this.goBackBtn.setPreferredSize(new Dimension(25, 25));
+        this.goBackBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         horizontalBox.add(Box.createHorizontalGlue());
         verticalBox.setAlignmentY(CENTER_ALIGNMENT);
         verticalBox.setAlignmentX(CENTER_ALIGNMENT);
+        verticalBox.add(this.goBackBtn);
+        verticalBox.add(Box.createRigidArea(new Dimension(0, 50)));
         JLabel label_edges = new JLabel("Choose Edges :");
         this.checkListEdge.add(checkboxZero);
         this.checkListEdge.add(checkboxOne);

@@ -3,6 +3,7 @@ package models;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -42,13 +43,13 @@ public class Tile {
     }
 
     public int getOppositeEdge(int edge) {
-        return switch (edge) {
-            case 0 -> 2;
-            case 2 -> 0;
-            case 3 -> 1;
-            case 1 -> 3;
-            default -> throw new IllegalArgumentException("Invalid direction");
-        };
+        switch (edge) {
+            case 0 : return 2;
+            case 2 : return 0;
+            case 3 : return 1;
+            case 1 : return 3;
+            default : throw new IllegalArgumentException("Invalid direction");
+        }
     }
     public BufferedImage getImage() {
         return image;
@@ -129,13 +130,17 @@ public class Tile {
 
     }
 
-    public void printNeighbors() {
-        if (!this.neighbors.isEmpty()) {
-            for (Tile p : this.neighbors) {
-                p.printTile();
-            }
-        }
+    public void setEdges(ArrayList<Integer> l){
+        this.edges=l;
+    }
 
+    public char getRoleChar(){
+        switch (this.role){
+            case SOURCE: return 'S';
+            case WIFI: return 'W';
+            case LAMP: return 'L';
+            default: return '.';
+        }
     }
 
 }

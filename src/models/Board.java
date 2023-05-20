@@ -1,9 +1,6 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Stack;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Board implements Observable {
@@ -41,7 +38,7 @@ public class Board implements Observable {
         }
         shuffle();
         lightsUp();
-
+        Collections.sort(this.board, Comparator.comparingInt(Tile::getId));
     }
     public void shuffle() {
         int max = isSquare ? 4 : 6;
@@ -51,8 +48,9 @@ public class Board implements Observable {
                 tile.rotateTile();
             }
         }
+
     }
-    private void connectSquareTiles(Tile currentTile, int row , int col){
+    private void connectSquareTiles(Tile currentTile, int row, int col){
         if (row > 0) {
             Tile topNeighbor = getTileByPosition(row - 1, col);
             if (topNeighbor != null) {
@@ -86,6 +84,52 @@ public class Board implements Observable {
             }
         }
 
+    }
+
+
+    private void connectHexagonalTiles(Tile currentTile, int row, int col) {
+        int[][] directions;
+
+        if (col % 2 == 0) {
+            directions = new int[][]{
+                    {-1, -1}, {-1, 0}, {0, -1},
+                    {1, 0}, {0, 1}, {-1, 1}
+            };
+        } else {
+            directions = new int[][]{
+                    {-1, 0}, {1, 0}, {1, 1},
+                    {0, 1}, {1, -1}, {0, -1}
+            };
+        }
+
+        for (int[] direction : directions) {
+            int newRow = row + direction[0];
+            int newCol = col + direction[1];
+
+            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < columns) {
+                Tile neighbor = getTileByPosition(newRow, newCol);
+                if (neighbor != null && neighbor.getEdges().size() != 0) {
+                    currentTile.addNeighbor(neighbor);
+                }
+            }
+        }
+    }
+
+
+    public void updateNeighbors(){
+        for (Tile currentTile : board) {
+            int row = currentTile.getPositionY();
+            int col = currentTile.getPositionX();
+            if(currentTile.getEdges().size()!=0){
+                // Check and add the neighbors: up, down, left, and right
+                if(isSquare){
+                    connectSquareTiles(currentTile, row, col);
+                }else{
+                    connectHexagonalTiles(currentTile, row, col);
+                }
+            }
+
+        }
     }
 
     private void connectHexagonalTiles(Tile currentTile, int row, int col) {
@@ -155,7 +199,7 @@ public class Board implements Observable {
     public void rotateTile(Tile t ){
         for(Tile tile : board){
             if (tile.equals(t)){
-               t.rotateTile();
+                t.rotateTile();
             }
         }
         notifyObservers();
@@ -335,17 +379,15 @@ public class Board implements Observable {
         }
     }
 
-    public void LightON(Tile a, Tile b) {
-        if (DFS(a.getId(), b.getId())) {
-            if (a.getRole() == Role.LAMP
-                    && (b.getRole() == Role.SOURCE || (b.getRole() == Role.WIFI && b.getLit()))) {
-                a.setLit(true);
-            }
-            if (b.getRole() == Role.LAMP
-                    && (a.getRole() == Role.SOURCE || (a.getRole() == Role.WIFI && a.getLit()))) {
-                b.setLit(true);
-            }
+    public void modifGeoBoard(){
+        this.clearBoard();
+        if (this.isSquare) {
+            this.isSquare=false;
         }
+        else{
+            this.isSquare=true;
+        }
+        notifyObservers();
     }
 
     public boolean isEmptyBoard(){
@@ -357,12 +399,16 @@ public class Board implements Observable {
         for (int i = 0 ; i<this.neighborsList.length ;i++){
             neighborsList[i].clear();
         }
+        this.columns=0;
+        this.rows=0;
+        this.score=0;
+        notifyObservers();
     }
 
     public void lightsUp(){
         for(Tile t: board){
             if(t.getRole()!=Role.SOURCE){
-               t.setLit(false);
+                t.setLit(false);
             }
         }
         for(Tile t : board){
@@ -374,19 +420,43 @@ public class Board implements Observable {
     }
 
     public void lightUpWifi(){
-            boolean isWifiLit= false;
-            for(Tile t : board){
-                if (t.getRole() == Role.WIFI && t.getLit()) {
-                    isWifiLit = true;
-                    break;
+        boolean isWifiLit= false;
+        for(Tile t : board){
+            if (t.getRole() == Role.WIFI && t.getLit()) {
+                isWifiLit = true;
+                break;
+            }
+        }
+        if(isWifiLit){
+            for (Tile t : board){
+                if(t.getRole()==Role.WIFI){
+                    t.setLit(true);
+                    lightUpNeighbors(t);
                 }
             }
-            if(isWifiLit){
-                for (Tile t : board){
-                    if(t.getRole()==Role.WIFI){
-                        t.setLit(true);
-                        lightUpNeighbors(t);
-                    }
+        }
+    }
+    public void lightUpNeighbors(Tile tile){
+        for(Tile neighbor : tile.getNeighbors()){
+            boolean connected;
+            if(isSquare){
+                connected = areConnectedSquare(tile, neighbor);
+            }else{
+                connected = areConnectedHex(tile, neighbor);
+            }
+            if(connected){
+                if(!neighbor.getLit()){
+                    neighbor.setLit(true);
+                    lightUpNeighbors(neighbor);
+                }
+            }
+        }
+    }
+    public boolean isBoardWinningConfig() {
+        for (Tile tile : board) {
+            if (tile.getEdges().size() != 0) {
+                if (!tile.getLit()) {
+                    return false;
                 }
             }
     }
@@ -424,7 +494,6 @@ public class Board implements Observable {
             return 0;
         }
         int id_tmp = 0;
-        Tile tile_tmp= this.board.get(0);
         for (Tile t : this.board){ // to find the last tile in the board
             if (id_tmp<t.getId()) {
                 id_tmp = t.getId();
@@ -434,17 +503,20 @@ public class Board implements Observable {
     }
 
 
-    public int [] getPosToAddColumn(){ // to add tile on the right of the board
+    public int [] getPosToAddRight(){ // to add tile on the bottom of the board
         if (this.board.isEmpty()){
             int [] pos ={0,0};
             this.columns++;
+            this.rows++;
             return pos;
         }
         int[] position = new int[2];
-        int last = this.lastTileAdded();
+        int lastX =this.columns-1;
+        int lastY =0;
         Tile last_tile = this.board.get(0);
         for (Tile t : this.board){
-            if (t.getId()==last){
+            if (t.getPositionY()>lastY && t.getPositionX()==lastX){
+                lastY = t.getPositionY();
                 last_tile=t;
             }
         }
@@ -452,24 +524,33 @@ public class Board implements Observable {
             position[0] = this.columns;
             position[1]=0;
             this.columns+=1;
-        }else{ // case when adding to an existing column
-            position[0] = this.columns-1;
+            for(int i = this.rows+1; i < this.board.size()-1;i++){
+                int tmp =this.board.get(i).getId();
+                this.board.get(i).setId(tmp+1);
+            }
+            this.board.get(this.board.size()-1).setId(this.rows+1);
+            Collections.sort(this.board, Comparator.comparingInt(Tile::getId));
+        }else{ // case when adding to an existing row
+            position[0] =this.columns-1;
             position[1] = last_tile.getPositionY()+1;
         }
         return position;
     }
 
-    public int [] getPosToAddRow(){ // to add tile at the bottom of the board
+    public int [] getPosToAddBottom(){ // to add tile at the right of the board
         if (this.board.isEmpty()){
             int [] pos ={0,0};
+            this.columns++;
             this.rows++;
             return pos;
         }
         int[] position = new int[2];
-        int last = this.lastTileAdded();
+        int lastX =0;
+        int lastY = this.rows-1;
         Tile last_tile = this.board.get(0);
         for (Tile t : this.board){
-            if (t.getId()==last){
+            if (t.getPositionX()>lastX && t.getPositionY()==lastY){
+                lastX = t.getPositionX();
                 last_tile=t;
             }
         }
@@ -486,20 +567,6 @@ public class Board implements Observable {
 
 
 
-    public void changeTile(Tile t1, Tile t2){ // change t1 into t2
-
-    }
-
-    public void addTileHexa(Tile t){
-        this.board.add(t);
-        updateNeighborsList();
-    }
-
-    public void addTileSquare(Tile t){
-        this.board.add(t);
-        updateNeighborsList();
-    }
-
 
     public char getShape(){
         return this.isSquare()? 'S':'H';
@@ -508,7 +575,50 @@ public class Board implements Observable {
 
     public void addTile(Tile t) {
         this.board.add(t);
-        initNeighborsList();
+        Collections.sort(this.board, Comparator.comparingInt(Tile::getId));
+        notifyObservers();
+    }
+
+
+    public String getLevelTxtFromBoard(){
+        int nextRow = 0;
+        String txt = "";
+        txt+=this.rows+ " ";
+        txt+=this.columns+ " ";
+        txt+=this.getShape()+"\n";
+        for (Tile t : this.board){
+            if (nextRow == this.columns){
+                txt+="\n";
+                nextRow=0;
+            }
+            txt+=t.getRoleChar()+" ";
+            nextRow++;
+            for(Integer i : t.getEdges()){
+                txt+=i+" ";
+            }
+        }
+        return txt;
+    }
+
+
+
+    public void modifyTile (int id,Role new_role,ArrayList<Integer> new_edges){
+        for (Tile t : this.board){
+            if (t.getId()==id){
+                t.setEdges(new_edges);
+                t.setRole(new_role);
+            }
+        }
+        Collections.sort(this.board, Comparator.comparingInt(Tile::getId));
+        notifyObservers();
+    }
+
+    public void removeTile (int id){
+        this.board.remove(id);
+        for (int i  =id+1 ; i< this.board.size();i++){
+            this.board.get(i).setId(this.board.get(i).getId()-1);
+        }
+        notifyObservers();
     }
 
 

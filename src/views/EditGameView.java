@@ -1,40 +1,36 @@
 package views;
 
-import controllers.EditmodeController;
-import controllers.HomepageController;
-import controllers.NavigationController;
-import listeners.NavigateBackListener;
-import models.*;
+import models.Board;
+import models.Level;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class EditGameView extends JPanel {
+
+public class EditGameView extends BoardAbstract  {
     public JFrame frame;
-    int level;
+    public JDialog dialog;
+    public JButton btnDialog;
+    public HomepageView frameHome;
     public JMenuBar editMenuBar = new JMenuBar();
     public JMenu editBoardMenu = new JMenu("Edit Board");
     public JMenu editTileMenu = new JMenu("Edit Tile");
     public JMenuItem addTileItem = new JMenuItem("Add a Tile");
     public JMenuItem modifTileItem = new JMenuItem("Modify a Tile");
+    public JMenuItem removeTileItem = new JMenuItem("Remove a Tile");
     public JMenuItem emtpyBoardItem = new JMenuItem("Empty Board");
     public JMenuItem modifGeoBoardItem = new JMenuItem("Modify Board Shape");
     public JButton validateModif = new JButton ("Validate");
     public JButton goBackBtn = new JButton();
-    public Board board;
-    public Board modification_board;
 
-    public EditGameView(JFrame frame, int level, Board board) {
-        this.level=level;
-        Level l = new Level(level);
-        this.board = board;
-        this.board.initNeighborsList();
-        this.modification_board = this.board;
+    public EditGameView(JFrame frame, Level level, Board board, HomepageView home) {
         this.frame=frame;
-        setName("Edit Mode Level " + level);
+        this.frameHome=home;
+        this.level=level;
+        this.tileViews = new ArrayList<>();
+        this.board = board;
+        setName("Edit Mode Level " + level.getNum());
         ImageIcon icon = new ImageIcon("src/res/back-icon-white.png");
         Image image = icon.getImage();
         Image scaledImage = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
@@ -48,12 +44,33 @@ public class EditGameView extends JPanel {
         this.editBoardMenu.add(this.modifGeoBoardItem);
         this.editTileMenu.add(this.addTileItem);
         this.editTileMenu.add(this.modifTileItem);
+        this.editTileMenu.add(this.removeTileItem);
         this.editMenuBar.add(this.editBoardMenu);
         this.editMenuBar.add(this.editTileMenu);
+        this.btnDialog = new JButton("OK");
         add(this.editMenuBar);
         add(validateModif);
     }
 
-    public int getLevel(){return this.level;}
+    public Level getLevel(){return this.level;}
+
+    public JPanel getPanel() {
+        return this;
+    }
+
+    public void showWinningDialog(Component parentComponent) {
+        dialog = new JDialog();
+        dialog.setTitle("Congratulations");
+        dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        JLabel l = new JLabel("The circuit is fully connected !");
+        JPanel p = new JPanel();
+        p.add(l);
+        p.add(btnDialog);
+        dialog.add(p);
+        dialog.setSize(200, 100);
+        dialog.setLocationRelativeTo(parentComponent);
+        dialog.setVisible(true);
+    }
 
 }
+
