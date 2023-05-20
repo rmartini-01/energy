@@ -485,7 +485,7 @@ public class Board implements Observable {
         return position;
     }
 
-    public int [] getPosToAddBottom(){ // to add tile at the right of the board
+     public int [] getPosToAddBottom(){ // to add tile at the right of the board
         if (this.board.isEmpty()){
             int [] pos ={0,0};
             this.columns++;
@@ -562,15 +562,20 @@ public class Board implements Observable {
     }
 
     public void removeTile (int id){
-        System.out.println(this.board.size());
+        Tile tmp =this.board.get(id);
+        if (tmp.getPositionX()==this.columns-1){
+            this.columns-=1;
+        }
+        if (tmp.getPositionY()==this.rows-1) {
+            this.rows-=1;
+        }
+
         this.board.remove(id);
-        System.out.println(this.board.size());
-        for (int i  =id+1 ; i< this.board.size();i++){
+        for (int i = id+1 ; i< this.board.size();i++){
             this.board.get(i).setId(this.board.get(i).getId()-1);
         }
         notifyObservers();
     }
-
 
 
     @Override
