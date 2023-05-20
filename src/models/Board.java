@@ -50,7 +50,7 @@ public class Board implements Observable {
         }
 
     }
-    private void connectSquareTiles(Tile currentTile, int row , int col){
+    private void connectSquareTiles(Tile currentTile, int row, int col){
         if (row > 0) {
             Tile topNeighbor = getTileByPosition(row - 1, col);
             if (topNeighbor != null) {
@@ -86,6 +86,7 @@ public class Board implements Observable {
 
     }
 
+
     private void connectHexagonalTiles(Tile currentTile, int row, int col) {
         int[][] directions;
 
@@ -114,6 +115,22 @@ public class Board implements Observable {
         }
     }
 
+
+    public void updateNeighbors(){
+        for (Tile currentTile : board) {
+            int row = currentTile.getPositionY();
+            int col = currentTile.getPositionX();
+            if(currentTile.getEdges().size()!=0){
+                // Check and add the neighbors: up, down, left, and right
+                if(isSquare){
+                    connectSquareTiles(currentTile, row, col);
+                }else{
+                    connectHexagonalTiles(currentTile, row, col);
+                }
+            }
+
+        }
+    }
 
     public int getRows() {
         return rows;
@@ -433,7 +450,7 @@ public class Board implements Observable {
     }
 
 
-    public int [] getPosToAddRight(){ // to add tile on the bottom of the board //TODO fix error when empty place
+    public int [] getPosToAddRight(){ // to add tile on the bottom of the board
         if (this.board.isEmpty()){
             int [] pos ={0,0};
             this.columns++;

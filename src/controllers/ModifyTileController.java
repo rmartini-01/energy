@@ -123,6 +123,7 @@ public class ModifyTileController extends Controller {
                     break;
             }
             this.modification_board.modifyTile(this.view.id_tile, r, edges);
+            this.modification_board.updateNeighbors();
 
             JDialog dialog = new JDialog(this.frame, "Tile Modified", true);
             JLabel label = new JLabel("Tile " + this.view.id_tile + " has been modified!");

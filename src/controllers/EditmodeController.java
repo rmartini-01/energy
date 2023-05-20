@@ -113,7 +113,7 @@ public class EditmodeController extends Controller {
 
 
 
-    public void emptyBoardListener() {// TODO update view
+    public void emptyBoardListener() {
         JDialog dialog = new JDialog(this.view.frame, "Board Cleared", true);
         JLabel label = new JLabel("Board is all cleared!");
         label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -155,7 +155,6 @@ public class EditmodeController extends Controller {
 
     public void setModification_board(Board b){
         this.board=b;
-        this.view.repaint();
     }
 
     public void handleTileClickEdit(MouseEvent e) {

@@ -146,7 +146,6 @@ public class AddTileController extends Controller {
                 new_tile = new Tile (last_id,0,0,this.shape,Role.EMPTY,edges);
                 break;
         }
-        this.modification_board.addTile(new_tile);
         int [] pos = new int [2];
         for (JCheckBox box : this.view.checkListPosition){
             if (box.isSelected()){
@@ -160,6 +159,8 @@ public class AddTileController extends Controller {
         }
         new_tile.setPositionX(pos[0]);
         new_tile.setPositionY(pos[1]);
+        this.modification_board.addTile(new_tile);
+        this.modification_board.updateNeighbors();
         JDialog dialog = new JDialog(this.frame, "Tile Added", true);
         JLabel label = new JLabel("A Tile has been added!");
         label.setHorizontalAlignment(SwingConstants.CENTER);
