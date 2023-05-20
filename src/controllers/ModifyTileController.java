@@ -135,7 +135,6 @@ public class ModifyTileController extends Controller {
             this.editController.setModification_board(this.modification_board);
             navigationController.navigateTo(view, this.editView);
 
-
         }
 
     private void goBackConfirmListener() {

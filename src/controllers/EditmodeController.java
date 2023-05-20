@@ -155,6 +155,8 @@ public class EditmodeController extends Controller {
 
     public void setModification_board(Board b){
         this.board=b;
+        this.view.repaint();
+
     }
 
     public void handleTileClickEdit(MouseEvent e) {
@@ -184,6 +186,7 @@ public class EditmodeController extends Controller {
                 }
             }
             this.board.removeTile(t.getId());
+
         }
         else{
             Point clickPosition = e.getPoint();
