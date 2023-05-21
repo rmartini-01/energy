@@ -1,5 +1,7 @@
 package models;
 
+import views.TilesFactory;
+
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -9,6 +11,7 @@ public class Board implements Observable {
     private ArrayList<Tile> board;
     private boolean isSquare; // 0 = square, 1 = Hexagone
     private ArrayList<Observer> observers;
+
     public Board(int r, int c, ArrayList<Tile> tl,boolean isSquare) {
         rows = r;
         columns = c;
@@ -44,6 +47,15 @@ public class Board implements Observable {
         }
 
     }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getColumns() {
+        return columns;
+    }
+
     private void connectSquareTiles(Tile currentTile, int row, int col){
         if (row > 0) {
             Tile topNeighbor = getTileByPosition(row - 1, col);

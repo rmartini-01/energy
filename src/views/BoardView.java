@@ -6,13 +6,12 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class BoardView extends BoardAbstract {
-    public JFrame frame;
     public JDialog dialog;
     public JButton btnDialog;
     public JButton nextLevelBtn;
-
     public BoardView(JFrame frame, Level level, Board board) {
         this.frame = frame;
+        System.out.println("cons");
         this.level = level;
         this.board = board;
         this.tileViews = new ArrayList<>();

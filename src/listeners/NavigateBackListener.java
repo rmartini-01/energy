@@ -20,7 +20,7 @@ public class NavigateBackListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         HomepageView homepageView = new HomepageView();
-        HomepageController homepageController = new HomepageController(homepageView);
+        HomepageController homepageController = new HomepageController(jframe, homepageView);
         NavigationController.getInstance(jframe).navigateTo(view, homepageView );
     }
 }

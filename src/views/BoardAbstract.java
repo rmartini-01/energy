@@ -1,23 +1,15 @@
 package views;
 
-import listeners.NavigateBackListener;
 import models.Board;
 import models.Level;
 import models.Observer;
 import models.Tile;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 public abstract class BoardAbstract extends JPanel implements Observer {
@@ -25,11 +17,7 @@ public abstract class BoardAbstract extends JPanel implements Observer {
     protected ArrayList<TileView> tileViews;
     protected Level level;
     protected Board board;
-    protected HashMap<String, BufferedImage> squareGrayTiles = createGraySquareTiles();
-    protected HashMap<String, BufferedImage> hexaGrayTiles = createGrayHexagoneTiles();
-    protected HashMap<String, BufferedImage> squareWhiteTiles = createWhiteSquareTiles();
-    protected HashMap<String, BufferedImage> hexaWhiteTiles = createWhiteHexagoneTiles();
-
+    public JFrame frame;
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -54,6 +42,13 @@ public abstract class BoardAbstract extends JPanel implements Observer {
         return level;
     }
 
+    protected int getTileSize(){
+        int tileSize = board.isSquare()? 120 : 104;
+        if(board.getRows() *tileSize >= 700 || board.getColumns() *tileSize >= 800){
+            tileSize = (int) (0.75 *tileSize);
+        }
+        return tileSize;
+    }
 
     public boolean contains(Point tilePosition, Point mousePosition, int width, int height) {
         return tilePosition.x <= mousePosition.x && mousePosition.x <= tilePosition.x + width
@@ -97,9 +92,9 @@ public abstract class BoardAbstract extends JPanel implements Observer {
         int x = origin.x + (posX * 104) - posX * 15;
         int y = origin.y + (posY * 104) + (posX%2==0 ? 0 : 52);
         String role = tile.getRole().toString().toLowerCase();
-        HashMap<String, BufferedImage> tiles = hexaGrayTiles;
+        HashMap<String, BufferedImage> tiles = TilesFactory.hexaGrayTiles;
         if(tile.getLit()){
-            tiles = hexaWhiteTiles;
+            tiles = TilesFactory.hexaWhiteTiles;
         }
         BufferedImage hexaImage = tiles.get("hexagone");
         BufferedImage connection = tiles.get("connection");
@@ -155,25 +150,27 @@ public abstract class BoardAbstract extends JPanel implements Observer {
     }
 
     protected ArrayList<TileView> drawSquareTiles(Point origin, Tile tile){
-        int x = origin.x + (tile.getPositionX() * 120);
-        int y = origin.y + (tile.getPositionY() * 120);
+        int x = origin.x + (tile.getPositionX() * getTileSize());
+        int y = origin.y + (tile.getPositionY() * getTileSize());
         ArrayList<TileView> temporaryTileViews = new ArrayList<>();
         String role = tile.getRole().toString().toLowerCase();
-        HashMap<String, BufferedImage> tiles = squareGrayTiles;
+        HashMap<String, BufferedImage> tiles = TilesFactory.squareGrayTiles;
         if(tile.getLit()){
-            tiles = squareWhiteTiles;
+            tiles = TilesFactory.squareWhiteTiles;
         }
+
         BufferedImage image;
+        int tileSize = getTileSize();
         BufferedImage connection = tiles.get("connection");
         BufferedImage squareImage = tiles.get("square");
-        g2d.drawImage(squareImage, x, y, null);
+        g2d.drawImage(squareImage,  x, y, getTileSize(), getTileSize(),null);
         temporaryTileViews.add(new TileView(tile, squareImage, new Point(x, y)));
         if (!role.equalsIgnoreCase("empty")) {
             image = tiles.get(role);
             for (int e : tile.getEdges()) {
-                g2d.drawImage(rotateImage(connection,  e * 90 ), x, y, null);
+                g2d.drawImage(rotateImage(connection,  e * 90 ), x, y, getTileSize(), getTileSize(), null);
             }
-            g2d.drawImage(image, x, y, null);
+            g2d.drawImage(image, x, y, getTileSize(), getTileSize(),null);
 
         } else {//connection tiles
             if (tile.getEdges().size() != 0) {
@@ -186,11 +183,11 @@ public abstract class BoardAbstract extends JPanel implements Observer {
                     if (previousEdge != currentEdge) { // vérifier si l'arête actuelle est différente de l'arête précédente
                         int difference = edgeDifference(previousEdge, currentEdge, 4);
                         if (difference == 1) {
-                            g2d.drawImage(rotateImage(curve, (previousEdge * 90)), x,
-                                    y, null);
+                            g2d.drawImage(rotateImage(curve, (previousEdge * 90)),   x,
+                                    y,getTileSize(), getTileSize(), null);
                         }else if (difference ==2  && edges.size() ==2){
-                            g2d.drawImage(rotateImage(line, (previousEdge * 90)), x,
-                                    y, null);
+                            g2d.drawImage(rotateImage(line, (previousEdge * 90)),  x,
+                                    y,getTileSize(), getTileSize(), null);
                         }
                     }
                     previousEdge = currentEdge;
@@ -201,59 +198,7 @@ public abstract class BoardAbstract extends JPanel implements Observer {
     }
 
 
-    protected HashMap<String, BufferedImage> createGraySquareTiles() {
-        BufferedImage gridImage = null;
-        HashMap<String, BufferedImage> grayImages = new HashMap<>();
-        try {
-            gridImage = ImageIO.read(new File("src/res/tuiles.png"));
-            BufferedImage square = gridImage.getSubimage(0, 0, 120, 120);
-            BufferedImage wifi = gridImage.getSubimage(120, 120, 120, 120);
-            BufferedImage lamp = gridImage.getSubimage(240, 120, 120, 120);
-            BufferedImage connection = gridImage.getSubimage(0, 240, 120, 120);
-            BufferedImage curve = gridImage.getSubimage(120, 240, 120, 120);
-            BufferedImage line = gridImage.getSubimage(240, 240, 120, 120);
-            // BufferedImage source = gridImage.getSubimage(0, 480, 120, 120);
 
-            grayImages.put("square", square);
-            grayImages.put("wifi", wifi);
-            grayImages.put("lamp", lamp);
-            grayImages.put("connection", connection);
-            grayImages.put("curve", curve);
-            grayImages.put("line", line);
-            //grayImages.put("source", source);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return grayImages;
-    }
-
-    protected HashMap<String, BufferedImage> createWhiteSquareTiles() {
-        BufferedImage gridImage = null;
-        HashMap<String, BufferedImage> grayImages = new HashMap<>();
-        try {
-            gridImage = ImageIO.read(new File("src/res/tuiles.png"));
-            BufferedImage square = gridImage.getSubimage(0, 0+ 3*120, 120, 120);
-            BufferedImage wifi = gridImage.getSubimage(120 , 120+ 3*120, 120, 120);
-            BufferedImage lamp = gridImage.getSubimage(240, 120+ 3*120, 120, 120);
-            BufferedImage connection = gridImage.getSubimage(0, 240+ 3*120, 120, 120);
-            BufferedImage curve = gridImage.getSubimage(120, 240+ 3*120, 120, 120);
-            BufferedImage line = gridImage.getSubimage(240, 240+ 3*120, 120, 120);
-            BufferedImage source = gridImage.getSubimage(0, 480, 120, 120);
-
-            grayImages.put("square", square);
-            grayImages.put("wifi", wifi);
-            grayImages.put("lamp", lamp);
-            grayImages.put("connection", connection);
-            grayImages.put("curve", curve);
-            grayImages.put("line", line);
-            grayImages.put("source", source);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return grayImages;
-    }
 
     protected BufferedImage rotateImage(BufferedImage img, int degree) {
         AffineTransform tx = new AffineTransform();
@@ -263,65 +208,7 @@ public abstract class BoardAbstract extends JPanel implements Observer {
         return rotatedImage;
     }
 
-    protected HashMap<String, BufferedImage> createGrayHexagoneTiles() {
 
-        HashMap<String, BufferedImage> grayImages = new HashMap<>();
-        try {
-            BufferedImage gridImage = ImageIO.read(new File("src/res/tuiles.png"));
-            BufferedImage hexagone = gridImage.getSubimage(360, 0, 120, 104);
-            BufferedImage wifi = gridImage.getSubimage(480, 120, 120, 104);
-            BufferedImage lamp = gridImage.getSubimage(600, 120, 120, 104);
-
-            BufferedImage connection = gridImage.getSubimage(360, 240, 120, 104);
-            BufferedImage curve = gridImage.getSubimage(480, 240, 120, 104);
-            BufferedImage large_curve = gridImage.getSubimage(600, 240, 120, 104);
-            BufferedImage line = gridImage.getSubimage(720, 240, 120, 104);
-            //BufferedImage source = gridImage.getSubimage(360, 480, 120, 104);
-
-            grayImages.put("hexagone", hexagone);
-            grayImages.put("wifi", wifi);
-            grayImages.put("lamp", lamp);
-            grayImages.put("connection", connection);
-            grayImages.put("curve", curve);
-            grayImages.put("large_curve", large_curve);
-            grayImages.put("line", line);
-            // grayImages.put("source", source);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return grayImages;
-    }
-
-    private HashMap<String, BufferedImage> createWhiteHexagoneTiles() {
-
-        HashMap<String, BufferedImage> grayImages = new HashMap<>();
-        try {
-            BufferedImage gridImage = ImageIO.read(new File("src/res/tuiles.png"));
-            BufferedImage hexagone = gridImage.getSubimage(360, 0+ 3*120, 120, 104);
-            BufferedImage wifi = gridImage.getSubimage(480, 120 + 3*120, 120, 104);
-            BufferedImage lamp = gridImage.getSubimage(600, 120+ 3*120, 120, 104);
-
-            BufferedImage connection = gridImage.getSubimage(360, 240 + 3*120, 120, 104);
-            BufferedImage curve = gridImage.getSubimage(480, 240+ 3*120, 120, 104);
-            BufferedImage large_curve = gridImage.getSubimage(600, 240 + 3*120, 120, 104);
-            BufferedImage line = gridImage.getSubimage(720, 240+ 3*120, 120, 104);
-            BufferedImage source = gridImage.getSubimage(360, 480, 120, 104);
-
-            grayImages.put("hexagone", hexagone);
-            grayImages.put("wifi", wifi);
-            grayImages.put("lamp", lamp);
-            grayImages.put("connection", connection);
-            grayImages.put("curve", curve);
-            grayImages.put("large_curve", large_curve);
-            grayImages.put("line", line);
-            grayImages.put("source", source);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return grayImages;
-    }
 
     public ArrayList<TileView> getTileViews() {
         return tileViews;

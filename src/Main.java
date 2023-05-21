@@ -17,7 +17,7 @@ public class Main {
         frame.setPreferredSize(new Dimension(800, 900));
         NavigationController navigationController = NavigationController.getInstance(frame);
         HomepageView homepageView = new HomepageView();
-        HomepageController homepageController = new HomepageController(homepageView);
+        HomepageController homepageController = new HomepageController(frame,homepageView);
         homepageController.setNavigationController(navigationController);
         navigationController.navigateTo(null , homepageController.getView());
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);

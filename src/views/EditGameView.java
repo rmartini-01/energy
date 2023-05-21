@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 
 public class EditGameView extends BoardAbstract  {
-    public JFrame frame;
     public JDialog dialog;
     public JButton btnDialog;
     public HomepageView frameHome;
