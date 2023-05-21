@@ -1,13 +1,8 @@
 package views;
 
-import controllers.EditmodeController;
-import controllers.NavigationController;
 import models.*;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class ModifyTileView extends JPanel {

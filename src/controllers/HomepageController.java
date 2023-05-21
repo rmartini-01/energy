@@ -27,13 +27,10 @@ public class HomepageController extends  Controller{
             Board board = new Board(level.getHeight(), level.getWidth(), level.getTileConfig(), level.getShape() == 'S');
             EditGameView editView = new EditGameView(frame,level,board,this.getView());
             EditmodeController editController = new EditmodeController(editView,board,navigationController);
-            navigationController.navigateTo(view, editView);
+            navigationController.getInstance(frame).navigateTo(view, editView);
 
         });
 
-        this.view.getSettings().addActionListener(e->{
-            System.out.println("settings btn clicked ");
-        });
     }
 
     public HomepageView getView() {

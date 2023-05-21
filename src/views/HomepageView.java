@@ -1,23 +1,17 @@
 package views;
 
-
 import javax.swing.*;
 import java.awt.*;
 
-
-
 public class HomepageView extends JPanel {
-    private JButton newGameBtn;
-    private JButton settingsBtn;
+    private final  JButton newGameBtn;
+    private final JButton editGameBtn;
 
-    private JButton editGameBtn;
-
-    JComboBox<Integer> selectLevel = new JComboBox<>();
-    JComboBox<Integer> selectCustomLevel = new JComboBox<>();
+    private final JComboBox<Integer> selectLevel = new JComboBox<>();
+    private final JComboBox<Integer> selectCustomLevel = new JComboBox<>();
     public HomepageView() {
         setName("Home");
         newGameBtn = new JButton("Start game");
-        settingsBtn = new JButton("Settings");
         editGameBtn = new JButton("Edit mode");
         JLabel level = new JLabel("Select a level: "); //JLabel Creation Box
         for (int i = 1; i < 12; i++) {
@@ -58,12 +52,9 @@ public class HomepageView extends JPanel {
         verticalBox.add(horizontalBoxEditMode);
         verticalBox.setAlignmentY(CENTER_ALIGNMENT);
         verticalBox.setAlignmentX(CENTER_ALIGNMENT);
-
         add(verticalBox);
-        //TODO bouton paramètres
         setVisible(true);
     }
-
 
     private JLabel addLogo() {
         JLabel logo = new JLabel(); //JLabel Creation
@@ -79,13 +70,8 @@ public class HomepageView extends JPanel {
         return (int) selectCustomLevel.getSelectedItem();
     }
 
-
     public JButton getNewGameBtn() {
         return newGameBtn;
-    }
-
-    public JButton getSettings() {
-        return settingsBtn;
     }
 
     public JButton getEditGameBtn() {

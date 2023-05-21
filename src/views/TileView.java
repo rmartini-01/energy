@@ -25,10 +25,6 @@ public class TileView {
         return image;
     }
 
-    public void setPosition(Point position) {
-        this.position = position;
-    }
-
     public Tile getTile() {
         return tile;
     }
@@ -37,7 +33,4 @@ public class TileView {
         this.tile = tile;
     }
 
-    public void setImage(BufferedImage image) {
-        this.image = image;
-    }
 }

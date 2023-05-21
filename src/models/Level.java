@@ -106,10 +106,6 @@ public class Level {
         return this.width;
     }
 
-    public ArrayList<Character> getConfig() {
-        return this.configuration;
-    }
-
     public ArrayList<Tile> getTileConfig() {
         return this.tiles_config;
     }

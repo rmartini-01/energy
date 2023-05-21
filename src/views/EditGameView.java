@@ -52,8 +52,6 @@ public class EditGameView extends BoardAbstract  {
         add(validateModif);
     }
 
-    public Level getLevel(){return this.level;}
-
     public JPanel getPanel() {
         return this;
     }

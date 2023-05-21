@@ -16,7 +16,6 @@ public class Tile {
     private Role role;
     private char shape;
     private boolean lit;
-    private BufferedImage image ;
 
     public Tile(int i, int x, int y, char s, Role r, ArrayList<Integer> e) {
         this.id = i;
@@ -26,7 +25,6 @@ public class Tile {
         this.edges = e;
         this.shape = s;
         this.lit = getRole() == Role.SOURCE;
-        image = null;
         neighbors = new ArrayList<>();
     }
 
@@ -42,22 +40,6 @@ public class Tile {
         this.pos_y = y;
     }
 
-    public int getOppositeEdge(int edge) {
-        switch (edge) {
-            case 0 : return 2;
-            case 2 : return 0;
-            case 3 : return 1;
-            case 1 : return 3;
-            default : throw new IllegalArgumentException("Invalid direction");
-        }
-    }
-    public BufferedImage getImage() {
-        return image;
-    }
-
-    public void setImage(BufferedImage image) {
-        this.image = image;
-    }
     public void setRole(Role r) {
         this.role = r;
     }
@@ -82,17 +64,10 @@ public class Tile {
         return this.role;
     }
 
-    public char getShape() {
-        return this.shape;
-    }
-
     public ArrayList<Integer> getEdges() {
         return this.edges;
     }
 
-    public void setNeighbors(ArrayList<Tile> n) {
-        this.neighbors = n;
-    }
     public void addNeighbor(Tile t){
         this.neighbors.add(t);
     }
@@ -118,16 +93,6 @@ public class Tile {
                 edges.set(i, tmp);
             }
         }
-    }
-
-    public void printTile() {
-        System.out.println(
-                "id : " + this.id + " |x : " + this.pos_x + " y : " + this.pos_y + "| Role : " + this.role.toString());
-        for (Integer r : this.edges) {
-            System.out.print(r + " ");
-        }
-        System.out.println();
-
     }
 
     public void setEdges(ArrayList<Integer> l){
