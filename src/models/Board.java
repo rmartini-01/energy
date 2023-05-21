@@ -4,23 +4,17 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Board implements Observable {
-    protected int rows;
-    protected int columns;
-    protected int score;
-    protected ArrayList<Tile> board;
-    protected ArrayList<Integer>[] neighborsList; // storing the neighbors of each vertex in the graph. connected
-    protected boolean isSquare; // 0 = square, 1 = Hexagone
+    private int rows;
+    private int columns;
+    private ArrayList<Tile> board;
+    private boolean isSquare; // 0 = square, 1 = Hexagone
     private ArrayList<Observer> observers;
     public Board(int r, int c, ArrayList<Tile> tl,boolean isSquare) {
         rows = r;
         columns = c;
-        score = 0;
         board = tl;
-        neighborsList = (ArrayList<Integer>[]) new ArrayList[tl.size()];
         observers = new ArrayList<>();
-        for (int i = 0; i < tl.size(); i++) {
-            neighborsList[i] = new ArrayList<Integer>();
-        }
+
         this.isSquare = isSquare;
 
         for (Tile currentTile : board) {
@@ -131,21 +125,6 @@ public class Board implements Observable {
         }
     }
 
-
-    public int getRows() {
-        return rows;
-    }
-    public void setRows(int r){this.rows=r;}
-
-    public int getColumns() {
-        return columns;
-    }
-    public void setColumns(int c){this.columns=c;}
-
-    public int getScore() {
-        return score;
-    }
-
     public ArrayList<Tile> getBoard() {
         return board;
     }
@@ -159,10 +138,6 @@ public class Board implements Observable {
         return null;
     }
 
-    public ArrayList<Integer>[] getneighborsList() {
-        return neighborsList;
-    }
-
     public boolean isSquare(){
         return this.isSquare;
     }
@@ -174,38 +149,6 @@ public class Board implements Observable {
             }
         }
         notifyObservers();
-    }
-    public boolean DFS(int t1, int t2) { // arguments are tiles' id, checks if there's a way between two tiles
-        boolean[] visited = new boolean[board.size()];
-        Stack<Integer> stack = new Stack<Integer>();
-        visited[t1] = true;
-        stack.push(t1);
-
-        while (!stack.isEmpty()) {
-            int currentVertix = stack.pop();
-            if (currentVertix == t2) {
-                return true;
-            }
-            Iterator<Integer> i = neighborsList[currentVertix].listIterator();
-            while (i.hasNext()) {
-                int m = i.next();
-                if (!visited[m]) {
-                    visited[m] = true;
-                    stack.push(m);
-                }
-            }
-        }
-        return false;
-    }
-
-    public void printNeighborsList() {
-        for (int i = 0; i < neighborsList.length; i++) {
-            System.out.print("Tile id " + i + " : ");
-            for (Integer k : this.neighborsList[i]) {
-                System.out.print(k + " ");
-            }
-            System.out.println();
-        }
     }
 
     public boolean areConnectedHex(Tile t1, Tile t2) {
@@ -272,84 +215,6 @@ public class Board implements Observable {
 
     }
 
-    public void setNeighborsSquare() { // sets the neighbors of each square tile
-        for (int i = 0; i < this.board.size(); i++) {
-            ArrayList<Tile> tmp2 = new ArrayList<Tile>();
-            for (int j = 0; j < this.board.size(); j++) {
-                if (areConnectedSquare(board.get(i), board.get(j)) && i != j) {
-                    if (!tmp2.contains(board.get(j))) {
-                        tmp2.add(board.get(j));
-                    }
-
-                }
-            }
-            this.board.get(i).setNeighbors(tmp2);
-        }
-    }
-    public void setNeighborsHexa() { // sets the neighbors of each square tile
-        for (int i = 0; i < this.board.size(); i++) {
-            ArrayList<Tile> tmp2 = new ArrayList<Tile>();
-            for (int j = 0; j < this.board.size(); j++) {
-                if (areConnectedHex(board.get(i), board.get(j)) && i != j) {
-                    if (!tmp2.contains(board.get(j))) {
-                        tmp2.add(board.get(j));
-                    }
-
-                }
-            }
-            this.board.get(i).setNeighbors(tmp2);
-        }
-    }
-
-    public void initNeighborsList() { // initialize the adjacency list
-        this.neighborsList = new ArrayList[this.board.size()];
-        for (int i = 0; i < this.board.size(); i++) {
-            this.neighborsList[i] = new ArrayList<>();
-            Tile t1 = board.get(i);
-            for (int j = 0; j < this.board.size(); j++) {
-                if (i == j) {
-                    continue; // skip the current tile
-                }
-                Tile t2 = board.get(j);
-                if (isSquare){
-                    if (areConnectedSquare(t1, t2)) {
-                        neighborsList[i].add(j);
-                    }
-                }else{
-                    if (areConnectedHex(t1, t2)) {
-                        neighborsList[i].add(j);
-                    }
-                }
-
-            }
-        }
-    }
-
-    public void updateNeighborsList() {
-        for (int i = 0; i < board.size(); i++) {
-            Tile tile1 = board.get(i);
-            neighborsList[i].clear(); // clear the list of neighbors for the i-th tile
-            for (int j = 0; j < board.size(); j++) {
-                if (i == j) {
-                    continue; // skip the current tile
-                }
-                Tile tile2 = board.get(j);
-
-                if (isSquare){
-                    if (areConnectedSquare(tile1, tile2)) {
-                        // if the j-th tile is a neighbor of the i-th tile, add it to the list of
-                        // neighbors
-                        neighborsList[i].add(j);
-                    }
-                }else{
-                    if (areConnectedHex(tile1, tile2)) {
-                        neighborsList[i].add(j);
-                    }
-                }
-            }
-        }
-    }
-
     public void modifGeoBoard(){
         this.clearBoard();
         if (this.isSquare) {
@@ -367,12 +232,8 @@ public class Board implements Observable {
 
     public void clearBoard(){
         this.board.clear();
-        for (int i = 0 ; i<this.neighborsList.length ;i++){
-            neighborsList[i].clear();
-        }
         this.columns=0;
         this.rows=0;
-        this.score=0;
         notifyObservers();
     }
 
@@ -435,8 +296,6 @@ public class Board implements Observable {
         return true;
     }
 
-
-
     public int lastTileAdded(){
         if (this.isEmptyBoard()){
             return 0;
@@ -449,7 +308,6 @@ public class Board implements Observable {
         }
         return  id_tmp;
     }
-
 
     public int [] getPosToAddRight(){ // to add tile on the bottom of the board
         if (this.board.isEmpty()){
@@ -513,9 +371,6 @@ public class Board implements Observable {
         return position;
     }
 
-
-
-
     public char getShape(){
         return this.isSquare()? 'S':'H';
     }
@@ -548,8 +403,6 @@ public class Board implements Observable {
         return txt;
     }
 
-
-
     public void modifyTile (int id,Role new_role,ArrayList<Integer> new_edges){
         for (Tile t : this.board){
             if (t.getId()==id){
@@ -576,7 +429,6 @@ public class Board implements Observable {
         }
         notifyObservers();
     }
-
 
     @Override
     public void addObserver(Observer observer) {

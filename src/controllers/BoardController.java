@@ -1,5 +1,6 @@
 package controllers;
 import models.Board;
+import models.Level;
 import models.Role;
 import models.Tile;
 import views.BoardView;
@@ -13,7 +14,7 @@ import java.awt.event.MouseEvent;
 
 public class BoardController extends Controller {
     private BoardView view;
-    private Board board;
+    protected Board board;
 
     public BoardController(BoardView view, Board board, NavigationController nc) {
         this.board =board;
@@ -33,6 +34,25 @@ public class BoardController extends Controller {
                 NavigationController.getInstance(view.frame).goBack();
             }
         });
+
+        this.view.nextLevelBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.dialog.dispose();
+                try {
+                    Level level = new Level(view.getLevel().getNum()+1);
+                    Board b = new Board(level.getHeight(), level.getWidth(), level.getTileConfig(), level.getShape() == 'S');
+                    BoardView boardView = new BoardView(view.frame,  level, b);
+                    BoardController bc = new BoardController(boardView, b, navigationController);
+                    navigationController.navigateTo(view,boardView);
+
+                    board.notifyObservers();
+
+                }catch (Exception exception){
+                    view.showAlert(view, "Level not found");
+                }
+            }
+        });
     }
     public void handleTileClick(MouseEvent e) {
         Point clickPosition = e.getPoint();
@@ -42,7 +62,6 @@ public class BoardController extends Controller {
                 Tile t = tileView.getTile();
                 board.rotateTile(t);
                 board.lightsUp();
-
             }
         }
         if(board.isBoardWinningConfig()){

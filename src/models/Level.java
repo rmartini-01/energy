@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Level {
-    private int numlevel;
+    private final int numlevel;
     private int height;
     private int width;
     private char shape;

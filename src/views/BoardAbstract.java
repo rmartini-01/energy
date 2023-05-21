@@ -41,14 +41,17 @@ public abstract class BoardAbstract extends JPanel implements Observer {
             updateBoard(origin);
 
         }
-
     }
     protected void createBoard(Point origin){
-        if (board.getShape() == 'H') {
+        if (!board.isSquare()) {
             createHexagoneBoard(g2d, origin);
         } else {
             createSquareBoard(g2d, origin);
         }
+    }
+
+    public Level getLevel() {
+        return level;
     }
 
 
@@ -56,8 +59,6 @@ public abstract class BoardAbstract extends JPanel implements Observer {
         return tilePosition.x <= mousePosition.x && mousePosition.x <= tilePosition.x + width
                 && tilePosition.y <= mousePosition.y && mousePosition.y <= tilePosition.y + height;
     }
-
-
 
     protected void createSquareBoard(Graphics2D g2d, Point origin) {
         tileViews.clear();
