@@ -140,6 +140,7 @@ public class EditmodeController extends Controller {
             dialog.setLocationRelativeTo(this.view.frame);
             dialog.setVisible(true);
             this.view.getLevel().saveChanges(this.board.getLevelTxtFromBoard());
+            NavigationController.getInstance(this.view.frame).goBack();
         }
         else{
             JDialog dialog = new JDialog(this.view.frame, "Level unsaved", true);
